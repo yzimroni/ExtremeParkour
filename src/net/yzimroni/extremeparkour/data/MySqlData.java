@@ -1,5 +1,6 @@
 package net.yzimroni.extremeparkour.data;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -62,6 +63,43 @@ public class MySqlData extends ExtremeParkourData {
 			e.printStackTrace();
 		}
 		return parkours;
+	}
+
+	@Override
+	public void saveParkour(Parkour p) {
+		//TODO points etc
+		if (p.getId() == -1) {
+			//If the parkour is not on the db we need to insert the parkour (instead of update it)
+			try {
+				PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "parkours (name,owner,createdTimestamp) VALUES(?,?,?)");
+				pre.setString(1, p.getName());
+				pre.setString(2, p.getOwner().toString());
+				pre.setLong(3, p.getCreatedTimestamp());
+				
+				pre.executeUpdate();
+				p.setChanged(false);
+				
+				int id = sql.getIdFromPrepared(pre);
+				p.setId(id);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else {
+			if (p.hasChanged()) {
+				// The parkour is already in the db, we need to update it
+				try {
+					PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "parkours SET name = ?, owner = ?, createdTimestamp = ?");
+					pre.setString(1, p.getName());
+					pre.setString(2, p.getOwner().toString());
+					pre.setLong(3, p.getCreatedTimestamp());
+
+					pre.executeUpdate();
+					p.setChanged(false);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

@@ -19,6 +19,8 @@ public class Parkour {
 	private Startpoint startPoint;
 	private List<Checkpoint> checkPoints = new ArrayList<Checkpoint>();
 	private Endpoint endPoint;
+	
+	private boolean changed;
 
 	/*
 	 * TODO rewards hologram
@@ -42,6 +44,10 @@ public class Parkour {
 	 */
 	public int getId() {
 		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	/**
@@ -132,6 +138,22 @@ public class Parkour {
 	 */
 	public void setEndPoint(Endpoint endPoint) {
 		this.endPoint = endPoint;
+	}
+
+
+	/**
+	 * @return the changed
+	 */
+	public boolean hasChanged() {
+		return changed;
+	}
+
+
+	/**
+	 * @param changed the changed to set
+	 */
+	public void setChanged(boolean changed) {
+		this.changed = changed;
 	}
 
 }

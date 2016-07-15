@@ -14,4 +14,6 @@ public abstract class ExtremeParkourData {
 	
 	public abstract List<Parkour> getAllParkours();
 	
+	public abstract void saveParkour(Parkour p);
+	
 }

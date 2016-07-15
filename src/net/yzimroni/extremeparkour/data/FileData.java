@@ -27,4 +27,10 @@ public class FileData extends ExtremeParkourData {
 		return null;
 	}
 
+	@Override
+	public void saveParkour(Parkour p) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
