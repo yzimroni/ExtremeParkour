@@ -33,7 +33,7 @@ public class ExtremeParkourCommands {
 		parkour.setAliases("p", "eparkour", "extremeparkour", "ep");
 		
 		SubCommand create = new SubCommand("create", "Create a new parkour", MethodExecutor.createByMethodId(this, "parkourCreate"));
-		create.setAliases("new");
+		create.setAliases("new", "add");
 		create.addArgument(new StringArgument("name", true, true));
 		create.setOnlyPlayer(true);
 		parkour.addSubCommand(create);

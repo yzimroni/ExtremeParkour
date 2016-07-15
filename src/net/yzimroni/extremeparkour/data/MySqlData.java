@@ -7,8 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Location;
+
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
+import net.yzimroni.extremeparkour.parkour.point.Endpoint;
+import net.yzimroni.extremeparkour.parkour.point.Point;
+import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.MCSQL;
+import net.yzimroni.extremeparkour.utils.Utils;
 
 public class MySqlData extends ExtremeParkourData {
 	
@@ -55,8 +62,36 @@ public class MySqlData extends ExtremeParkourData {
 				long createdTimestamp = rs.getLong("createdTimestamp");
 				Parkour p = new Parkour(id, name, owner, createdTimestamp);
 				
-				//TODO points etc
 				
+				ResultSet points_rs = sql.get("SELECT * FROM " + prefix + "points WHERE parkour_id=" + id + " ORDER BY point_index DESC");
+				List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
+				while (points_rs.next()) {
+					int point_id = rs.getInt("ID");
+					Location location = Utils.deserializeLocation(points_rs.getString("location"));
+					int index = points_rs.getInt("point_index");
+					Point point = null;
+					if (index == -1) {
+						//Start
+						Startpoint start = new Startpoint(point_id, p, location);
+						p.setStartPoint(start);
+						point = start;
+					} else if (index == -2) {
+						//End
+						Endpoint end = new Endpoint(point_id, p, location);
+						p.setEndPoint(end);
+						point = end;
+					} else {
+						//Checkpoint
+						Checkpoint checkpoint = new Checkpoint(point_id, p, location, index);
+						checkpoints.add(checkpoint);
+						point = checkpoint;
+					}
+					//TODO effects
+				}
+				p.setCheckPoints(checkpoints);
+				//TODO points, ladderboard etc
+				
+				p.setChanged(false);
 				parkours.add(p);
 			}
 		} catch (SQLException e) {
