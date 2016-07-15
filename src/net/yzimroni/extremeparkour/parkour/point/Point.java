@@ -1,5 +1,7 @@
 package net.yzimroni.extremeparkour.parkour.point;
 
+import java.util.List;
+
 import org.bukkit.Location;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
@@ -16,6 +18,10 @@ public abstract class Point {
 		this.parkour = parkour;
 		this.location = location;
 	}
+	
+	public abstract String getName();
+	
+	public abstract List<String> getHologramText();
 
 	/**
 	 * @return the id

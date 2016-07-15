@@ -1,5 +1,8 @@
 package net.yzimroni.extremeparkour.parkour.point;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Location;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
@@ -26,6 +29,16 @@ public class Checkpoint extends Point {
 	 */
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	@Override
+	public String getName() {
+		return "Checkpoint #" + index;
+	}
+
+	@Override
+	public List<String> getHologramText() {
+		return Arrays.asList("Checkpoint #" + index);
 	}
 
 }
