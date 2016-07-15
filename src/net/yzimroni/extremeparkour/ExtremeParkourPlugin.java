@@ -3,6 +3,7 @@ package net.yzimroni.extremeparkour;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.yzimroni.extremeparkour.data.ExtremeParkourData;
+import net.yzimroni.extremeparkour.data.MySqlData;
 import net.yzimroni.extremeparkour.parkour.ParkourManager;
 import net.yzimroni.extremeparkour.utils.ExtremeParkourLogger;
 
@@ -26,7 +27,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	
 	private void initData() {
 		//TODO
-		
+		data = new MySqlData("127.0.0.1", "3306", "extremeparkour", "extremeparkour", "S8f8G927hjCuJxRW", "");
 		data.init();
 	}
 	
