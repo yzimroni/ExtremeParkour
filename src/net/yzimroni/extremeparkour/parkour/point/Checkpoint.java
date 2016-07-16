@@ -29,6 +29,7 @@ public class Checkpoint extends Point {
 	 *            the index to set
 	 */
 	public void setIndex(int index) {
+		changed = true;
 		this.index = index;
 	}
 

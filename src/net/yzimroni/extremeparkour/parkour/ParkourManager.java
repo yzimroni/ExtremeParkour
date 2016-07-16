@@ -40,15 +40,13 @@ public class ParkourManager {
 	public void disable() {
 		events.disable();
 		for (Parkour parkour : parkours) {
-			if (parkour.hasChanged()) {
-				plugin.getData().saveParkour(parkour);
-			}
+			plugin.getData().saveParkour(parkour);
 		}
 		parkours.clear();
 	}
 	
 	public Parkour createParkour(Player p, String name) {
-		Parkour parkour = new Parkour(-1, name, p.getUniqueId(), System.currentTimeMillis());
+		Parkour parkour = new Parkour(plugin, -1, name, p.getUniqueId(), System.currentTimeMillis());
 		plugin.getData().saveParkour(parkour);
 		return parkour;
 	}
@@ -77,6 +75,15 @@ public class ParkourManager {
 		
 		//TODO hologram
 
+	}
+	
+	public void removePoint(Point p) {
+		if (p == null || p.getLocation() == null) {
+			return;
+		}
+		removePointMetadata(p.getLocation().getBlock());
+		//removeHologram(p);
+		p.getLocation().getBlock().setType(Material.AIR);
 	}
 	
 	private void removePointMetadata(Block b) {

@@ -2,10 +2,15 @@ package net.yzimroni.extremeparkour.data;
 
 import java.util.List;
 
+import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 
 public class FileData extends ExtremeParkourData {
+
+	public FileData(ExtremeParkourPlugin plugin) {
+		super(plugin);
+	}
 
 	@Override
 	public void init() {

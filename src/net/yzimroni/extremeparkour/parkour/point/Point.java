@@ -5,14 +5,13 @@ import java.util.List;
 import org.bukkit.Location;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
-import net.yzimroni.extremeparkour.utils.DataStatus;
 
 public abstract class Point {
 
 	private int id;
 	private Parkour parkour;
 	private Location location;
-	private boolean changed;
+	protected boolean changed;
 
 	public Point(int id, Parkour parkour, Location location) {
 		super();
@@ -54,6 +53,7 @@ public abstract class Point {
 	 *            the parkour to set
 	 */
 	public void setParkour(Parkour parkour) {
+		changed = true;
 		this.parkour = parkour;
 	}
 
@@ -69,6 +69,7 @@ public abstract class Point {
 	 *            the location to set
 	 */
 	public void setLocation(Location location) {
+		changed = true;
 		this.location = location;
 	}
 

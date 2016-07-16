@@ -9,12 +9,12 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 
+import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
-import net.yzimroni.extremeparkour.utils.DataStatus;
 import net.yzimroni.extremeparkour.utils.MCSQL;
 import net.yzimroni.extremeparkour.utils.Utils;
 
@@ -23,7 +23,8 @@ public class MySqlData extends ExtremeParkourData {
 	MCSQL sql = null;
 	private String prefix = null;
 	
-	public MySqlData(String host, String port, String database, String username, String password, String prefix) {
+	public MySqlData(ExtremeParkourPlugin plugin, String host, String port, String database, String username, String password, String prefix) {
+		super(plugin);
 		sql = new MCSQL(host, port, database, username, password);
 		if (prefix == null) {
 			prefix = "";
@@ -61,13 +62,13 @@ public class MySqlData extends ExtremeParkourData {
 				String name = rs.getString("name");
 				UUID owner = UUID.fromString(rs.getString("owner"));
 				long createdTimestamp = rs.getLong("createdTimestamp");
-				Parkour p = new Parkour(id, name, owner, createdTimestamp);
+				Parkour p = new Parkour(plugin ,id, name, owner, createdTimestamp);
 				
 				
 				ResultSet points_rs = sql.get("SELECT * FROM " + prefix + "points WHERE parkour_id=" + id + " ORDER BY point_index DESC");
 				List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 				while (points_rs.next()) {
-					int point_id = rs.getInt("ID");
+					int point_id = points_rs.getInt("ID");
 					Location location = Utils.deserializeLocation(points_rs.getString("location"));
 					int index = points_rs.getInt("point_index");
 					Point point = null;
@@ -192,6 +193,9 @@ public class MySqlData extends ExtremeParkourData {
 			pre.setString(3, Utils.serializeLocation(point.getLocation()));
 			
 			pre.executeUpdate();
+			
+			int id = sql.getIdFromPrepared(pre);
+			point.setId(id);
 			
 			point.setChanged(false);
 		} catch (SQLException e) {

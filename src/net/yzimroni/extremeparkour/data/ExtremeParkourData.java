@@ -2,10 +2,17 @@ package net.yzimroni.extremeparkour.data;
 
 import java.util.List;
 
+import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 
 public abstract class ExtremeParkourData {
+	
+	protected ExtremeParkourPlugin plugin;
+	
+	public ExtremeParkourData(ExtremeParkourPlugin plugin) {
+		this.plugin = plugin;
+	}
 	
 	public abstract void init();
 

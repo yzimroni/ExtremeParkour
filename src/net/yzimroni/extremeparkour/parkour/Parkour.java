@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 
 public class Parkour {
+	
+	private ExtremeParkourPlugin plugin;
 
 	private int id;
 	private String name;
@@ -29,7 +32,8 @@ public class Parkour {
 	 * TODO rewards hologram
 	 */
 
-	public Parkour(int id, String name, UUID owner, long createdTimestamp) {
+	public Parkour(ExtremeParkourPlugin plugin, int id, String name, UUID owner, long createdTimestamp) {
+		this.plugin = plugin;
 		this.id = id;
 		this.name = name;
 		this.owner = owner;
@@ -45,10 +49,16 @@ public class Parkour {
 		if (p == null) {
 			return;
 		}
+		plugin.getParkourManager().removePoint(p);
 		if (removedPoints == null) {
 			removedPoints = new ArrayList<Integer>();
 		}
 		removedPoints.add(p.getId());
+	}
+	
+	public void initPoint(Point p) {
+		plugin.getData().insertPoint(p);
+		plugin.getParkourManager().initPoint(p);
 	}
 	
 
@@ -120,6 +130,9 @@ public class Parkour {
 	 *            the startPoint to set
 	 */
 	public void setStartPoint(Startpoint startPoint) {
+		if (this.startPoint != null) {
+			markPointAsRemoved(this.startPoint);
+		}
 		this.startPoint = startPoint;
 	}
 
@@ -150,6 +163,9 @@ public class Parkour {
 	 *            the endPoint to set
 	 */
 	public void setEndPoint(Endpoint endPoint) {
+		if (this.endPoint != null) {
+			markPointAsRemoved(this.endPoint);
+		}
 		this.endPoint = endPoint;
 	}
 

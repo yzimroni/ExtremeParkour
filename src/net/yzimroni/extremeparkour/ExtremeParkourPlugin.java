@@ -51,7 +51,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	
 	private void initData() {
 		//TODO
-		data = new MySqlData("127.0.0.1", "3306", "extremeparkour", "extremeparkour", "XGNb3vqWBQYbDyKF", "");
+		data = new MySqlData(this, "127.0.0.1", "3306", "extremeparkour", "extremeparkour", "XGNb3vqWBQYbDyKF", "");
 		data.init();
 	}
 	
