@@ -23,4 +23,9 @@ public class Endpoint extends Point {
 		return Arrays.asList("Parkour End");
 	}
 
+	@Override
+	public int getIndex() {
+		return -2;
+	}
+
 }

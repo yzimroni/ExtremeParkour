@@ -3,6 +3,7 @@ package net.yzimroni.extremeparkour.data;
 import java.util.List;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.point.Point;
 
 public class FileData extends ExtremeParkourData {
 
@@ -29,6 +30,18 @@ public class FileData extends ExtremeParkourData {
 
 	@Override
 	public void saveParkour(Parkour p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void insertParkour(Parkour p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void insertPoint(Point point) {
 		// TODO Auto-generated method stub
 		
 	}

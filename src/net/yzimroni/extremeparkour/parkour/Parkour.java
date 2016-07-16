@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
+import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 
 public class Parkour {
@@ -21,6 +22,8 @@ public class Parkour {
 	private Endpoint endPoint;
 	
 	private boolean changed;
+	
+	private List<Integer> removedPoints;
 
 	/*
 	 * TODO rewards hologram
@@ -36,6 +39,16 @@ public class Parkour {
 	
 	public boolean isComplete() {
 		return startPoint != null && endPoint != null;
+	}
+	
+	public void markPointAsRemoved(Point p) {
+		if (p == null) {
+			return;
+		}
+		if (removedPoints == null) {
+			removedPoints = new ArrayList<Integer>();
+		}
+		removedPoints.add(p.getId());
 	}
 	
 
@@ -155,5 +168,24 @@ public class Parkour {
 	public void setChanged(boolean changed) {
 		this.changed = changed;
 	}
+
+
+	/**
+	 * @return the removedPoints
+	 */
+	public List<Integer> getRemovedPoints() {
+		return removedPoints;
+	}
+
+
+	/**
+	 * @param removedPoints the removedPoints to set
+	 */
+	public void setRemovedPoints(List<Integer> removedPoints) {
+		this.removedPoints = removedPoints;
+	}
+
+
+	
 
 }

@@ -11,10 +11,16 @@ public class Utils {
 	}
 	
 	public static String serializeLocation(Location location) {
+		if (location == null) {
+			return null;
+		}
 		return location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";" + location.getZ();
 	}
 	
 	public static Location deserializeLocation(String string) {
+		if (string == null || string.isEmpty()) {
+			return null;
+		}
 		String[] parts = string.split(";");
 		if (parts.length != 4) {
 			//TODO debug

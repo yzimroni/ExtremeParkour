@@ -19,6 +19,7 @@ public class Checkpoint extends Point {
 	/**
 	 * @return the index
 	 */
+	@Override
 	public int getIndex() {
 		return index;
 	}

@@ -14,6 +14,7 @@ import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
+import net.yzimroni.extremeparkour.utils.DataStatus;
 import net.yzimroni.extremeparkour.utils.MCSQL;
 import net.yzimroni.extremeparkour.utils.Utils;
 
@@ -86,6 +87,7 @@ public class MySqlData extends ExtremeParkourData {
 						checkpoints.add(checkpoint);
 						point = checkpoint;
 					}
+					point.setChanged(false);
 					//TODO effects
 				}
 				p.setCheckPoints(checkpoints);
@@ -99,41 +101,101 @@ public class MySqlData extends ExtremeParkourData {
 		}
 		return parkours;
 	}
+	
+	@Override
+	public void insertParkour(Parkour p) {
+		try {
+			PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "parkours (name,owner,createdTimestamp) VALUES(?,?,?)");
+			pre.setString(1, p.getName());
+			pre.setString(2, p.getOwner().toString());
+			pre.setLong(3, p.getCreatedTimestamp());
+			
+			pre.executeUpdate();
+			p.setChanged(false);
+			
+			int id = sql.getIdFromPrepared(pre);
+			p.setId(id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void saveParkour(Parkour p) {
-		//TODO points etc
-		if (p.getId() == -1) {
-			//If the parkour is not on the db we need to insert the parkour (instead of update it)
+
+		if (p.hasChanged()) {
+			//If the parkour settings/options were changed we need to updated them
 			try {
-				PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "parkours (name,owner,createdTimestamp) VALUES(?,?,?)");
+				PreparedStatement pre = sql
+						.getPrepare("UPDATE " + prefix + "parkours SET name = ?, owner = ?, createdTimestamp = ?");
 				pre.setString(1, p.getName());
 				pre.setString(2, p.getOwner().toString());
 				pre.setLong(3, p.getCreatedTimestamp());
-				
+
 				pre.executeUpdate();
 				p.setChanged(false);
-				
-				int id = sql.getIdFromPrepared(pre);
-				p.setId(id);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		} else {
-			if (p.hasChanged()) {
-				// The parkour is already in the db, we need to update it
-				try {
-					PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "parkours SET name = ?, owner = ?, createdTimestamp = ?");
-					pre.setString(1, p.getName());
-					pre.setString(2, p.getOwner().toString());
-					pre.setLong(3, p.getCreatedTimestamp());
+		}
 
-					pre.executeUpdate();
-					p.setChanged(false);
-				} catch (SQLException e) {
-					e.printStackTrace();
+		// Delete from the database the points that were deleted in-game
+		if (p.getRemovedPoints() != null && !p.getRemovedPoints().isEmpty()) {
+			String ids = "";
+			for (Integer id : p.getRemovedPoints()) {
+				if (!ids.isEmpty()) {
+					ids += ",";
 				}
+				ids += id.intValue();
 			}
+			sql.set("DELETE FROM " + prefix + "points WHERE ID IN (" + ids + ")");
+		}
+
+		// Update/insert the new/changed points
+		List<Point> changed = new ArrayList<Point>();
+		if (p.getStartPoint() != null && p.getStartPoint().hasChanged()) {
+			changed.add(p.getStartPoint());
+		}
+
+		if (p.getEndPoint() != null && p.getEndPoint().hasChanged()) {
+			changed.add(p.getEndPoint());
+		}
+
+		for (Checkpoint checkpoint : p.getCheckPoints()) {
+			if (checkpoint.hasChanged()) {
+				changed.add(checkpoint);
+			}
+		}
+
+		for (Point point : changed) {
+			try {
+				PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, index=? WHERE ID = " + point.getId());
+				pre.setInt(1, point.getParkour().getId());
+				pre.setString(2, Utils.serializeLocation(point.getLocation()));
+				pre.setInt(3, point.getIndex());
+
+				pre.executeUpdate();
+
+				point.setChanged(false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void insertPoint(Point point) {
+		try {
+			PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "points (parkour_id,point_index,location) VALUES(?,?,?)");
+			pre.setInt(1, point.getParkour().getId());
+			pre.setInt(2, point.getIndex());
+			pre.setString(3, Utils.serializeLocation(point.getLocation()));
+			
+			pre.executeUpdate();
+			
+			point.setChanged(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 

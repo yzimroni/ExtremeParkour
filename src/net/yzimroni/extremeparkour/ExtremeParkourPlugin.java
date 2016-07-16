@@ -10,6 +10,26 @@ import net.yzimroni.extremeparkour.utils.ExtremeParkourLogger;
 
 public class ExtremeParkourPlugin extends JavaPlugin {
 	
+	/*
+	 * TODO
+	 * Save points
+	 * Command to set start & end
+	 * Command to add a checkpoint and remove
+	 * Add point hologram
+	 * Command to insert a checkpoint
+	 * Allow players to start & end the parkour
+	 * Checkpoint command
+	 * Add actionbar time count system (with protocol lib)
+	 * 
+	 * Create GUI to edit
+	 * 
+	 * Add point effects
+	 * Add ladderboard
+	 * Add parkour reward
+	 * Add FileData
+	 * Parkour protection (fly, teleport etc)
+	 */
+	
 	private ExtremeParkourData data;
 	private ParkourManager manager;
 	private ExtremeParkourCommands commands;

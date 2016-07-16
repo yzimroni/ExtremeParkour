@@ -23,4 +23,9 @@ public class Startpoint extends Point {
 		return Arrays.asList("Parkour Start");
 	}
 
+	@Override
+	public int getIndex() {
+		return -1;
+	}
+
 }
