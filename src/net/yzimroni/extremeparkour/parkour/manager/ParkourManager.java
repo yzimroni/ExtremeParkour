@@ -1,4 +1,4 @@
-package net.yzimroni.extremeparkour.parkour;
+package net.yzimroni.extremeparkour.parkour.manager;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
+import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;

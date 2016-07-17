@@ -10,7 +10,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import net.yzimroni.extremeparkour.commands.ExtremeParkourCommands;
 import net.yzimroni.extremeparkour.data.ExtremeParkourData;
 import net.yzimroni.extremeparkour.data.MySqlData;
-import net.yzimroni.extremeparkour.parkour.ParkourManager;
+import net.yzimroni.extremeparkour.parkour.manager.ParkourManager;
 import net.yzimroni.extremeparkour.utils.ExtremeParkourLogger;
 
 public class ExtremeParkourPlugin extends JavaPlugin {

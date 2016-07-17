@@ -1,4 +1,4 @@
-package net.yzimroni.extremeparkour.parkour;
+package net.yzimroni.extremeparkour.parkour.manager;
 
 import org.bukkit.event.Listener;
 
