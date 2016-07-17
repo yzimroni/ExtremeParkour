@@ -5,6 +5,8 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 
@@ -14,6 +16,7 @@ public abstract class Point {
 	private Parkour parkour;
 	private Location location;
 	protected boolean changed;
+	private Hologram hologram;
 
 	public Point(int id, Parkour parkour, Location location) {
 		super();
@@ -89,6 +92,20 @@ public abstract class Point {
 	 */
 	public void setChanged(boolean changed) {
 		this.changed = changed;
+	}
+
+	/**
+	 * @return the hologram
+	 */
+	public Hologram getHologram() {
+		return hologram;
+	}
+
+	/**
+	 * @param hologram the hologram to set
+	 */
+	public void setHologram(Hologram hologram) {
+		this.hologram = hologram;
 	}
 
 	

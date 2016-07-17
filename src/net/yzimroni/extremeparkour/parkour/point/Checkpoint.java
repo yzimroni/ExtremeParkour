@@ -3,6 +3,7 @@ package net.yzimroni.extremeparkour.parkour.point;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -44,7 +45,7 @@ public class Checkpoint extends Point {
 
 	@Override
 	public List<String> getHologramText() {
-		return Arrays.asList(getName());
+		return Arrays.asList(ChatColor.RED + "Checkpoint " + ChatColor.GREEN + "#" + (index + 1));
 	}
 
 	@Override

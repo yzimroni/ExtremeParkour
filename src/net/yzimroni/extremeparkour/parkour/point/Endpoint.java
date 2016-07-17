@@ -3,6 +3,7 @@ package net.yzimroni.extremeparkour.parkour.point;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -22,7 +23,7 @@ public class Endpoint extends Point {
 
 	@Override
 	public List<String> getHologramText() {
-		return Arrays.asList("Parkour End");
+		return Arrays.asList(ChatColor.GREEN + "Parkour End");
 	}
 
 	@Override

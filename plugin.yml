@@ -2,6 +2,7 @@ name: ExtremeParkour
 main: net.yzimroni.extremeparkour.ExtremeParkourPlugin
 version: 0.1
 description: ExtremeParkour Plugin
+depend: [CommandManager, HolographicDisplays]
 authors: [yzimroni]
 commands:
   parkour:

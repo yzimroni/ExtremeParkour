@@ -1,6 +1,11 @@
 package net.yzimroni.extremeparkour;
 
+import java.util.Collection;
+
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import net.yzimroni.extremeparkour.commands.ExtremeParkourCommands;
 import net.yzimroni.extremeparkour.data.ExtremeParkourData;
@@ -60,6 +65,15 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		
+		//Remove all the plugin's holograms when disabled
+		Collection<Hologram> hs = HologramsAPI.getHolograms(this);
+		if (!hs.isEmpty()) {
+			for (Hologram h : hs) {
+				h.delete();
+			}
+		}
+		
 		commands.disable();
 		manager.disable();
 		data.disable();

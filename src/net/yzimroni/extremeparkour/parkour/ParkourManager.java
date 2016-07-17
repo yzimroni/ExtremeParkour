@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
@@ -77,6 +80,12 @@ public class ParkourManager {
 			block.setMetadata("point_index", new FixedMetadataValue(plugin, ((Checkpoint) p).getIndex()));
 		}
 		
+		Hologram hologram = HologramsAPI.createHologram(plugin, p.getLocation().getBlock().getLocation().add(0.5, 1.5, 0.5));
+		for (String line : p.getHologramText()) {
+			hologram.appendTextLine(line);
+		}
+		
+		p.setHologram(hologram);
 		
 		//TODO hologram
 
@@ -89,6 +98,11 @@ public class ParkourManager {
 		removePointMetadata(p.getLocation().getBlock());
 		//removeHologram(p);
 		p.getLocation().getBlock().setType(Material.AIR);
+		
+		if (p.getHologram() != null) {
+			p.getHologram().delete();
+			p.setHologram(null);
+		}
 	}
 	
 	private void removePointMetadata(Block b) {
