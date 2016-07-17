@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public class Checkpoint extends Point {
 
@@ -29,18 +31,25 @@ public class Checkpoint extends Point {
 	 *            the index to set
 	 */
 	public void setIndex(int index) {
-		changed = true;
+		if (this.index != index) {
+			changed = true;
+		}
 		this.index = index;
 	}
 
 	@Override
 	public String getName() {
-		return "Checkpoint #" + index;
+		return "Checkpoint #" + (index + 1);
 	}
 
 	@Override
 	public List<String> getHologramText() {
-		return Arrays.asList("Checkpoint #" + index);
+		return Arrays.asList(getName());
+	}
+
+	@Override
+	public MaterialData getPointMaterial() {
+		return new MaterialData(Material.WOOD_PLATE);
 	}
 
 }

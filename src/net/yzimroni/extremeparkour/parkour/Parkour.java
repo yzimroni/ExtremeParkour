@@ -182,6 +182,7 @@ public class Parkour {
 	public void insertCheckpoint(int index, Checkpoint point) {
 		initPoint(point);
 		checkpoints.add(index, point);
+		plugin.getParkourManager().fixCheckpoints(this);
 	}
 	
 	public void removeCheckpoint(int index) {

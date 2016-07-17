@@ -28,6 +28,9 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	 * Add parkour reward
 	 * Add FileData
 	 * Parkour protection (fly, teleport etc)
+	 * 
+	 * Prevent more then one point in the same location
+	 * Checkpoint index fixing
 	 */
 	
 	private ExtremeParkourData data;

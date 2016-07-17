@@ -15,6 +15,7 @@ import net.yzimroni.commandmanager.manager.CommandManager;
 import net.yzimroni.commandmanager.utils.MethodId;
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 
@@ -62,6 +63,12 @@ public class ExtremeParkourCommands {
 		SubCommand end = new SubCommand("end", "Set the end of the parkour", MethodExecutor.createByMethodId(this, "parkourPointSetEnd"));
 		end.setOnlyPlayer(true);
 		set.addSubCommand(end);
+		
+		SubCommand check = new SubCommand("check", "Add a checkpoint to the parkour", MethodExecutor.createByMethodId(this, "parkourPointSetCheck"));
+		check.setAliases("checkpoint");
+		check.setOnlyPlayer(true);
+		check.addArgument(new IntegerArgument("index", false, 0, null));
+		set.addSubCommand(check);
 		
 		//TODO /parkour point add check[point] [index]
 		
@@ -140,4 +147,26 @@ public class ExtremeParkourCommands {
 		return true;
 	}
 	
+	
+	@MethodId("parkourPointSetCheck")
+	public boolean parkourPointSetCheck(CommandSender sender, Command command, ArgumentData args) {
+		Player p = (Player) sender;
+		if (parkourSel == null) {
+			p.sendMessage("Parkour is null");
+			return true;
+		}
+		int index = parkourSel.getChestpointsCount();
+		boolean hasIndex = false;
+		if (args.has("index", Integer.class)) {
+			index = args.get("index", Integer.class);
+			hasIndex = true;
+		}
+		Checkpoint check = new Checkpoint(-1, parkourSel, p.getLocation(), index);
+		if (hasIndex) {
+			parkourSel.insertCheckpoint(index, check);
+		} else {
+			parkourSel.addCheckpoint(check);
+		}
+		return true;
+	}
 }

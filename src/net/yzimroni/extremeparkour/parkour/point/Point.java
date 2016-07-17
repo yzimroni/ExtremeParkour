@@ -3,8 +3,10 @@ package net.yzimroni.extremeparkour.parkour.point;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public abstract class Point {
 
@@ -25,6 +27,8 @@ public abstract class Point {
 	public abstract List<String> getHologramText();
 
 	public abstract int getIndex();
+	
+	public abstract MaterialData getPointMaterial();
 	
 	/**
 	 * @return the id

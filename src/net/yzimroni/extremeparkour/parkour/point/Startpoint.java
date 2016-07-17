@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public class Startpoint extends Point {
 
@@ -26,6 +28,11 @@ public class Startpoint extends Point {
 	@Override
 	public int getIndex() {
 		return -1;
+	}
+
+	@Override
+	public MaterialData getPointMaterial() {
+		return new MaterialData(Material.IRON_PLATE);
 	}
 
 }

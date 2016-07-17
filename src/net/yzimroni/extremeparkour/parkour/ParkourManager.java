@@ -14,6 +14,7 @@ import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
+import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public class ParkourManager {
 	
@@ -62,7 +63,11 @@ public class ParkourManager {
 			block_below.setType(Material.STONE);
 		}
 		
-		block.setType(Material.WOOD_PLATE); //TODO
+		MaterialData type = p.getPointMaterial();
+		block.setType(type.getMaterial());
+		if (type.getData() != (byte) 0) {
+			block.setData(type.getData());
+		}
 		
 		removePointMetadata(block);
 		
@@ -143,6 +148,15 @@ public class ParkourManager {
 			return parkour.getEndPoint();
 		}
 		return null;
+	}
+	
+	public void fixCheckpoints(Parkour p) {
+		for (int i = 0; i < p.getCheckpoints().size(); i++) {
+			//TODO remove hologram
+			Checkpoint point = p.getCheckpoints().get(i);
+			point.setIndex(i);
+			initPoint(point);
+		}
 	}
 	
 
