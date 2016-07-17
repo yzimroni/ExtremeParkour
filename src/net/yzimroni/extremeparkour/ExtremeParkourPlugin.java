@@ -15,9 +15,9 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	 * Save points
 	 * Command to set start & end
 	 * Command to add a checkpoint and remove
+	 * Allow players to start & end the parkour
 	 * Add point hologram
 	 * Command to insert a checkpoint
-	 * Allow players to start & end the parkour
 	 * Checkpoint command
 	 * Add actionbar time count system (with protocol lib)
 	 * 

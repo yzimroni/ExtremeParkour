@@ -21,7 +21,7 @@ public class Parkour {
 	private long createdTimestamp;
 
 	private Startpoint startPoint;
-	private List<Checkpoint> checkPoints = new ArrayList<Checkpoint>();
+	private List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 	private Endpoint endPoint;
 	
 	private boolean changed;
@@ -136,20 +136,6 @@ public class Parkour {
 		this.startPoint = startPoint;
 	}
 
-	/**
-	 * @return the checkPoints
-	 */
-	public List<Checkpoint> getCheckPoints() {
-		return checkPoints;
-	}
-
-	/**
-	 * @param checkPoints
-	 *            the checkPoints to set
-	 */
-	public void setCheckPoints(List<Checkpoint> checkPoints) {
-		this.checkPoints = checkPoints;
-	}
 
 	/**
 	 * @return the endPoint
@@ -167,6 +153,55 @@ public class Parkour {
 			markPointAsRemoved(this.endPoint);
 		}
 		this.endPoint = endPoint;
+	}
+	
+	/**
+	 * @return the checkpoints
+	 */
+	public List<Checkpoint> getCheckpoints() {
+		return checkpoints;
+	}
+	
+	public boolean hasCheckpoints() {
+		return !checkpoints.isEmpty();
+	}
+	
+	public int getChestpointsCount() {
+		return checkpoints.size();
+	}
+	
+	public Checkpoint getCheckpoint(int index) {
+		return checkpoints.get(index);
+	}
+	
+	public void addCheckpoint(Checkpoint point) {
+		initPoint(point);
+		checkpoints.add(point);
+	}
+	
+	public void insertCheckpoint(int index, Checkpoint point) {
+		initPoint(point);
+		checkpoints.add(index, point);
+	}
+	
+	public void removeCheckpoint(int index) {
+		Checkpoint p = getCheckpoint(index);
+		removeCheckpoint(p);
+	}
+	
+	public void removeCheckpoint(Checkpoint point) {
+		if (checkpoints.contains(point)) {
+			markPointAsRemoved(point);
+			checkpoints.remove(point);
+		}
+	}
+	
+
+	/**
+	 * @param checkpoints the checkpoints to set
+	 */
+	public void setCheckpoints(List<Checkpoint> checkpoints) {
+		this.checkpoints = checkpoints;
 	}
 
 
@@ -200,6 +235,8 @@ public class Parkour {
 	public void setRemovedPoints(List<Integer> removedPoints) {
 		this.removedPoints = removedPoints;
 	}
+
+
 
 
 	

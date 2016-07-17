@@ -31,7 +31,7 @@ public class ParkourManager {
 			//TODO
 			initPoint(p.getStartPoint());
 			initPoint(p.getEndPoint());
-			for (Checkpoint checkpoint : p.getCheckPoints()) {
+			for (Checkpoint checkpoint : p.getCheckpoints()) {
 				initPoint(checkpoint);
 			}
 		}
@@ -131,7 +131,7 @@ public class ParkourManager {
 		if (type.equals(Checkpoint.class.getName())) {
 			int index = b.getMetadata("point_index").get(0).asInt();
 			try {
-				return parkour.getCheckPoints().get(index);
+				return parkour.getCheckpoints().get(index);
 			} catch (Exception e) {
 				//TODO debug
 				removePointMetadata(b);

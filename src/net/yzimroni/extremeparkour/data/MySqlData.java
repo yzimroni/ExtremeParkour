@@ -91,7 +91,7 @@ public class MySqlData extends ExtremeParkourData {
 					point.setChanged(false);
 					//TODO effects
 				}
-				p.setCheckPoints(checkpoints);
+				p.setCheckpoints(checkpoints);
 				//TODO points, ladderboard etc
 				
 				p.setChanged(false);
@@ -162,7 +162,7 @@ public class MySqlData extends ExtremeParkourData {
 			changed.add(p.getEndPoint());
 		}
 
-		for (Checkpoint checkpoint : p.getCheckPoints()) {
+		for (Checkpoint checkpoint : p.getCheckpoints()) {
 			if (checkpoint.hasChanged()) {
 				changed.add(checkpoint);
 			}
