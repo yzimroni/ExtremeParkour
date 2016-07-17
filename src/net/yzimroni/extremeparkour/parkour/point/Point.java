@@ -3,8 +3,6 @@ package net.yzimroni.extremeparkour.parkour.point;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
-
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
