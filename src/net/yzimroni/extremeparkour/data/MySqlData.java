@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
@@ -198,6 +200,44 @@ public class MySqlData extends ExtremeParkourData {
 			point.setId(id);
 			
 			point.setChanged(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public ParkourPlayerScore getBestPlayerScore(Player p, Parkour parkour) {
+		try {
+			PreparedStatement pre = sql.getPrepare("SELECT * FROM " + prefix + "playerscore WHERE UUID = ? AND parkourId = ? ORDER BY timeTook ASC LIMIT 1");
+			pre.setString(1, p.getUniqueId().toString());
+			pre.setInt(2, parkour.getId());
+			
+			ResultSet rs = pre.executeQuery();
+			if (rs.next()) {
+				UUID player = UUID.fromString(rs.getString("UUID"));
+				int parkourId = rs.getInt("parkourId");
+				long date = rs.getLong("date");
+				long timeTook = rs.getLong("timeTook");
+				return new ParkourPlayerScore(player, parkourId, date, timeTook);
+			} else {
+				return null;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public void insertPlayerScore(ParkourPlayerScore score) {
+		try {
+			PreparedStatement pre = sql.getPrepare("INSERT INTO " + prefix + "playerscore (UUID,parkourId,date,timeTook) VALUES(?,?,?,?)");
+			pre.setString(1, score.getPlayer().toString());
+			pre.setInt(2, score.getParkourId());
+			pre.setLong(3, score.getDate());
+			pre.setLong(4, score.getTimeTook());
+			
+			pre.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

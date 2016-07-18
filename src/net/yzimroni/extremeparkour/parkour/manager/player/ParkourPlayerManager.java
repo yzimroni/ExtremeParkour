@@ -18,6 +18,7 @@ import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
+import net.yzimroni.extremeparkour.utils.Utils;
 
 public class ParkourPlayerManager implements Listener {
 
@@ -148,10 +149,16 @@ public class ParkourPlayerManager implements Listener {
 	
 	private boolean completeParkour(Player p, Parkour parkour, ParkourPlayer playerp) {
 		long time = System.currentTimeMillis() - playerp.getStartTime();
+		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
+		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
 		players.remove(p.getUniqueId());
 		// TODO player score
-		p.sendMessage(ChatColor.GREEN + "You completed the parkour in " + ((double) time / 1000) + " seconds WIP");
-		return false;
+		p.sendMessage(ChatColor.GREEN + "You completed the parkour in " + Utils.formatTime(time) + " WIP");
+		if (old != null) {
+			p.sendMessage(ChatColor.GREEN + "Privues record was " + Utils.formatTime(old.getTimeTook()));
+		}
+		plugin.getData().insertPlayerScore(now);
+		return true;
 	}
 	
 	
