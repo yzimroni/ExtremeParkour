@@ -68,9 +68,18 @@ public class ExtremeParkourCommands {
 		check.setAliases("checkpoint");
 		check.setOnlyPlayer(true);
 		check.addArgument(new IntegerArgument("index", false, 0, null));
+		
 		set.addSubCommand(check);
 		
-		//TODO /parkour point add check[point] [index]
+		SubCommand remove = new SubCommand("remove", "Remove a point", MethodExecutor.createByMethodId(this, "parkourMain")); //Just need to send help
+		remove.setAliases("rem", "delete", "del");
+		
+		SubCommand remcheck = new SubCommand("check", "Remove a checkpoint", MethodExecutor.createByMethodId(this, "parkourPointRemoveCheck"));
+		remcheck.setAliases("checkpoint");
+		remcheck.addArgument(new IntegerArgument("index", true, 0, null));
+		remove.addSubCommand(remcheck);
+		
+		set.addSubCommand(remove);
 		
 		point.addSubCommand(set);
 		parkour.addSubCommand(point);
@@ -167,6 +176,23 @@ public class ExtremeParkourCommands {
 		} else {
 			parkourSel.addCheckpoint(check);
 		}
+		return true;
+	}
+	
+	
+	@MethodId("parkourPointRemoveCheck")
+	public boolean parkourPointRemoveCheck(CommandSender sender, Command command, ArgumentData args) {
+		if (parkourSel == null) {
+			sender.sendMessage("Parkour is null");
+			return true;
+		}
+		int index = args.get("index", Integer.class) - 1;
+		if (parkourSel.getChestpointsCount() >= index) {
+			sender.sendMessage("Checkpoint not found");
+			return false;
+		}
+		parkourSel.removeCheckpoint(index);
+		sender.sendMessage("Removed checkpoint #" + (index + 1));
 		return true;
 	}
 }
