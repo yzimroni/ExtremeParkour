@@ -170,11 +170,11 @@ public class MySqlData extends ExtremeParkourData {
 
 		for (Point point : changed) {
 			try {
-				PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, index=? WHERE ID = " + point.getId());
+				PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, point_index=? WHERE ID = " + point.getId());
 				pre.setInt(1, point.getParkour().getId());
 				pre.setString(2, Utils.serializeLocation(point.getLocation()));
 				pre.setInt(3, point.getIndex());
-
+				
 				pre.executeUpdate();
 
 				point.setChanged(false);

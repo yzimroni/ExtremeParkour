@@ -12,6 +12,8 @@ public class ParkourPlayer {
 	private long startTime;
 	private int lastCheckpoint;
 	private long lastCheckpointTime;
+	
+	private long lastMessage = -1;
 
 	public ParkourPlayer(UUID player, Parkour parkour, long startTime) {
 		super();
@@ -58,6 +60,43 @@ public class ParkourPlayer {
 
 	public void setStartTime(long startTime) {
 		this.startTime = startTime;
+	}
+
+	/**
+	 * @return the lastMessage
+	 */
+	public long getLastMessage() {
+		return lastMessage;
+	}
+
+	/**
+	 * @param lastMessage the lastMessage to set
+	 */
+	public void setLastMessage(long lastMessage) {
+		this.lastMessage = lastMessage;
+	}
+	
+	public boolean checkLastMessage() {
+		if (lastMessage == -1) {
+			return true;
+		}
+		
+		if (System.currentTimeMillis() - lastMessage > 1000) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void setLastMessage() {
+		lastMessage = System.currentTimeMillis();
+	}
+	
+	public boolean checkAndSetLastMessage() {
+		if (checkLastMessage()) {
+			setLastMessage();
+			return true;
+		}
+		return false;
 	}
 
 }

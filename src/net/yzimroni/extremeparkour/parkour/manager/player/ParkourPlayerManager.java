@@ -79,10 +79,14 @@ public class ParkourPlayerManager implements Listener {
 			playerp.setLastCheckpoint(-1); //So the next checkpoint is index 0
 			players.put(p.getUniqueId(), playerp);
 			p.sendMessage(ChatColor.GREEN + "You start the parkour!");
+			playerp.setLastMessage();
 			playerp.setStartTime(System.currentTimeMillis());
 			return true;
 		} else {
 			ParkourPlayer playerp = players.get(p.getUniqueId());
+			if (!playerp.checkAndSetLastMessage()) {
+				return false;
+			}
 			if (parkour.equals(playerp.getParkour())) {
 				p.sendMessage("restart the parkour WIP");
 				//TODO restart the parkour
@@ -105,8 +109,12 @@ public class ParkourPlayerManager implements Listener {
 				playerp.setLastCheckpoint(check.getIndex());
 				playerp.setLastCheckpointTime(System.currentTimeMillis() - playerp.getStartTime());
 				p.sendMessage(ChatColor.YELLOW + "You are now on checkpoint " + ChatColor.AQUA + "#" + (check.getDisplayIndex()));
+				playerp.setLastMessage();
 				return true;
 			} else {
+				if (!playerp.checkAndSetLastMessage()) {
+					return false;
+				}
 				p.sendMessage("Not this one WIP");
 			}
 		}
@@ -125,6 +133,9 @@ public class ParkourPlayerManager implements Listener {
 					// is the last one
 					return completeParkour(p, parkour, playerp);
 				} else {
+					if (!playerp.checkAndSetLastMessage()) {
+						return false;
+					}
 					p.sendMessage(ChatColor.RED + "You missed a checkpoint");
 				}
 			} else {
