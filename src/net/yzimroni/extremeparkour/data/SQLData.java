@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
@@ -132,7 +133,7 @@ public class SQLData {
 				while (leaderboard_rs.next()) {
 					int leaderboard_id = leaderboard_rs.getInt("ID");
 					Location location = Utils.deserializeLocation(leaderboard_rs.getString("location"));
-					int playerCount = leaderboard_rs.getInt("player_count");
+					int playerCount = leaderboard_rs.getInt("players_count");
 					int page = leaderboard_rs.getInt("page");
 					
 					ParkourLeaderboard leaderboard = new ParkourLeaderboard(leaderboard_id, p, location, playerCount, page);
@@ -315,6 +316,24 @@ public class SQLData {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public List<ParkourPlayerScore> getTopPlayerScore(Parkour parkour, int playercount, int page) {
+		/*
+		 * TODO take page into account
+		 */
+		try {
+			ResultSet rs = sql.get("SELECT * FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC LIMIT " + playercount);
+			List<ParkourPlayerScore> players = new ArrayList<ParkourPlayerScore>();
+			while (rs.next()) {
+				ParkourPlayerScore player = new ParkourPlayerScore(UUID.fromString(rs.getString("UUID")), parkour.getId(), rs.getLong("date"), rs.getLong("timeTook"));
+				players.add(player);
+			}
+			return players;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

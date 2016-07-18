@@ -2,6 +2,8 @@ package net.yzimroni.extremeparkour.parkour;
 
 import org.bukkit.Location;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+
 import net.yzimroni.extremeparkour.utils.DataStatus;
 
 public class ParkourLeaderboard {
@@ -11,6 +13,8 @@ public class ParkourLeaderboard {
 	private Location location;
 	private int playerCount;
 	private int page;
+	
+	private Hologram hologram;
 	
 	private DataStatus status;
 
@@ -85,6 +89,20 @@ public class ParkourLeaderboard {
 		if (status == null) {
 			status = DataStatus.UPDATED;
 		}
+	}
+
+	/**
+	 * @return the hologram
+	 */
+	public Hologram getHologram() {
+		return hologram;
+	}
+
+	/**
+	 * @param hologram the hologram to set
+	 */
+	public void setHologram(Hologram hologram) {
+		this.hologram = hologram;
 	}
 
 }

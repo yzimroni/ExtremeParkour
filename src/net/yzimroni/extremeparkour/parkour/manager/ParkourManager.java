@@ -2,12 +2,18 @@ package net.yzimroni.extremeparkour.parkour.manager;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
@@ -16,12 +22,16 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerManager;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.MaterialData;
+import net.yzimroni.extremeparkour.utils.Utils;
 
 public class ParkourManager {
 	
@@ -55,6 +65,7 @@ public class ParkourManager {
 			for (Checkpoint checkpoint : p.getCheckpoints()) {
 				initPoint(checkpoint);
 			}
+			initLeaderboard(p);
 		}
 	}
 	
@@ -108,6 +119,44 @@ public class ParkourManager {
 
 	}
 	
+	public void initLeaderboard(Parkour parkour) {
+		if (!parkour.getLeaderboards().isEmpty()) {
+			int max = -1;
+			for (ParkourLeaderboard leaderboard : parkour.getLeaderboards()) {
+				if (leaderboard.getPlayerCount() > max) {
+					max = leaderboard.getPlayerCount();
+				}
+			}
+			if (max > 150) {
+				max = 150;
+			}
+
+			List<ParkourPlayerScore> top = plugin.getData().getTopPlayerScore(parkour, max, 0 /* TODO */);
+			HashMap<UUID, String> nameCache = new HashMap<UUID, String>();
+			for (ParkourLeaderboard leaderboard : parkour.getLeaderboards()) {
+				removeLeaderboard(leaderboard);
+				Hologram hologram = HologramsAPI.createHologram(plugin, leaderboard.getLocation());
+				ItemStack diamond = new ItemStack(Material.DIAMOND);
+				diamond.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+				hologram.appendItemLine(diamond);
+				for (int i = 0; i < Math.min(leaderboard.getPlayerCount(), top.size()); i++) {
+					ParkourPlayerScore score = top.get(i);
+					String name = "";
+					if (nameCache.containsKey(score.getPlayer())) {
+						name = nameCache.get(score.getPlayer());
+					} else {
+						OfflinePlayer offline = Bukkit.getOfflinePlayer(score.getPlayer());
+						nameCache.put(score.getPlayer(), offline.getName());
+						name = offline.getName();
+					}
+					hologram.appendTextLine(ChatColor.GRAY + "" + ChatColor.BOLD + (i + 1) + ". " + ChatColor.GREEN + name + ChatColor.WHITE + " @ " + ChatColor.GOLD + Utils.formatTime(score.getTimeTook()));
+				}
+				hologram.teleport(hologram.getLocation().add(0, hologram.getHeight(), 0));
+				leaderboard.setHologram(hologram);
+			}
+		}
+	}
+	
 	public void removePoint(Point p) {
 		if (p == null || p.getLocation() == null) {
 			return;
@@ -116,6 +165,13 @@ public class ParkourManager {
 		p.getLocation().getBlock().setType(Material.AIR);
 		
 		removeHologram(p);
+	}
+	
+	public void removeLeaderboard(ParkourLeaderboard leaderboard) {
+		if (leaderboard.getHologram() != null) {
+			leaderboard.getHologram().delete();
+			leaderboard.setHologram(null);
+		}
 	}
 	
 	public void removeHologram(Point p) {

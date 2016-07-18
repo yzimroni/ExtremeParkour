@@ -3,6 +3,7 @@ package net.yzimroni.extremeparkour.parkour.manager.player;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -158,6 +159,13 @@ public class ParkourPlayerManager implements Listener {
 			p.sendMessage(ChatColor.GREEN + "Privues record was " + Utils.formatTime(old.getTimeTook()));
 		}
 		plugin.getData().insertPlayerScore(now);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				plugin.getParkourManager().initLeaderboard(parkour);
+			}
+		});
 		return true;
 	}
 	
