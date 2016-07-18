@@ -11,6 +11,8 @@ import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public class Endpoint extends Point {
+	
+	public static MaterialData MATERIAL = new MaterialData(Material.GOLD_PLATE);
 
 	public Endpoint(int id, Parkour parkour, Location location) {
 		super(id, parkour, location);
@@ -23,7 +25,7 @@ public class Endpoint extends Point {
 
 	@Override
 	public List<String> getHologramText() {
-		return Arrays.asList(ChatColor.GREEN + "Parkour End");
+		return Arrays.asList(ChatColor.GOLD + "Parkour " + ChatColor.RED + "" + ChatColor.BOLD + "End");
 	}
 
 	@Override
@@ -33,7 +35,7 @@ public class Endpoint extends Point {
 
 	@Override
 	public MaterialData getPointMaterial() {
-		return new MaterialData(Material.GOLD_PLATE);
+		return MATERIAL;
 	}
 
 }

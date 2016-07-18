@@ -11,6 +11,8 @@ import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public class Checkpoint extends Point {
+	
+	public static MaterialData MATERIAL = new MaterialData(Material.IRON_PLATE);
 
 	private int index;
 
@@ -49,12 +51,12 @@ public class Checkpoint extends Point {
 
 	@Override
 	public List<String> getHologramText() {
-		return Arrays.asList(ChatColor.RED + "Checkpoint " + ChatColor.GREEN + "#" + getDisplayIndex());
+		return Arrays.asList(ChatColor.AQUA + "" + ChatColor.BOLD + "Checkpoint " + ChatColor.YELLOW + "#" + getDisplayIndex());
 	}
 
 	@Override
 	public MaterialData getPointMaterial() {
-		return new MaterialData(Material.WOOD_PLATE);
+		return MATERIAL;
 	}
 
 }

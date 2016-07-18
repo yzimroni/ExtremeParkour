@@ -41,7 +41,7 @@ public class ParkourPlayerManager implements Listener {
 		if (b == null) {
 			return;
 		}
-		if (b.getType() == Material.GOLD_PLATE || b.getType() == Material.IRON_PLATE || b.getType() == Material.WOOD_PLATE) {
+		if (b.getType() == Startpoint.MATERIAL.getMaterial() || b.getType() == Checkpoint.MATERIAL.getMaterial() || b.getType() == Endpoint.MATERIAL.getMaterial()) {
 			Point p = plugin.getParkourManager().getPoint(b);
 			if (p != null) {
 				//TODO later move the endpoint source to protocol lib
