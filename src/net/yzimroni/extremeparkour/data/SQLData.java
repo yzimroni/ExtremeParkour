@@ -15,11 +15,13 @@ import org.bukkit.entity.Player;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
+import net.yzimroni.extremeparkour.utils.DataStatus;
 import net.yzimroni.extremeparkour.utils.MCSQL;
 import net.yzimroni.extremeparkour.utils.Utils;
 
@@ -124,6 +126,19 @@ public class SQLData {
 					//TODO effects
 				}
 				p.setCheckpoints(checkpoints);
+				
+				ResultSet leaderboard_rs = sql.get("SELECT * FROM " + prefix + "parkour_leaderboards WHERE parkourId=" + id);
+				List<ParkourLeaderboard> leaderboards = new ArrayList<ParkourLeaderboard>();
+				while (leaderboard_rs.next()) {
+					int leaderboard_id = leaderboard_rs.getInt("ID");
+					Location location = Utils.deserializeLocation(leaderboard_rs.getString("location"));
+					int playerCount = leaderboard_rs.getInt("player_count");
+					int page = leaderboard_rs.getInt("page");
+					
+					ParkourLeaderboard leaderboard = new ParkourLeaderboard(leaderboard_id, p, location, playerCount, page);
+					leaderboards.add(leaderboard);
+				}
+				p.setLeaderboards(leaderboards);
 				//TODO points, ladderboard etc
 				
 				p.setChanged(false);
@@ -210,6 +225,40 @@ public class SQLData {
 				point.setChanged(false);
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		}
+		
+		for (ParkourLeaderboard leaderboard : p.getLeaderboards()) {
+			if (leaderboard.getStatus() != null) {
+				try {
+					if (leaderboard.getStatus() == DataStatus.CREATED) {
+						PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix
+								+ "parkour_leaderboards (parkourId,location,players_count,page) VALUES(?,?,?,?)");
+						pre.setInt(1, leaderboard.getParkour().getId());
+						pre.setString(2, Utils.serializeLocation(leaderboard.getLocation()));
+						pre.setInt(3, leaderboard.getPlayerCount());
+						pre.setInt(4, leaderboard.getPage());
+
+						pre.executeUpdate();
+
+						int id = sql.getIdFromPrepared(pre);
+						leaderboard.setId(id);
+						leaderboard.setStatus(null);
+					} else if (leaderboard.getStatus() == DataStatus.UPDATED) {
+						PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "parkour_leaderboards SET parkourId=?, location=?, players_count=?, page=? WHERE ID = " + leaderboard.getId());
+						pre.setInt(1, leaderboard.getParkour().getId());
+						pre.setString(2, Utils.serializeLocation(leaderboard.getLocation()));
+						pre.setInt(3, leaderboard.getPlayerCount());
+						pre.setInt(4, leaderboard.getPage());
+						
+						pre.executeUpdate();
+						leaderboard.setStatus(null);
+					} else {
+						// TODO debug
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

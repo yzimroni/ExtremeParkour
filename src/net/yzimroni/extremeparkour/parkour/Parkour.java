@@ -24,6 +24,8 @@ public class Parkour {
 	private List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 	private Endpoint endPoint;
 	
+	private List<ParkourLeaderboard> leaderboards = new ArrayList<ParkourLeaderboard>();
+	
 	private boolean changed;
 	
 	private List<Integer> removedPoints;
@@ -203,6 +205,22 @@ public class Parkour {
 	 */
 	public void setCheckpoints(List<Checkpoint> checkpoints) {
 		this.checkpoints = checkpoints;
+	}
+
+
+	/**
+	 * @return the leaderboards
+	 */
+	public List<ParkourLeaderboard> getLeaderboards() {
+		return leaderboards;
+	}
+
+
+	/**
+	 * @param leaderboards the leaderboards to set
+	 */
+	public void setLeaderboards(List<ParkourLeaderboard> leaderboards) {
+		this.leaderboards = leaderboards;
 	}
 
 
