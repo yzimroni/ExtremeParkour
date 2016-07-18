@@ -54,7 +54,7 @@ public class SQLData {
 	private void createTables(String type) throws Exception {
 		/*
 		 * To get a file to use here:
-		 * Export from phpmyadmin the table structure (using the template 'full')
+		 * Export from phpmyadmin the table structure (using the template 'structure')
 		 * Remove the phpmyadmin header from it
 		 * add %prefix% before each table name
 		 * 

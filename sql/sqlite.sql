@@ -37,3 +37,15 @@ CREATE TABLE IF NOT EXISTS `%prefix%points` (
   `point_index` int(11) NOT NULL,
   `location` varchar(200) NOT NULL
 );
+
+--
+-- Table structure for table `parkour_leaderboards`
+--
+
+CREATE TABLE IF NOT EXISTS `%prefix%parkour_leaderboards` (
+  `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `parkourId` int(11) NOT NULL,
+  `location` varchar(150) NOT NULL,
+  `players_count` int(11) NOT NULL,
+  `page` int(11) NOT NULL
+);
