@@ -1,5 +1,8 @@
 package net.yzimroni.extremeparkour.data;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,41 +23,68 @@ import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.MCSQL;
 import net.yzimroni.extremeparkour.utils.Utils;
 
-public class MySqlData extends ExtremeParkourData {
+public class SQLData {
 	
 	MCSQL sql = null;
 	private String prefix = null;
+	private  ExtremeParkourPlugin plugin;
 	
-	public MySqlData(ExtremeParkourPlugin plugin, String host, String port, String database, String username, String password, String prefix) {
-		super(plugin);
-		sql = new MCSQL(host, port, database, username, password);
+	public SQLData(ExtremeParkourPlugin plugin, String prefix) {
+		this.plugin = plugin;
 		if (prefix == null) {
 			prefix = "";
 		}
 		this.prefix = prefix;
+		this.sql = new MCSQL();
 	}
 	
-	@Override
-	public void init() {
-		try {
-			sql.openConnecting();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void openMySQL(String host, String port, String database, String username, String password) throws Exception {
+		sql.openMySQLConnection(host, port, database, username, password);
+		createTables("mysql");
 	}
-
-	@Override
-	public void save() {
+	
+	public void openSQLite(String file) throws Exception {
+		sql.openSQLiteConnection(file);
+		createTables("sqlite");
+	}
+	
+	private void createTables(String type) throws Exception {
+		/*
+		 * To get a file to use here:
+		 * Export from phpmyadmin the table structure (using the template 'full')
+		 * Remove the phpmyadmin header from it
+		 * add %prefix% before each table name
+		 * 
+		 * To add compat with sqlite:
+		 * Remove all auto increment field and put "`ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+		 * Remove "PRIMARY KEY (`ID`)" and the "," the line above
+		 * Remove "ENGINE=InnoDB DEFAULT CHARSET=utf8" from the last line
+		 */
+		InputStream stream = plugin.getResource("sql/" + type + ".sql");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        String line;
+        String query = "";
+        while ((line = reader.readLine()) != null) {
+        	if (line.isEmpty() || line.startsWith("#") || line.startsWith("--")) {
+        		continue;
+        	}
+        	line = line.replaceAll("%prefix%", prefix);
+        	query += line;
+        	if (line.endsWith(";")) {
+        		sql.set(query);
+        		query = "";
+        	}
+        }
+        reader.close();
 		
 	}
-
-	@Override
+	
 	public void disable() {
 		sql.disable();
 		sql = null;
 	}
+	
 
-	@Override
 	public List<Parkour> getAllParkours() {
 		ResultSet rs = sql.get("SELECT * FROM " + prefix + "parkours");
 		List<Parkour> parkours = new ArrayList<Parkour>();
@@ -105,7 +135,6 @@ public class MySqlData extends ExtremeParkourData {
 		return parkours;
 	}
 	
-	@Override
 	public void insertParkour(Parkour p) {
 		try {
 			PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "parkours (name,owner,createdTimestamp) VALUES(?,?,?)");
@@ -123,7 +152,6 @@ public class MySqlData extends ExtremeParkourData {
 		}
 	}
 
-	@Override
 	public void saveParkour(Parkour p) {
 
 		if (p.hasChanged()) {
@@ -186,7 +214,6 @@ public class MySqlData extends ExtremeParkourData {
 		}
 	}
 
-	@Override
 	public void insertPoint(Point point) {
 		try {
 			PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "points (parkour_id,point_index,location) VALUES(?,?,?)");
@@ -205,7 +232,6 @@ public class MySqlData extends ExtremeParkourData {
 		}
 	}
 	
-	@Override
 	public ParkourPlayerScore getBestPlayerScore(Player p, Parkour parkour) {
 		try {
 			PreparedStatement pre = sql.getPrepare("SELECT * FROM " + prefix + "playerscore WHERE UUID = ? AND parkourId = ? ORDER BY timeTook ASC LIMIT 1");
@@ -228,7 +254,6 @@ public class MySqlData extends ExtremeParkourData {
 		return null;
 	}
 	
-	@Override
 	public void insertPlayerScore(ParkourPlayerScore score) {
 		try {
 			PreparedStatement pre = sql.getPrepare("INSERT INTO " + prefix + "playerscore (UUID,parkourId,date,timeTook) VALUES(?,?,?,?)");

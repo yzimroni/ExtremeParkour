@@ -15,8 +15,8 @@ import java.sql.Statement;
 public class MCSQL {
 	private MySQL ms = null;
 
-	public MCSQL(String host, String port, String database, String username, String password) {
-		ms = new MySQL(host, port, database, username, password);
+	public MCSQL() {
+		ms = new MySQL();
 	}
 
 	public void disable() {
@@ -33,8 +33,13 @@ public class MCSQL {
 		return !hasConnecting();
 	}
 
-	public boolean openConnecting() throws Exception {
-		ms.open();
+	public boolean openMySQLConnection(String hostname, String port, String database, String username, String password) throws Exception {
+		ms.openMySQL(hostname, port, database, username, password);
+		return ms.checkConnection();
+	}
+	
+	public boolean openSQLiteConnection(String file) throws Exception {
+		ms.openSQLite(file);
 		return ms.checkConnection();
 	}
 
@@ -107,35 +112,21 @@ public class MCSQL {
 }
 
 class MySQL extends Database {
-	String user = "";
-	String database = "";
-	String password = "";
-	String port = "";
-	String hostname = "";
 	Connection c = null;
 
-	public MySQL(String hostname, String portnmbr, String database, String username, String password) {
-		this.hostname = hostname;
-		this.port = portnmbr;
-		this.database = database;
-		this.user = username;
-		this.password = password;
+	public MySQL() {
 	}
 
-	public Connection open() throws Exception {
+	public Connection openMySQL(String hostname, String port, String database, String username, String password) throws Exception {
 		Class.forName("com.mysql.jdbc.Driver");
-		this.c = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
-		this.password = "123";
+		this.c = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, username, password);
 		return c;
-
-		/*try {
-
-		} catch (SQLException e) {
-			System.out.println("Could not connect to MySQL server! because: " + e.getMessage());
-		} catch (ClassNotFoundException e) {
-			System.out.println("JDBC Driver not found!");
-		}*/
-		//return this.c;
+	}
+	
+	public Connection openSQLite(String file) throws Exception {
+        Class.forName("org.sqlite.JDBC");
+        this.c = DriverManager.getConnection("jdbc:sqlite:" + file);
+        return c;
 	}
 
 	public boolean checkConnection() {

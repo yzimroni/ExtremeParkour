@@ -2,14 +2,14 @@ package net.yzimroni.extremeparkour;
 
 import java.util.Collection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import net.yzimroni.extremeparkour.commands.ExtremeParkourCommands;
-import net.yzimroni.extremeparkour.data.ExtremeParkourData;
-import net.yzimroni.extremeparkour.data.MySqlData;
+import net.yzimroni.extremeparkour.data.SQLData;
 import net.yzimroni.extremeparkour.parkour.manager.ParkourManager;
 import net.yzimroni.extremeparkour.utils.ExtremeParkourLogger;
 
@@ -38,9 +38,11 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	 * Checkpoint index fixing
 	 */
 	
-	private ExtremeParkourData data;
+	private SQLData data;
 	private ParkourManager manager;
 	private ExtremeParkourCommands commands;
+	
+	private boolean inited = false;
 
 	@Override
 	public void onEnable() {
@@ -48,39 +50,64 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
-		initData();
+		if (!initData()) {
+			return;
+		}
 		
 		manager = new ParkourManager(this);
 		
 		commands = new ExtremeParkourCommands(this);
 		
 		ExtremeParkourLogger.log("enabled");
+		
+		inited = true;
 	}
 	
-	private void initData() {
-		//TODO
-		data = new MySqlData(this, "127.0.0.1", "3306", "extremeparkour", "extremeparkour", "XGNb3vqWBQYbDyKF", "");
-		data.init();
+	private boolean initData() {
+		data = new SQLData(this, getConfig().getString("storage.prefix"));
+		try {
+			String type = getConfig().getString("storage.type").toLowerCase();
+			if (type.equals("mysql")) {
+				data.openMySQL(getConfig().getString("storage.mysql.host"), getConfig().getString("storage.mysql.port"),
+						getConfig().getString("storage.mysql.database"), getConfig().getString("storage.mysql.username"),
+						getConfig().getString("storage.mysql.password"));
+			} else if (type.equals("sqlite")) {
+				data.openSQLite("plugins/" + getDataFolder().getName() + "/extremeparkour.db");
+			} else {
+				ExtremeParkourLogger.log("Unknown data type: " + type + ", switch to sqlite");
+				getConfig().set("storage.type", "sqlite");
+				saveConfig();
+				initData(); //Call the method again to init the sqlite
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Bukkit.getPluginManager().disablePlugin(this);
+			return false;
+		}
+		return true;
 	}
 	
 	@Override
 	public void onDisable() {
 		
-		//Remove all the plugin's holograms when disabled
-		Collection<Hologram> hs = HologramsAPI.getHolograms(this);
-		if (!hs.isEmpty()) {
-			for (Hologram h : hs) {
-				h.delete();
+		if (inited) {
+			//Remove all the plugin's holograms when disabled
+			Collection<Hologram> hs = HologramsAPI.getHolograms(this);
+			if (!hs.isEmpty()) {
+				for (Hologram h : hs) {
+					h.delete();
+				}
 			}
+			
+			commands.disable();
+			manager.disable();
+			data.disable();
+			
+			commands = null;
+			manager = null;
+			data = null;
 		}
-		
-		commands.disable();
-		manager.disable();
-		data.disable();
-		
-		commands = null;
-		manager = null;
-		data = null;
+		inited = false;
 		ExtremeParkourLogger.log("disabled");
 	}
 
@@ -94,7 +121,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	/**
 	 * @return the data
 	 */
-	public ExtremeParkourData getData() {
+	public SQLData getData() {
 		return data;
 	}
 	
