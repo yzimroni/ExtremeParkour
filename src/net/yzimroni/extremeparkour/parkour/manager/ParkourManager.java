@@ -1,5 +1,7 @@
 package net.yzimroni.extremeparkour.parkour.manager;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -27,6 +29,7 @@ public class ParkourManager {
 	private Events events;
 	private ParkourPlayerManager playerManager;
 	private List<Parkour> parkours = null;
+	private Comparator<Checkpoint> checkpointComparator;
 
 	public ParkourManager(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
@@ -35,8 +38,17 @@ public class ParkourManager {
 		playerManager = new ParkourPlayerManager(plugin);
 		Bukkit.getPluginManager().registerEvents(playerManager, plugin);
 
+		checkpointComparator = new Comparator<Checkpoint>() {
+			
+			@Override
+			public int compare(Checkpoint o1, Checkpoint o2) {
+				return Integer.compare(o1.getIndex(), o2.getIndex());
+			}
+		};
+		
 		parkours = plugin.getData().getAllParkours();
 		for (Parkour p : parkours) {
+			Collections.sort(p.getCheckpoints(), checkpointComparator);
 			//TODO
 			initPoint(p.getStartPoint());
 			initPoint(p.getEndPoint());
@@ -92,8 +104,6 @@ public class ParkourManager {
 		}
 		
 		p.setHologram(hologram);
-		
-		//TODO hologram
 
 	}
 	
@@ -102,7 +112,6 @@ public class ParkourManager {
 			return;
 		}
 		removePointMetadata(p.getLocation().getBlock());
-		//removeHologram(p);
 		p.getLocation().getBlock().setType(Material.AIR);
 		
 		if (p.getHologram() != null) {
@@ -172,8 +181,11 @@ public class ParkourManager {
 	
 	public void fixCheckpoints(Parkour p) {
 		for (int i = 0; i < p.getCheckpoints().size(); i++) {
-			//TODO remove hologram
 			Checkpoint point = p.getCheckpoints().get(i);
+			if (point.getHologram() != null) {
+				point.getHologram().delete();
+				point.setHologram(null);
+			}
 			point.setIndex(i);
 			initPoint(point);
 		}

@@ -65,7 +65,7 @@ public class MySqlData extends ExtremeParkourData {
 				Parkour p = new Parkour(plugin ,id, name, owner, createdTimestamp);
 				
 				
-				ResultSet points_rs = sql.get("SELECT * FROM " + prefix + "points WHERE parkour_id=" + id + " ORDER BY point_index DESC");
+				ResultSet points_rs = sql.get("SELECT * FROM " + prefix + "points WHERE parkour_id=" + id + " ORDER BY point_index ASC");
 				List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 				while (points_rs.next()) {
 					int point_id = points_rs.getInt("ID");

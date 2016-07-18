@@ -26,6 +26,10 @@ public class Checkpoint extends Point {
 	public int getIndex() {
 		return index;
 	}
+	
+	public int getDisplayIndex() {
+		return index + 1;
+	}
 
 	/**
 	 * @param index
@@ -40,12 +44,12 @@ public class Checkpoint extends Point {
 
 	@Override
 	public String getName() {
-		return "Checkpoint #" + (index + 1);
+		return "Checkpoint #" + getDisplayIndex();
 	}
 
 	@Override
 	public List<String> getHologramText() {
-		return Arrays.asList(ChatColor.RED + "Checkpoint " + ChatColor.GREEN + "#" + (index + 1));
+		return Arrays.asList(ChatColor.RED + "Checkpoint " + ChatColor.GREEN + "#" + getDisplayIndex());
 	}
 
 	@Override
