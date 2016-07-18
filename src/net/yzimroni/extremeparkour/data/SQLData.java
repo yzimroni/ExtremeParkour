@@ -228,6 +228,18 @@ public class SQLData {
 			}
 		}
 		
+		// Delete from the database the leaderboards that were deleted in-game
+		if (p.getRemovedLeaderboards() != null && !p.getRemovedLeaderboards().isEmpty()) {
+			String ids = "";
+			for (Integer id : p.getRemovedLeaderboards()) {
+				if (!ids.isEmpty()) {
+					ids += ",";
+				}
+				ids += id.intValue();
+			}
+			sql.set("DELETE FROM " + prefix + "parkour_leaderboards WHERE ID IN (" + ids + ")");
+		}
+		
 		for (ParkourLeaderboard leaderboard : p.getLeaderboards()) {
 			if (leaderboard.getStatus() != null) {
 				try {

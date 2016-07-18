@@ -15,9 +15,11 @@ import net.yzimroni.commandmanager.manager.CommandManager;
 import net.yzimroni.commandmanager.utils.MethodId;
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
+import net.yzimroni.extremeparkour.utils.DataStatus;
 
 public class ExtremeParkourCommands {
 
@@ -83,6 +85,22 @@ public class ExtremeParkourCommands {
 		
 		point.addSubCommand(set);
 		parkour.addSubCommand(point);
+		
+		SubCommand leaderboard = new SubCommand("leaderboard", "Parkour leaderboard", MethodExecutor.createByMethodId(this, "parkourMain")); //Just need to send help
+		leaderboard.setAliases("leader", "board");
+		
+		SubCommand add = new SubCommand("add", "Add a leaderboard", MethodExecutor.createByMethodId(this, "parkourLeaderboardAdd"));
+		add.setAliases("create", "new");
+		add.setOnlyPlayer(true);
+		add.addArgument(new IntegerArgument("players", false, 1, 150, true));
+		leaderboard.addSubCommand(add);
+		
+		SubCommand removeLeader = new SubCommand("remove", "Remove a leaderboard", MethodExecutor.createByMethodId(this, "parkourLeaderboardRemove"));
+		removeLeader.setAliases("rem", "delete", "del");
+		removeLeader.setOnlyPlayer(true);
+		leaderboard.addSubCommand(removeLeader);
+		
+		parkour.addSubCommand(leaderboard);
 		
 		CommandManager.get().registerCommand(plugin, parkour);
 	}
@@ -193,6 +211,55 @@ public class ExtremeParkourCommands {
 		}
 		parkourSel.removeCheckpoint(index);
 		sender.sendMessage("Removed checkpoint #" + (index + 1));
+		return true;
+	}
+	
+	
+	@MethodId("parkourLeaderboardAdd")
+	public boolean parkourLeaderboardAdd(CommandSender sender, Command command, ArgumentData args) {
+		Player p = (Player) sender;
+		if (parkourSel == null) {
+			sender.sendMessage("Parkour is null");
+			return true;
+		}
+		int count = args.has("players") ? args.get("players", Integer.class) : 10;
+		ParkourLeaderboard leaderboard = new ParkourLeaderboard(-1, parkourSel, p.getLocation(), count, 1);
+		leaderboard.setStatus(DataStatus.CREATED);
+		parkourSel.getLeaderboards().add(leaderboard);
+		plugin.getParkourManager().initLeaderboard(parkourSel);
+		return true;
+	}
+	
+	@MethodId("parkourLeaderboardRemove")
+	public boolean parkourLeaderboardRemove(CommandSender sender, Command command, ArgumentData args) {
+		Player p = (Player) sender;
+		if (parkourSel == null) {
+			sender.sendMessage("Parkour is null");
+			return true;
+		}
+		if (parkourSel.getLeaderboards().isEmpty()) {
+			p.sendMessage("The parkour dont have leaderboards");
+			return false;
+		}
+		ParkourLeaderboard lb = null;
+		double last_dis = -1;
+		for (ParkourLeaderboard h : parkourSel.getLeaderboards()) {
+			if (h.getLocation().getWorld().equals(p.getWorld())) {
+				double dis = h.getLocation().distance(p.getLocation());
+				if (dis < 10 && (last_dis == -1 || lb == null || dis < last_dis)) {
+					lb = h;
+					last_dis = dis;
+				}
+			}
+		}
+		if (lb == null) {
+			p.sendMessage("Leaderboard not found, are you near the board?");
+			return false;
+		}
+		
+		parkourSel.removeLeaderboard(lb);
+		p.sendMessage("Leaderboard removed!");
+		
 		return true;
 	}
 }

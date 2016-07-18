@@ -9,6 +9,7 @@ import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
+import net.yzimroni.extremeparkour.utils.DataStatus;
 
 public class Parkour {
 	
@@ -29,6 +30,7 @@ public class Parkour {
 	private boolean changed;
 	
 	private List<Integer> removedPoints;
+	private List<Integer> removedLeaderboards;
 
 	/*
 	 * TODO rewards hologram
@@ -222,6 +224,23 @@ public class Parkour {
 	public void setLeaderboards(List<ParkourLeaderboard> leaderboards) {
 		this.leaderboards = leaderboards;
 	}
+	
+	public boolean removeLeaderboard(ParkourLeaderboard leaderboard) {
+		if (leaderboards.contains(leaderboard)) {
+			leaderboards.remove(leaderboard);
+			plugin.getParkourManager().removeLeaderboard(leaderboard);
+			if (leaderboard.getStatus() != DataStatus.CREATED) {
+				//If the leaderboard just created and not yet inserted to the db, we can just remove it, but if it is inserted, we
+				//need you remove it from the database as well
+				if (removedLeaderboards == null) {
+					removedLeaderboards = new ArrayList<Integer>();
+				}
+				removedLeaderboards.add(leaderboard.getId());
+				return true;
+			}
+		}
+		return false;
+	}
 
 
 	/**
@@ -253,6 +272,22 @@ public class Parkour {
 	 */
 	public void setRemovedPoints(List<Integer> removedPoints) {
 		this.removedPoints = removedPoints;
+	}
+
+
+	/**
+	 * @return the removedLeaderboards
+	 */
+	public List<Integer> getRemovedLeaderboards() {
+		return removedLeaderboards;
+	}
+
+
+	/**
+	 * @param removedLeaderboards the removedLeaderboards to set
+	 */
+	public void setRemovedLeaderboards(List<Integer> removedLeaderboards) {
+		this.removedLeaderboards = removedLeaderboards;
 	}
 
 
