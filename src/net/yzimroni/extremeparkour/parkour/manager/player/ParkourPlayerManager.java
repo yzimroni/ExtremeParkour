@@ -63,6 +63,10 @@ public class ParkourPlayerManager implements Listener {
 	}
 	
 	public boolean startParkour(Player p, Parkour parkour) {
+		if (!parkour.isComplete()) {
+			return false;
+		}
+		
 		if (p.isFlying()) {
 			return false;
 		}

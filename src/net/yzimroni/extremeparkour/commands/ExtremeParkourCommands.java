@@ -158,7 +158,7 @@ public class ExtremeParkourCommands {
 		int index = parkourSel.getChestpointsCount();
 		boolean hasIndex = false;
 		if (args.has("index", Integer.class)) {
-			index = args.get("index", Integer.class);
+			index = args.get("index", Integer.class) - 1;
 			hasIndex = true;
 		}
 		Checkpoint check = new Checkpoint(-1, parkourSel, p.getLocation(), index);

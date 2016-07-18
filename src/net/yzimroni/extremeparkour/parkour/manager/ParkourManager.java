@@ -69,7 +69,8 @@ public class ParkourManager {
 	
 	public Parkour createParkour(Player p, String name) {
 		Parkour parkour = new Parkour(plugin, -1, name, p.getUniqueId(), System.currentTimeMillis());
-		plugin.getData().saveParkour(parkour);
+		plugin.getData().insertParkour(parkour);
+		parkours.add(parkour);
 		return parkour;
 	}
 
@@ -98,7 +99,7 @@ public class ParkourManager {
 			block.setMetadata("point_index", new FixedMetadataValue(plugin, ((Checkpoint) p).getIndex()));
 		}
 		
-		Hologram hologram = HologramsAPI.createHologram(plugin, p.getLocation().getBlock().getLocation().add(0.5, 1.5, 0.5));
+		Hologram hologram = HologramsAPI.createHologram(plugin, p.getLocation().getBlock().getLocation().add(0.5, 2, 0.5));
 		for (String line : p.getHologramText()) {
 			hologram.appendTextLine(line);
 		}
@@ -114,6 +115,10 @@ public class ParkourManager {
 		removePointMetadata(p.getLocation().getBlock());
 		p.getLocation().getBlock().setType(Material.AIR);
 		
+		removeHologram(p);
+	}
+	
+	public void removeHologram(Point p) {
 		if (p.getHologram() != null) {
 			p.getHologram().delete();
 			p.setHologram(null);
@@ -182,10 +187,7 @@ public class ParkourManager {
 	public void fixCheckpoints(Parkour p) {
 		for (int i = 0; i < p.getCheckpoints().size(); i++) {
 			Checkpoint point = p.getCheckpoints().get(i);
-			if (point.getHologram() != null) {
-				point.getHologram().delete();
-				point.setHologram(null);
-			}
+			removeHologram(point);
 			point.setIndex(i);
 			initPoint(point);
 		}
