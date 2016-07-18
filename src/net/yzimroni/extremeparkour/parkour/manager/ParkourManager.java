@@ -23,7 +23,6 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
-import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerManager;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;

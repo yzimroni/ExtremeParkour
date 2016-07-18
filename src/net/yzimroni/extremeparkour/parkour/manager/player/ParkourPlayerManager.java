@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,10 +23,13 @@ import net.yzimroni.extremeparkour.utils.Utils;
 public class ParkourPlayerManager implements Listener {
 
 	private ExtremeParkourPlugin plugin;
+	private Events events;
 	private HashMap<UUID, ParkourPlayer> players;
 	
 	public ParkourPlayerManager(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
+		events = new Events(this);
+		Bukkit.getPluginManager().registerEvents(events, plugin);
 		players = new HashMap<UUID, ParkourPlayer>();
 	}
 	
@@ -64,6 +66,14 @@ public class ParkourPlayerManager implements Listener {
 		}
 	}
 	
+	public boolean isPakouring(Player p) {
+		return players.containsKey(p.getUniqueId());
+	}
+	
+	public ParkourPlayer getPlayer(Player p) {
+		return players.get(p.getUniqueId());
+	}
+	
 	public boolean startParkour(Player p, Parkour parkour) {
 		if (!parkour.isComplete()) {
 			return false;
@@ -96,6 +106,18 @@ public class ParkourPlayerManager implements Listener {
 				p.sendMessage("not the same parkour WIP");
 				//TODO send message
 			}
+		}
+		return false;
+	}
+	
+	public boolean leaveParkour(Player p, String reason) {
+		if (players.containsKey(p.getUniqueId())) {
+			ParkourPlayer playerp = getPlayer(p);
+			players.remove(p.getUniqueId());
+			if (reason != null && !reason.isEmpty()) {
+				p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + reason);
+			}
+			return true;
 		}
 		return false;
 	}
