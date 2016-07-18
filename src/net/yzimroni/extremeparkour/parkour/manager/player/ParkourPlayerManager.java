@@ -100,11 +100,15 @@ public class ParkourPlayerManager implements Listener {
 				return false;
 			}
 			if (parkour.equals(playerp.getParkour())) {
-				p.sendMessage("restart the parkour WIP");
-				//TODO restart the parkour
+				if (!playerp.checkAndSetLastMessage()) {
+					return false;
+				}
+				playerp.setLastCheckpoint(-1);
+				playerp.setLastCheckpointTime(0);
+				p.sendMessage(ChatColor.GREEN + "Time reset to " + Utils.formatTime(0));
 			} else {
-				p.sendMessage("not the same parkour WIP");
-				//TODO send message
+				leaveParkour(p, "");
+				return startParkour(p, parkour);
 			}
 		}
 		return false;
