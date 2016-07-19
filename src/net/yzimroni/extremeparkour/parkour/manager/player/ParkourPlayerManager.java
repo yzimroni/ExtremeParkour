@@ -96,9 +96,6 @@ public class ParkourPlayerManager implements Listener {
 			return true;
 		} else {
 			ParkourPlayer playerp = players.get(p.getUniqueId());
-			if (!playerp.checkAndSetLastMessage()) {
-				return false;
-			}
 			if (parkour.equals(playerp.getParkour())) {
 				if (!playerp.checkAndSetLastMessage()) {
 					return false;
@@ -143,7 +140,7 @@ public class ParkourPlayerManager implements Listener {
 				if (!playerp.checkAndSetLastMessage()) {
 					return false;
 				}
-				p.sendMessage("Not this one WIP");
+				p.sendMessage(ChatColor.RED + "You need to get " + check.getParkour().getCheckpoint(playerp.getLastCheckpoint() + 1).getName() + " first");
 			}
 		}
 		return false;
@@ -180,9 +177,11 @@ public class ParkourPlayerManager implements Listener {
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
 		players.remove(p.getUniqueId());
 		// TODO player score
-		p.sendMessage(ChatColor.GREEN + "You completed the parkour in " + Utils.formatTime(time) + " WIP");
+		p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You completed the parkour in " + ChatColor.GREEN + Utils.formatTime(time));
 		if (old != null) {
-			p.sendMessage(ChatColor.GREEN + "Privues record was " + Utils.formatTime(old.getTimeTook()));
+			if (now.getTimeTook() < old.getTimeTook()) {
+				p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You break your previous record of " + ChatColor.RESET + "" + ChatColor.AQUA + Utils.formatTime(old.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + " (Improvement of " + ChatColor.GREEN + Utils.formatTime(old.getTimeTook() - now.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + ")!");
+			}
 		}
 		plugin.getData().insertPlayerScore(now);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
