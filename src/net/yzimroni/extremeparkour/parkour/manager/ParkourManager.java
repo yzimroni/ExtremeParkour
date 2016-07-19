@@ -261,5 +261,9 @@ public class ParkourManager {
 	public List<Parkour> getParkours() {
 		return parkours;
 	}
+
+	public ParkourPlayerManager getPlayerManager() {
+		return playerManager;
+	}
 			
 }

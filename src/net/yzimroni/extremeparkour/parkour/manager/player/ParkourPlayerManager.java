@@ -140,10 +140,33 @@ public class ParkourPlayerManager implements Listener {
 				if (!playerp.checkAndSetLastMessage()) {
 					return false;
 				}
-				p.sendMessage(ChatColor.RED + "You need to get " + check.getParkour().getCheckpoint(playerp.getLastCheckpoint() + 1).getName() + " first");
+				if ((playerp.getLastCheckpoint() + 1) < check.getIndex()) {
+					p.sendMessage(ChatColor.RED + "You need to get " + check.getParkour().getCheckpoint(playerp.getLastCheckpoint() + 1).getName() + " first");
+				} else {
+					p.sendMessage(ChatColor.GREEN + "You already got this checkpoint"); //TODO
+				}
 			}
 		}
 		return false;
+	}
+	
+	public boolean teleportLatestCheckpoint(Player p) {
+		if (isPakouring(p)) {
+			ParkourPlayer playerp = getPlayer(p);
+			Point latest = null;
+			if (playerp.getLastCheckpoint() == -1) {
+				latest = playerp.getParkour().getStartPoint();
+			} else {
+				latest = playerp.getParkour().getCheckpoint(playerp.getLastCheckpoint());
+			}
+			playerp.setTeleportAllowed(true);
+			p.teleport(latest.getLocation().getBlock().getLocation().add(0.5, 1.5, 0.5));
+			p.sendMessage(ChatColor.GREEN + "Teleported back to " + latest.getName());
+			return true;
+		} else {
+			p.sendMessage(ChatColor.RED + "You aren't in a parkour");
+			return false;
+		}
 	}
 	
 	public boolean checkComplete(Player p, Parkour parkour) {

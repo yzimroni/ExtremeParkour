@@ -13,6 +13,8 @@ public class ParkourPlayer {
 	private int lastCheckpoint;
 	private long lastCheckpointTime;
 	
+	private boolean teleportAllowed = false;
+	
 	private long lastMessage = -1;
 
 	public ParkourPlayer(UUID player, Parkour parkour, long startTime) {
@@ -97,6 +99,20 @@ public class ParkourPlayer {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @return the teleportAllowed
+	 */
+	public boolean isTeleportAllowed() {
+		return teleportAllowed;
+	}
+
+	/**
+	 * @param teleportAllowed the teleportAllowed to set
+	 */
+	public void setTeleportAllowed(boolean teleportAllowed) {
+		this.teleportAllowed = teleportAllowed;
 	}
 
 }

@@ -40,6 +40,11 @@ public class ExtremeParkourCommands {
 		Command parkour = new Command("parkour", "ExetremePakour command", MethodExecutor.createByMethodId(this, "parkourMain"));
 		parkour.setAliases("p", "eparkour", "extremeparkour", "ep");
 		
+		SubCommand checkpoint = new SubCommand("checkpoint", "Teleport to your latest checkpoint", MethodExecutor.createByMethodId(this, "parkourCheckpoint"));
+		checkpoint.setAliases("check", "cp");
+		checkpoint.setOnlyPlayer(true);
+		parkour.addSubCommand(checkpoint);
+		
 		SubCommand select = new SubCommand("select", "Select a parkour", MethodExecutor.createByMethodId(this, "parkourSelect"));
 		select.addArgument(new IntegerArgument("parkourId", true));
 		parkour.addSubCommand(select);
@@ -111,6 +116,13 @@ public class ExtremeParkourCommands {
 		return true;
 	}
 	
+	
+	
+	@MethodId("parkourCheckpoint")
+	public boolean parkourCheckpoint(CommandSender sender, Command command, ArgumentData args) {
+		plugin.getParkourManager().getPlayerManager().teleportLatestCheckpoint((Player) sender);
+		return true;
+	}
 	
 	@MethodId("parkourSelect")
 	public boolean parkourSelect(CommandSender sender, Command command, ArgumentData args) {

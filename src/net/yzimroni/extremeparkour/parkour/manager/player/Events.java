@@ -36,7 +36,14 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
-		leaveParkour(e.getPlayer(), "Don't teleport!");
+		ParkourPlayer playerp = manager.getPlayer(e.getPlayer());
+		if (playerp != null) {
+			if (playerp.isTeleportAllowed()) {
+				playerp.setTeleportAllowed(false);
+			} else {
+				leaveParkour(e.getPlayer(), "Don't teleport!");
+			}
+		}
 	}
 	
 	@EventHandler
