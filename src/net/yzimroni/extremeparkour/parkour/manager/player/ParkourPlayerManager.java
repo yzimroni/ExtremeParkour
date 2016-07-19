@@ -150,6 +150,19 @@ public class ParkourPlayerManager implements Listener {
 		return false;
 	}
 	
+	public boolean teleportStart(Player p) {
+		if (isPakouring(p)) {
+			ParkourPlayer playerp = getPlayer(p);
+			playerp.setTeleportAllowed(true);
+			p.teleport(playerp.getParkour().getStartPoint().getLocation());
+			p.sendMessage(ChatColor.GREEN + "Teleported back to " + playerp.getParkour().getStartPoint().getName());
+			return true;
+		} else {
+			p.sendMessage(ChatColor.RED + "You aren't in a parkour");
+			return false;
+		}
+	}
+	
 	public boolean teleportLatestCheckpoint(Player p) {
 		if (isPakouring(p)) {
 			ParkourPlayer playerp = getPlayer(p);

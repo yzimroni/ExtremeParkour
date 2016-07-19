@@ -45,6 +45,10 @@ public class ExtremeParkourCommands {
 		checkpoint.setOnlyPlayer(true);
 		parkour.addSubCommand(checkpoint);
 		
+		SubCommand reset = new SubCommand("reset", "Teleport to the parkour start point", MethodExecutor.createByMethodId(this, "parkourReset"));
+		reset.setOnlyPlayer(true);
+		parkour.addSubCommand(reset);
+		
 		SubCommand select = new SubCommand("select", "Select a parkour", MethodExecutor.createByMethodId(this, "parkourSelect"));
 		select.addArgument(new IntegerArgument("parkourId", true));
 		parkour.addSubCommand(select);
@@ -121,6 +125,13 @@ public class ExtremeParkourCommands {
 	@MethodId("parkourCheckpoint")
 	public boolean parkourCheckpoint(CommandSender sender, Command command, ArgumentData args) {
 		plugin.getParkourManager().getPlayerManager().teleportLatestCheckpoint((Player) sender);
+		return true;
+	}
+	
+	
+	@MethodId("parkourReset")
+	public boolean parkourReset(CommandSender sender, Command command, ArgumentData args) {
+		plugin.getParkourManager().getPlayerManager().teleportStart((Player) sender);
 		return true;
 	}
 	
