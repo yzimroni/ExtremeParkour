@@ -29,6 +29,7 @@ public class SQLData {
 	
 	MCSQL sql = null;
 	private String prefix = null;
+	private SQLType type = null;
 	private  ExtremeParkourPlugin plugin;
 	
 	public SQLData(ExtremeParkourPlugin plugin, String prefix) {
@@ -42,15 +43,17 @@ public class SQLData {
 	
 	public void openMySQL(String host, String port, String database, String username, String password) throws Exception {
 		sql.openMySQLConnection(host, port, database, username, password);
-		createTables("mysql");
+		type = SQLType.MySQL;
+		createTables();
 	}
 	
 	public void openSQLite(String file) throws Exception {
 		sql.openSQLiteConnection(file);
-		createTables("sqlite");
+		type = SQLType.SQLite;
+		createTables();
 	}
 	
-	private void createTables(String type) throws Exception {
+	private void createTables() throws Exception {
 		/*
 		 * To get a file to use here:
 		 * Export from phpmyadmin the table structure (using the template 'structure')
@@ -62,7 +65,7 @@ public class SQLData {
 		 * Remove "PRIMARY KEY (`ID`)" and the "," the line above
 		 * Remove "ENGINE=InnoDB DEFAULT CHARSET=utf8" from the last line
 		 */
-		InputStream stream = plugin.getResource("sql/" + type + ".sql");
+		InputStream stream = plugin.getResource("sql/" + type.name().toLowerCase() + ".sql");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         String line;
         String query = "";
