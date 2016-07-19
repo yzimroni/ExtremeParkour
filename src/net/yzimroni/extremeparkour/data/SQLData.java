@@ -349,5 +349,13 @@ public class SQLData {
 		}
 		return null;
 	}
+	
+	public void deleteParkour(Parkour parkour) {
+		sql.set("DELETE FROM " + prefix + "points WHERE parkour_id=" + parkour.getId());
+		sql.set("DELETE FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId());
+		sql.set("DELETE FROM " + prefix + "parkour_leaderboards WHERE parkourId=" + parkour.getId());
+		sql.set("DELETE FROM " + prefix + "parkours WHERE ID=" + parkour.getId());
+		
+	}
 
 }

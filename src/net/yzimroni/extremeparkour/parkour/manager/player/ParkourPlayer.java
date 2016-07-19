@@ -2,6 +2,9 @@ package net.yzimroni.extremeparkour.parkour.manager.player;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import net.yzimroni.extremeparkour.parkour.Parkour;
 
 public class ParkourPlayer {
@@ -23,6 +26,10 @@ public class ParkourPlayer {
 		this.player = player;
 		this.parkour = parkour;
 		this.startTime = startTime;
+	}
+	
+	public Player getBukkitPlayer() {
+		return Bukkit.getPlayer(getPlayer());
 	}
 
 	public UUID getPlayer() {

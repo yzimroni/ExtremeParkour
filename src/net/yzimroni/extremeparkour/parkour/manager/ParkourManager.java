@@ -23,6 +23,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerManager;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
@@ -256,6 +257,26 @@ public class ParkourManager {
 			}
 		}
 		return null;
+	}
+	
+	public void removeParkour(Parkour p) {
+		if (parkours.contains(p)) {
+			for (ParkourPlayer player : playerManager.getParkourPlayers(p)) {
+				playerManager.leaveParkour(player.getBukkitPlayer(), "Parkour deleted");
+			}
+			parkours.remove(p);
+			
+			for (ParkourLeaderboard leaderboard : p.getLeaderboards()) {
+				removeLeaderboard(leaderboard);
+			}
+			
+			removePoint(p.getStartPoint());
+			removePoint(p.getEndPoint());
+			for (Checkpoint checkpoint : p.getCheckpoints()) {
+				removePoint(checkpoint);
+			}
+			plugin.getData().deleteParkour(p);
+		}
 	}
 	
 	public List<Parkour> getParkours() {

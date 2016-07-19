@@ -1,6 +1,8 @@
 package net.yzimroni.extremeparkour.parkour.manager.player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -76,6 +78,18 @@ public class ParkourPlayerManager implements Listener {
 				}
 			}
 		}, 1L, 1L);
+	}
+	
+	public List<ParkourPlayer> getParkourPlayers(Parkour parkour) {
+		List<ParkourPlayer> list = new ArrayList<ParkourPlayer>();
+		
+		for (ParkourPlayer player : players.values()) {
+			if (player.getParkour().equals(parkour)) {
+				list.add(player);
+			}
+		}
+		
+		return list;
 	}
 		
 	@EventHandler

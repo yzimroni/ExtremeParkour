@@ -2,6 +2,7 @@ package net.yzimroni.extremeparkour.commands;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -108,6 +109,10 @@ public class ExtremeParkourCommands {
 		removeLeader.setAliases("rem", "delete", "del");
 		removeLeader.setOnlyPlayer(true);
 		leaderboard.addSubCommand(removeLeader);
+		
+		SubCommand removeParkour = new SubCommand("remove", "remove a parkour", MethodExecutor.createByMethodId(this, "parkourRemove"));
+		removeParkour.setAliases("rem", "delete", "del");
+		parkour.addSubCommand(removeParkour);
 		
 		parkour.addSubCommand(leaderboard);
 		
@@ -285,4 +290,18 @@ public class ExtremeParkourCommands {
 		
 		return true;
 	}
+	
+	
+	@MethodId("parkourRemove")
+	public boolean parkourRemove(CommandSender sender, Command command, ArgumentData args) {
+		//TODO require the sender to accept the deletion
+		if (parkourSel == null) {
+			sender.sendMessage("Parkour is null");
+			return true;
+		}
+		plugin.getParkourManager().removeParkour(parkourSel);
+		sender.sendMessage(ChatColor.DARK_RED + "Parkour deleted");
+		return true;
+	}
+	
 }
