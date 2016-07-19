@@ -17,25 +17,25 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	
 	/*
 	 * TODO
-	 * Save points
-	 * Command to set start & end
-	 * Command to add a checkpoint and remove
-	 * Allow players to start & end the parkour
-	 * Add point hologram
-	 * Command to insert a checkpoint
-	 * Checkpoint command
+	 * V Save points
+	 * V Command to set start & end
+	 * V Command to add a checkpoint and remove
+	 * V Allow players to start & end the parkour
+	 * V Add point hologram
+	 * V Command to insert a checkpoint
+	 * V Checkpoint command
 	 * Add actionbar time count system (with protocol lib)
 	 * 
 	 * Create GUI to edit
 	 * 
 	 * Add point effects
-	 * Add ladderboard
+	 * V Add ladderboard
 	 * Add parkour reward
-	 * Add FileData
-	 * Parkour protection (fly, teleport etc)
+	 * X (added sqlite instead)Add FileData
+	 * V Parkour protection (fly, teleport etc)
 	 * 
 	 * Prevent more then one point in the same location
-	 * Checkpoint index fixing
+	 * V Checkpoint index fixing
 	 */
 	
 	private SQLData data;
