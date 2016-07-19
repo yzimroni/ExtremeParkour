@@ -11,6 +11,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import net.yzimroni.extremeparkour.commands.ExtremeParkourCommands;
 import net.yzimroni.extremeparkour.data.SQLData;
 import net.yzimroni.extremeparkour.parkour.manager.ParkourManager;
+import net.yzimroni.extremeparkour.utils.Actionbar;
 import net.yzimroni.extremeparkour.utils.ExtremeParkourLogger;
 
 public class ExtremeParkourPlugin extends JavaPlugin {
@@ -41,6 +42,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	private SQLData data;
 	private ParkourManager manager;
 	private ExtremeParkourCommands commands;
+	private Actionbar actionbar;
 	
 	private boolean inited = false;
 
@@ -55,8 +57,8 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 		}
 		
 		manager = new ParkourManager(this);
-		
 		commands = new ExtremeParkourCommands(this);
+		actionbar = new Actionbar(this);
 		
 		ExtremeParkourLogger.log("enabled");
 		
@@ -124,5 +126,12 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	public SQLData getData() {
 		return data;
 	}
-	
+
+	/**
+	 * @return the actionbar
+	 */
+	public Actionbar getActionbar() {
+		return actionbar;
+	}
+
 }

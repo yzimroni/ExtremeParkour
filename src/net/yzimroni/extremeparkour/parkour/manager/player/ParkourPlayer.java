@@ -16,6 +16,7 @@ public class ParkourPlayer {
 	private boolean teleportAllowed = false;
 	
 	private long lastMessage = -1;
+	private long lastActionbar = -1;
 
 	public ParkourPlayer(UUID player, Parkour parkour, long startTime) {
 		super();
@@ -113,6 +114,20 @@ public class ParkourPlayer {
 	 */
 	public void setTeleportAllowed(boolean teleportAllowed) {
 		this.teleportAllowed = teleportAllowed;
+	}
+
+	/**
+	 * @return the lastActionbar
+	 */
+	public long getLastActionbar() {
+		return lastActionbar;
+	}
+
+	/**
+	 * @param lastActionbar the lastActionbar to set
+	 */
+	public void setLastActionbar(long lastActionbar) {
+		this.lastActionbar = lastActionbar;
 	}
 
 }

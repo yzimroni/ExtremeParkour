@@ -12,6 +12,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
@@ -31,14 +37,47 @@ public class ParkourPlayerManager implements Listener {
 		events = new Events(this);
 		Bukkit.getPluginManager().registerEvents(events, plugin);
 		players = new HashMap<UUID, ParkourPlayer>();
+		
+		initProtocolLib();
+		initBarSend();
 	}
 	
 	public void disable() {
 		
 	}
 	
-	//TODO start parkour, end parkour (with message) methods
+	private void initProtocolLib() {
+		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGH, PacketType.Play.Client.POSITION) {
+			
+			@Override
+			public void onPacketReceiving(PacketEvent e) {
+				if (isPakouring(e.getPlayer())) {
+					sendBar(e.getPlayer());
+					Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(e.getPlayer().getLocation().getBlock());
+					if (point != null && point instanceof Endpoint) {
+						prossesPoint(e.getPlayer(), point);
+					}
+						
+				}
+			}
+		});
+	}
 	
+	@SuppressWarnings("deprecation")
+	private void initBarSend() {
+		Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				for (ParkourPlayer p : players.values()) {
+					if (System.currentTimeMillis() - p.getLastActionbar() > 50) {
+						sendBar(Bukkit.getPlayer(p.getPlayer()));
+					}
+				}
+			}
+		}, 1L, 1L);
+	}
+		
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Block b = e.getPlayer().getLocation().getBlock();
@@ -48,8 +87,9 @@ public class ParkourPlayerManager implements Listener {
 		if (b.getType() == Startpoint.MATERIAL.getMaterial() || b.getType() == Checkpoint.MATERIAL.getMaterial() || b.getType() == Endpoint.MATERIAL.getMaterial()) {
 			Point p = plugin.getParkourManager().getPoint(b);
 			if (p != null) {
-				//TODO later move the endpoint source to protocol lib
-				prossesPoint(e.getPlayer(), p);
+				if (!(p instanceof Endpoint)) {
+					prossesPoint(e.getPlayer(), p);
+				}
 			}
 		}
 	}
@@ -208,6 +248,7 @@ public class ParkourPlayerManager implements Listener {
 	}
 	
 	private boolean completeParkour(Player p, Parkour parkour, ParkourPlayer playerp) {
+		//System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
 		long time = System.currentTimeMillis() - playerp.getStartTime();
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
@@ -228,6 +269,13 @@ public class ParkourPlayerManager implements Listener {
 			}
 		});
 		return true;
+	}
+	
+	private void sendBar(Player p) {
+		ParkourPlayer player = getPlayer(p);
+		player.setLastActionbar(System.currentTimeMillis());
+		String bar = ChatColor.GREEN + Utils.formatTime(System.currentTimeMillis() - player.getStartTime());
+		plugin.getActionbar().sendActionBarRaw(p, bar);
 	}
 	
 	
