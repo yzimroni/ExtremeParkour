@@ -70,12 +70,12 @@ public class Actionbar {
 
 	public void sendActionBarRaw(Player p, String s) {
 		try {
-			Object chatTitle = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class)
+			Object text = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class)
 					.invoke(null, "{\"text\": \"" + s + "\"}");
-			Constructor<?> titleConstructor = getNMSClass("PacketPlayOutChat")
+			Constructor<?> actionbarConstructor = getNMSClass("PacketPlayOutChat")
 					.getConstructor(getNMSClass("IChatBaseComponent"), byte.class);
-			Object packet = titleConstructor.newInstance(chatTitle, (byte) 2);
-			sendPacket(p, packet);
+			Object actionbar = actionbarConstructor.newInstance(text, (byte) 2);
+			sendPacket(p, actionbar);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -87,7 +87,7 @@ public class Actionbar {
 		Class<?> nmsClass = null;
 		try {
 			nmsClass = Class.forName(name);
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return nmsClass;
