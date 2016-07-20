@@ -27,6 +27,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	 * Prevent more then one point in the same location
 	 * Storage convert
 	 * Leaderboard reset
+	 * Remove all potions effects from the player before enter the parkour (and give them back afterwards)
 	 */
 	
 	private SQLData data;

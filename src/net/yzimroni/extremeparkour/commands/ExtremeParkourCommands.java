@@ -37,6 +37,11 @@ public class ExtremeParkourCommands {
 		
 	}
 	
+	private Parkour getSelection(CommandSender sender) {
+		//TODO
+		return parkourSel;
+	}
+	
 	private void createPakourCommand() {
 		Command parkour = new Command("parkour", "ExetremePakour command", MethodExecutor.createByMethodId(this, "parkourMain"));
 		parkour.setAliases("p", "eparkour", "extremeparkour", "ep");
@@ -177,13 +182,14 @@ public class ExtremeParkourCommands {
 	@MethodId("parkourPointSetStart")
 	public boolean parkourPointSetStart(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
-		if (parkourSel == null) {
+		Parkour parkour = getSelection(p);
+		if (parkour == null) {
 			p.sendMessage("Parkour is null");
 			return true;
 		}
-		Startpoint start = new Startpoint(-1, parkourSel, p.getLocation());
-		parkourSel.setStartPoint(start);
-		parkourSel.initPoint(start);
+		Startpoint start = new Startpoint(-1, parkour, p.getLocation());
+		parkour.setStartPoint(start);
+		parkour.initPoint(start);
 		p.sendMessage("Start point set!");
 		return true;
 	}
@@ -191,13 +197,14 @@ public class ExtremeParkourCommands {
 	@MethodId("parkourPointSetEnd")
 	public boolean parkourPointSetEnd(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
-		if (parkourSel == null) {
+		Parkour parkour = getSelection(p);
+		if (parkour == null) {
 			p.sendMessage("Parkour is null");
 			return true;
 		}
-		Endpoint end = new Endpoint(-1, parkourSel, p.getLocation());
-		parkourSel.setEndPoint(end);
-		parkourSel.initPoint(end);
+		Endpoint end = new Endpoint(-1, parkour, p.getLocation());
+		parkour.setEndPoint(end);
+		parkour.initPoint(end);
 		p.sendMessage("End point set!");
 		return true;
 	}
@@ -206,21 +213,22 @@ public class ExtremeParkourCommands {
 	@MethodId("parkourPointSetCheck")
 	public boolean parkourPointSetCheck(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
-		if (parkourSel == null) {
+		Parkour parkour = getSelection(p);
+		if (parkour == null) {
 			p.sendMessage("Parkour is null");
 			return true;
 		}
-		int index = parkourSel.getChestpointsCount();
+		int index = parkour.getChestpointsCount();
 		boolean hasIndex = false;
 		if (args.has("index", Integer.class)) {
 			index = args.get("index", Integer.class) - 1;
 			hasIndex = true;
 		}
-		Checkpoint check = new Checkpoint(-1, parkourSel, p.getLocation(), index);
+		Checkpoint check = new Checkpoint(-1, parkour, p.getLocation(), index);
 		if (hasIndex) {
-			parkourSel.insertCheckpoint(index, check);
+			parkour.insertCheckpoint(index, check);
 		} else {
-			parkourSel.addCheckpoint(check);
+			parkour.addCheckpoint(check);
 		}
 		return true;
 	}
@@ -228,16 +236,17 @@ public class ExtremeParkourCommands {
 	
 	@MethodId("parkourPointRemoveCheck")
 	public boolean parkourPointRemoveCheck(CommandSender sender, Command command, ArgumentData args) {
-		if (parkourSel == null) {
+		Parkour parkour = getSelection(sender);
+		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
 			return true;
 		}
 		int index = args.get("index", Integer.class) - 1;
-		if (parkourSel.getChestpointsCount() >= index) {
+		if (parkour.getChestpointsCount() >= index) {
 			sender.sendMessage("Checkpoint not found");
 			return false;
 		}
-		parkourSel.removeCheckpoint(index);
+		parkour.removeCheckpoint(index);
 		sender.sendMessage("Removed checkpoint #" + (index + 1));
 		return true;
 	}
@@ -246,32 +255,34 @@ public class ExtremeParkourCommands {
 	@MethodId("parkourLeaderboardAdd")
 	public boolean parkourLeaderboardAdd(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
-		if (parkourSel == null) {
+		Parkour parkour = getSelection(p);
+		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
 			return true;
 		}
 		int count = args.has("players") ? args.get("players", Integer.class) : 10;
-		ParkourLeaderboard leaderboard = new ParkourLeaderboard(-1, parkourSel, p.getLocation(), count, 1);
+		ParkourLeaderboard leaderboard = new ParkourLeaderboard(-1, parkour, p.getLocation(), count, 1);
 		leaderboard.setStatus(DataStatus.CREATED);
-		parkourSel.getLeaderboards().add(leaderboard);
-		plugin.getParkourManager().initLeaderboard(parkourSel);
+		parkour.getLeaderboards().add(leaderboard);
+		plugin.getParkourManager().initLeaderboard(parkour);
 		return true;
 	}
 	
 	@MethodId("parkourLeaderboardRemove")
 	public boolean parkourLeaderboardRemove(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
-		if (parkourSel == null) {
+		Parkour parkour = getSelection(p);
+		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
 			return true;
 		}
-		if (parkourSel.getLeaderboards().isEmpty()) {
+		if (parkour.getLeaderboards().isEmpty()) {
 			p.sendMessage("The parkour dont have leaderboards");
 			return false;
 		}
 		ParkourLeaderboard lb = null;
 		double last_dis = -1;
-		for (ParkourLeaderboard h : parkourSel.getLeaderboards()) {
+		for (ParkourLeaderboard h : parkour.getLeaderboards()) {
 			if (h.getLocation().getWorld().equals(p.getWorld())) {
 				double dis = h.getLocation().distance(p.getLocation());
 				if (dis < 10 && (last_dis == -1 || lb == null || dis < last_dis)) {
@@ -285,7 +296,7 @@ public class ExtremeParkourCommands {
 			return false;
 		}
 		
-		parkourSel.removeLeaderboard(lb);
+		parkour.removeLeaderboard(lb);
 		p.sendMessage("Leaderboard removed!");
 		
 		return true;
@@ -295,11 +306,12 @@ public class ExtremeParkourCommands {
 	@MethodId("parkourRemove")
 	public boolean parkourRemove(CommandSender sender, Command command, ArgumentData args) {
 		//TODO require the sender to accept the deletion
-		if (parkourSel == null) {
+		Parkour parkour = getSelection(sender);
+		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
 			return true;
 		}
-		plugin.getParkourManager().removeParkour(parkourSel);
+		plugin.getParkourManager().removeParkour(parkour);
 		sender.sendMessage(ChatColor.DARK_RED + "Parkour deleted");
 		return true;
 	}
