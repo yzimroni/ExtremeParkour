@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.potion.PotionEffect;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -25,6 +26,7 @@ import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
+import net.yzimroni.extremeparkour.parkour.point.PointEffect;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.Utils;
 
@@ -147,6 +149,7 @@ public class ParkourPlayerManager implements Listener {
 			p.sendMessage(ChatColor.GREEN + "You start the parkour!");
 			playerp.setLastMessage();
 			playerp.setStartTime(System.currentTimeMillis());
+			handlePointEffect(p, parkour.getStartPoint());
 			return true;
 		} else {
 			ParkourPlayer playerp = players.get(p.getUniqueId());
@@ -157,6 +160,8 @@ public class ParkourPlayerManager implements Listener {
 				playerp.setLastCheckpoint(-1);
 				playerp.setLastCheckpointTime(0);
 				p.sendMessage(ChatColor.GREEN + "Time reset to " + Utils.formatTime(0));
+				//TODO remove effects
+				handlePointEffect(p, parkour.getStartPoint());
 			} else {
 				leaveParkour(p, "");
 				return startParkour(p, parkour);
@@ -189,6 +194,7 @@ public class ParkourPlayerManager implements Listener {
 				playerp.setLastCheckpointTime(System.currentTimeMillis() - playerp.getStartTime());
 				p.sendMessage(ChatColor.YELLOW + "You are now on checkpoint " + ChatColor.AQUA + "#" + (check.getDisplayIndex()));
 				playerp.setLastMessage();
+				handlePointEffect(p, check);
 				return true;
 			} else {
 				if (!playerp.checkAndSetLastMessage()) {
@@ -229,6 +235,7 @@ public class ParkourPlayerManager implements Listener {
 			playerp.setTeleportAllowed(true);
 			p.teleport(latest.getLocation().getBlock().getLocation().add(0.5, 1.5, 0.5));
 			p.sendMessage(ChatColor.GREEN + "Teleported back to " + latest.getName());
+			//TODO remove effects
 			return true;
 		} else {
 			p.sendMessage(ChatColor.RED + "You aren't in a parkour");
@@ -267,7 +274,7 @@ public class ParkourPlayerManager implements Listener {
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
 		players.remove(p.getUniqueId());
-		// TODO player score
+		// TODO remove effects
 		p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You completed the parkour in " + ChatColor.GREEN + Utils.formatTime(time));
 		if (old != null) {
 			if (now.getTimeTook() < old.getTimeTook()) {
@@ -282,6 +289,7 @@ public class ParkourPlayerManager implements Listener {
 				plugin.getParkourManager().initLeaderboard(parkour);
 			}
 		});
+		handlePointEffect(p, parkour.getEndPoint());
 		return true;
 	}
 	
@@ -290,6 +298,26 @@ public class ParkourPlayerManager implements Listener {
 		player.setLastActionbar(System.currentTimeMillis());
 		String bar = ChatColor.GREEN + Utils.formatTime(System.currentTimeMillis() - player.getStartTime());
 		plugin.getActionbar().sendActionBarRaw(p, bar);
+	}
+	
+	private void handlePointEffect(Player p, Point point) {
+		List<PointEffect> removed = new ArrayList<PointEffect>();
+		ParkourPlayer player = getPlayer(p);
+		for (PointEffect effect : player.getEffectsAdded()) {
+			if (effect.getDuration() == -1) {
+				p.removePotionEffect(effect.getType());
+				removed.add(effect);
+			}
+		}
+		player.getEffectsAdded().removeAll(removed);
+		removed.clear();
+		
+		for (PointEffect effect : point.getEffects()) {
+			PotionEffect potion = effect.createPotionEffect();
+			p.removePotionEffect(potion.getType());
+			p.addPotionEffect(potion);
+		}
+		
 	}
 	
 	

@@ -1,5 +1,6 @@
 package net.yzimroni.extremeparkour.parkour.point;
 
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import net.yzimroni.extremeparkour.utils.DataStatus;
@@ -68,6 +69,11 @@ public class PointEffect {
 
 	public void setStatus(DataStatus status) {
 		this.status = status;
+	}
+	
+	public PotionEffect createPotionEffect() {
+		PotionEffect effect = new PotionEffect(type, duration == -1 ? Integer.MAX_VALUE : duration, amplifier);
+		return effect;
 	}
 
 }

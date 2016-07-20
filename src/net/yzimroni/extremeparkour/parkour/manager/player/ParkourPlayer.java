@@ -1,11 +1,15 @@
 package net.yzimroni.extremeparkour.parkour.manager.player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.point.PointEffect;
 
 public class ParkourPlayer {
 
@@ -20,6 +24,8 @@ public class ParkourPlayer {
 	
 	private long lastMessage = -1;
 	private long lastActionbar = -1;
+	
+	private List<PointEffect> effectsAdded = new ArrayList<PointEffect>();
 
 	public ParkourPlayer(UUID player, Parkour parkour, long startTime) {
 		super();
@@ -135,6 +141,14 @@ public class ParkourPlayer {
 	 */
 	public void setLastActionbar(long lastActionbar) {
 		this.lastActionbar = lastActionbar;
+	}
+
+	public List<PointEffect> getEffectsAdded() {
+		return effectsAdded;
+	}
+
+	public void setEffectsAdded(List<PointEffect> effectsAdded) {
+		this.effectsAdded = effectsAdded;
 	}
 
 }
