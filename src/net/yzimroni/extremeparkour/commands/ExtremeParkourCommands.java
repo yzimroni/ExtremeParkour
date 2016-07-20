@@ -119,6 +119,12 @@ public class ExtremeParkourCommands {
 		listeffect.addArgument(new PointArgument(plugin, "point"));
 		effect.addSubCommand(listeffect);
 		
+		SubCommand removeeffect = new SubCommand("remove", "Remove an effect from a point", MethodExecutor.createByMethodId(this, "parkourPointEffectRemove"));
+		removeeffect.setAliases("rem", "delete", "del");
+		removeeffect.addArgument(new PointArgument(plugin, "point"));
+		removeeffect.addArgument(new PotionEffectArgument("effect", true));
+		effect.addSubCommand(removeeffect);
+		
 		point.addSubCommand(effect);
 		
 		parkour.addSubCommand(point);
@@ -137,11 +143,15 @@ public class ExtremeParkourCommands {
 		removeLeader.setOnlyPlayer(true);
 		leaderboard.addSubCommand(removeLeader);
 		
+		SubCommand resetleader = new SubCommand("reset", "Reset the times in this parkour for all players", MethodExecutor.createByMethodId(this, "parkourLeaderboardReset"));
+		leaderboard.addSubCommand(resetleader);
+		
+		parkour.addSubCommand(leaderboard);
+		
 		SubCommand removeParkour = new SubCommand("remove", "remove a parkour", MethodExecutor.createByMethodId(this, "parkourRemove"));
 		removeParkour.setAliases("rem", "delete", "del");
 		parkour.addSubCommand(removeParkour);
 		
-		parkour.addSubCommand(leaderboard);
 		
 		CommandManager.get().registerCommand(plugin, parkour);
 	}
@@ -308,6 +318,31 @@ public class ExtremeParkourCommands {
 		return true;
 	}
 	
+	
+	@MethodId("parkourPointEffectRemove")
+	public boolean parkourPointEffectRemove(CommandSender sender, Command command, ArgumentData args) {
+		Point point = args.get("point", Point.class);
+		PotionEffectType type = args.get("effect", PotionEffectType.class);
+		if (!point.hasEffect(type)) {
+			sender.sendMessage("This point doesn't contains the effect " + type.getName());
+			return false;
+		}
+		PointEffect ep = null;
+		for (PointEffect temp : point.getEffects()) {
+			if (temp.getType().equals(type)) {
+				ep = temp;
+				break;
+			}
+		}
+		if (ep == null) {
+			sender.sendMessage("Error: ep is null");
+			return false;
+		}
+		point.removeEffect(ep);
+		sender.sendMessage("Effect " + type.getName() + " removed from point" + point.getName());
+		return true;
+	}
+	
 	@MethodId("parkourLeaderboardAdd")
 	public boolean parkourLeaderboardAdd(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
@@ -358,6 +393,19 @@ public class ExtremeParkourCommands {
 		return true;
 	}
 	
+	
+	@MethodId("parkourLeaderboardReset")
+	public boolean parkourLeaderboardReset(CommandSender sender, Command command, ArgumentData args) {
+		Parkour parkour = getSelection(sender);
+		if (parkour == null) {
+			sender.sendMessage("Parkour is null");
+			return true;
+		}
+		//TODO accept
+		plugin.getData().resetLeaderboard(parkour);
+		sender.sendMessage("Leaderboard stats has been reset for parkour " + parkour.getId());
+		return true;
+	}
 	
 	@MethodId("parkourRemove")
 	public boolean parkourRemove(CommandSender sender, Command command, ArgumentData args) {

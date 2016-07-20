@@ -212,6 +212,7 @@ public class SQLData {
 				ids += id.intValue();
 			}
 			sql.set("DELETE FROM " + prefix + "points WHERE ID IN (" + ids + ")");
+			p.setRemovedPoints(null);
 		}
 
 		// Update/insert the new/changed points
@@ -252,6 +253,7 @@ public class SQLData {
 					ids += id.intValue();
 				}
 				sql.set("DELETE FROM " + prefix + "point_effects WHERE ID IN (" + ids + ")");
+				point.setRemovedEffects(null);
 			}
 			
 			for (PointEffect effect : point.getEffects()) {
@@ -307,6 +309,7 @@ public class SQLData {
 				ids += id.intValue();
 			}
 			sql.set("DELETE FROM " + prefix + "parkour_leaderboards WHERE ID IN (" + ids + ")");
+			p.setRemovedLeaderboards(null);
 		}
 		
 		for (ParkourLeaderboard leaderboard : p.getLeaderboards()) {
@@ -414,6 +417,11 @@ public class SQLData {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void resetLeaderboard(Parkour parkour) {
+		sql.set("DELETE FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId());
+		plugin.getParkourManager().initLeaderboard(parkour);
 	}
 	
 	public void deleteParkour(Parkour parkour) {

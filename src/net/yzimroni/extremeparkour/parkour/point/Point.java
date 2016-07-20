@@ -51,6 +51,9 @@ public abstract class Point {
 	public void removeEffect(PointEffect effect) {
 		if (effects.contains(effect)) {
 			effects.remove(effect);
+			if (removedEffects == null) {
+				removedEffects = new ArrayList<Integer>();
+			}
 			removedEffects.add(effect.getId());
 		}
 	}

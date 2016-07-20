@@ -1,6 +1,6 @@
 package net.yzimroni.extremeparkour.commands;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.yzimroni.commandmanager.command.args.ArgumentParseData;
@@ -65,7 +65,16 @@ public class PointArgument extends CommandArgument<Point> {
 
 	@Override
 	public List<String> getTabCompleteOptions(ArgumentParseData data) {
-		return Arrays.asList("start", "end");
+		Parkour p = plugin.getCommands().getSelection(data.getCommandSender());
+		List<String> options = new ArrayList<String>();
+		if (p != null) {
+			options.add("start");
+			options.add("end");
+			for (int i = 0; i < p.getChestpointsCount(); i++) {
+				options.add("" + (i + 1));
+			}
+		}
+		return options;
 	}
 
 	@Override
