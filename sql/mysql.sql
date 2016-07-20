@@ -54,3 +54,19 @@ CREATE TABLE IF NOT EXISTS `%prefix%parkour_leaderboards` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `point_effects`
+--
+
+CREATE TABLE IF NOT EXISTS `%prefix%point_effects` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `pointId` varchar(30) NOT NULL,
+  `type` int(11) NOT NULL,
+  `duration` int(11) NOT NULL,
+  `amplifier` smallint(6) NOT NULL,
+  `particles` tinyint(1) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

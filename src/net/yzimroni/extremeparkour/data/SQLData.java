@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
@@ -20,6 +21,7 @@ import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
+import net.yzimroni.extremeparkour.parkour.point.PointEffect;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.DataStatus;
 import net.yzimroni.extremeparkour.utils.MCSQL;
@@ -126,7 +128,19 @@ public class SQLData {
 						point = checkpoint;
 					}
 					point.setChanged(false);
-					//TODO effects
+					
+					ResultSet effects_rs = sql.get("SELECT * FROM " + prefix + "point_effects WEHRE pointId=" + point_id);
+					List<PointEffect> effects = new ArrayList<PointEffect>();
+					while (effects_rs.next()) {
+						int effect_id = effects_rs.getInt("ID");
+						PotionEffectType type = PotionEffectType.getByName(effects_rs.getString("type"));
+						int duration = effects_rs.getInt("duration");
+						int amplifier = effects_rs.getInt("amplifier");
+						boolean particles = effects_rs.getBoolean("particles");
+						PointEffect effect = new PointEffect(effect_id, type, duration, amplifier, particles);
+						effects.add(effect);
+					}
+					point.setEffects(effects);
 				}
 				p.setCheckpoints(checkpoints);
 				
@@ -201,35 +215,87 @@ public class SQLData {
 		}
 
 		// Update/insert the new/changed points
-		List<Point> changed = new ArrayList<Point>();
-		if (p.getStartPoint() != null && p.getStartPoint().hasChanged()) {
-			changed.add(p.getStartPoint());
+		List<Point> points = new ArrayList<Point>();
+		if (p.getStartPoint() != null) {
+			points.add(p.getStartPoint());
 		}
 
-		if (p.getEndPoint() != null && p.getEndPoint().hasChanged()) {
-			changed.add(p.getEndPoint());
+		if (p.getEndPoint() != null) {
+			points.add(p.getEndPoint());
 		}
 
 		for (Checkpoint checkpoint : p.getCheckpoints()) {
-			if (checkpoint.hasChanged()) {
-				changed.add(checkpoint);
-			}
+			points.add(checkpoint);
 		}
 
-		for (Point point : changed) {
-			try {
-				PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, point_index=? WHERE ID = " + point.getId());
-				pre.setInt(1, point.getParkour().getId());
-				pre.setString(2, Utils.serializeLocation(point.getLocation()));
-				pre.setInt(3, point.getIndex());
-				
-				pre.executeUpdate();
-
-				point.setChanged(false);
-			} catch (Exception e) {
-				e.printStackTrace();
+		for (Point point : points) {
+			if (point.hasChanged()) {
+				try {
+					PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, point_index=? WHERE ID = " + point.getId());
+					pre.setInt(1, point.getParkour().getId());
+					pre.setString(2, Utils.serializeLocation(point.getLocation()));
+					pre.setInt(3, point.getIndex());
+					
+					pre.executeUpdate();
+	
+					point.setChanged(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-		}
+			if (point.getRemovedEffects() != null && !point.getRemovedEffects().isEmpty()) {
+				String ids = "";
+				for (Integer id : point.getRemovedEffects()) {
+					if (!ids.isEmpty()) {
+						ids += ",";
+					}
+					ids += id.intValue();
+				}
+				sql.set("DELETE FROM " + prefix + "point_effects WHERE ID IN (" + ids + ")");
+			}
+			
+			for (PointEffect effect : point.getEffects()) {
+				if (effect.getStatus() != null) {
+					if (effect.getStatus() == DataStatus.CREATED) {
+						try {
+							PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix 
+									+ "point_effects (pointId,type,duration,amplifier,particles) VALUES(?,?,?,?,?)");
+							pre.setInt(1, point.getId());
+							pre.setString(2, effect.getType().getName());
+							pre.setInt(3, effect.getDuration());
+							pre.setInt(4, effect.getAmplifier());
+							pre.setBoolean(5, effect.isShowParticles());
+							
+							pre.executeUpdate();
+							
+							int id = sql.getIdFromPrepared(pre);
+							effect.setId(id);
+							effect.setStatus(null);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else if (effect.getStatus() == DataStatus.UPDATED) {
+						try {
+							PreparedStatement pre = sql.getPrepare("UPDATE " + prefix
+									+ "parkour_leaderboards SET pointId=?, type=?, duration=?, amplifier=?, particles=? WHERE ID = "
+									+ effect.getId());
+
+							pre.setInt(1, point.getId());
+							pre.setString(2, effect.getType().getName());
+							pre.setInt(3, effect.getDuration());
+							pre.setInt(4, effect.getAmplifier());
+							pre.setBoolean(5, effect.isShowParticles());
+
+							pre.executeUpdate();
+							
+							effect.setStatus(null);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		} 
 		
 		// Delete from the database the leaderboards that were deleted in-game
 		if (p.getRemovedLeaderboards() != null && !p.getRemovedLeaderboards().isEmpty()) {

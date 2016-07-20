@@ -49,3 +49,18 @@ CREATE TABLE IF NOT EXISTS `%prefix%parkour_leaderboards` (
   `players_count` int(11) NOT NULL,
   `page` int(11) NOT NULL
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `point_effects`
+--
+
+CREATE TABLE IF NOT EXISTS `%prefix%point_effects` (
+  `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `pointId` varchar(30) NOT NULL,
+  `type` int(11) NOT NULL,
+  `duration` int(11) NOT NULL,
+  `amplifier` smallint(6) NOT NULL,
+  `particles` tinyint(1) NOT NULL
+);

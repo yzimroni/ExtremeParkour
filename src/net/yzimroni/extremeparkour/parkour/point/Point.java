@@ -38,6 +38,13 @@ public abstract class Point {
 	
 	public abstract MaterialData getPointMaterial();
 	
+	public void removeEffect(PointEffect effect) {
+		if (effects.contains(effect)) {
+			effects.remove(effect);
+			removedEffects.add(effect.getId());
+		}
+	}
+	
 	/**
 	 * @return the id
 	 */

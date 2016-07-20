@@ -10,16 +10,16 @@ public class PointEffect {
 	private PotionEffectType type;
 	private int duration; // -1 to stay until the next point
 	private int amplifier;
-	private boolean showParticals;
+	private boolean showParticles;
 
 	private DataStatus status;
 
-	public PointEffect(int id, PotionEffectType type, int duration, int amplifier, boolean showParticals) {
+	public PointEffect(int id, PotionEffectType type, int duration, int amplifier, boolean showParticles) {
 		this.id = id;
 		this.type = type;
 		this.duration = duration;
 		this.amplifier = amplifier;
-		this.showParticals = showParticals;
+		this.setShowParticles(showParticles);
 	}
 
 	public int getId() {
@@ -54,12 +54,12 @@ public class PointEffect {
 		this.amplifier = amplifier;
 	}
 
-	public boolean isShowParticals() {
-		return showParticals;
+	public boolean isShowParticles() {
+		return showParticles;
 	}
 
-	public void setShowParticals(boolean showParticals) {
-		this.showParticals = showParticals;
+	public void setShowParticles(boolean showParticles) {
+		this.showParticles = showParticles;
 	}
 
 	public DataStatus getStatus() {
