@@ -125,4 +125,8 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 		return actionbar;
 	}
 
+	public ExtremeParkourCommands getCommands() {
+		return commands;
+	}
+
 }

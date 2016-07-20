@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.potion.PotionEffectType;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 
@@ -37,6 +38,15 @@ public abstract class Point {
 	public abstract int getIndex();
 	
 	public abstract MaterialData getPointMaterial();
+	
+	public boolean hasEffect(PotionEffectType type) {
+		for (PointEffect effect : effects) {
+			if (effect.getType().equals(type)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public void removeEffect(PointEffect effect) {
 		if (effects.contains(effect)) {

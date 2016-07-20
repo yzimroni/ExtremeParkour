@@ -55,4 +55,20 @@ public class Utils {
 		return format.format(d);
 	}
 	
+	public static boolean isInt(String s) {
+		try {
+			Integer.valueOf(s);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	public static int getInt(String s) {
+		try {
+			return Integer.valueOf(s);
+		} catch (Exception e) {}
+		return 0;
+	}
+	
 }

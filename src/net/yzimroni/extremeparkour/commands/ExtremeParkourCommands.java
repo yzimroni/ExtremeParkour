@@ -5,12 +5,16 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import net.yzimroni.commandmanager.command.Command;
 import net.yzimroni.commandmanager.command.MethodExecutor;
 import net.yzimroni.commandmanager.command.SubCommand;
 import net.yzimroni.commandmanager.command.args.ArgumentData;
+import net.yzimroni.commandmanager.command.args.arguments.BooleanArgument;
 import net.yzimroni.commandmanager.command.args.arguments.IntegerArgument;
+import net.yzimroni.commandmanager.command.args.arguments.PotionEffectArgument;
 import net.yzimroni.commandmanager.command.args.arguments.StringArgument;
 import net.yzimroni.commandmanager.manager.CommandManager;
 import net.yzimroni.commandmanager.utils.MethodId;
@@ -19,6 +23,8 @@ import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
+import net.yzimroni.extremeparkour.parkour.point.Point;
+import net.yzimroni.extremeparkour.parkour.point.PointEffect;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.DataStatus;
 
@@ -37,7 +43,7 @@ public class ExtremeParkourCommands {
 		
 	}
 	
-	private Parkour getSelection(CommandSender sender) {
+	protected Parkour getSelection(CommandSender sender) {
 		//TODO
 		return parkourSel;
 	}
@@ -85,7 +91,6 @@ public class ExtremeParkourCommands {
 		check.setAliases("checkpoint");
 		check.setOnlyPlayer(true);
 		check.addArgument(new IntegerArgument("index", false, 0, null));
-		
 		set.addSubCommand(check);
 		
 		SubCommand remove = new SubCommand("remove", "Remove a point", MethodExecutor.createByMethodId(this, "parkourMain")); //Just need to send help
@@ -95,10 +100,23 @@ public class ExtremeParkourCommands {
 		remcheck.setAliases("checkpoint");
 		remcheck.addArgument(new IntegerArgument("index", true, 0, null));
 		remove.addSubCommand(remcheck);
-		
 		set.addSubCommand(remove);
 		
 		point.addSubCommand(set);
+		
+		SubCommand effect = new SubCommand("effect", "Potion effect", MethodExecutor.createByMethodId(this, "parkourMain")); //Just need to send help
+		
+		SubCommand addeffect = new SubCommand("add", "Add a new effect", MethodExecutor.createByMethodId(this, "parkourPointEffectAdd"));
+		addeffect.setAliases("new");
+		addeffect.addArgument(new PointArgument(plugin, "point"));
+		addeffect.addArgument(new PotionEffectArgument("effect", true));
+		addeffect.addArgument(new IntegerArgument("duration", true));
+		addeffect.addArgument(new IntegerArgument("amplifier", false));
+		addeffect.addArgument(new BooleanArgument("showParticles", false));
+		effect.addSubCommand(addeffect);
+		
+		point.addSubCommand(effect);
+		
 		parkour.addSubCommand(point);
 		
 		SubCommand leaderboard = new SubCommand("leaderboard", "Parkour leaderboard", MethodExecutor.createByMethodId(this, "parkourMain")); //Just need to send help
@@ -251,6 +269,25 @@ public class ExtremeParkourCommands {
 		return true;
 	}
 	
+	
+	@MethodId("parkourPointEffectAdd")
+	public boolean parkourPointEffectAdd(CommandSender sender, Command command, ArgumentData args) {
+		Parkour p = getSelection(sender); //The parkour must be, if not PointArgument will throw an exeption and the command would not executed
+		Point point = args.get("point", Point.class);
+		PotionEffectType type = args.get("effect", PotionEffectType.class);
+		if (point.hasEffect(type)) {
+			sender.sendMessage("This point already has effect " + type.getName());
+			return false;
+		}
+		int duration = args.get("duration", Integer.class);
+		int amplifier = args.has("amplifier") ? args.get("amplifier", Integer.class) : 0;
+		boolean showParticles = args.has("showParticles") ? args.get("showParticles", Boolean.class) : true;
+		PointEffect effect = new PointEffect(-1, type, duration, amplifier, showParticles);
+		effect.setStatus(DataStatus.CREATED);
+		point.getEffects().add(effect);
+		sender.sendMessage("Effect " + type.getName() + " added to point " + point.getName());
+		return true;
+	}
 	
 	@MethodId("parkourLeaderboardAdd")
 	public boolean parkourLeaderboardAdd(CommandSender sender, Command command, ArgumentData args) {
