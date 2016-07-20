@@ -115,6 +115,10 @@ public class ExtremeParkourCommands {
 		addeffect.addArgument(new BooleanArgument("showParticles", false));
 		effect.addSubCommand(addeffect);
 		
+		SubCommand listeffect = new SubCommand("list", "List of effects on a point", MethodExecutor.createByMethodId(this, "parkourPointEffectList"));
+		listeffect.addArgument(new PointArgument(plugin, "point"));
+		effect.addSubCommand(listeffect);
+		
 		point.addSubCommand(effect);
 		
 		parkour.addSubCommand(point);
@@ -280,12 +284,27 @@ public class ExtremeParkourCommands {
 			return false;
 		}
 		int duration = args.get("duration", Integer.class);
-		int amplifier = args.has("amplifier") ? args.get("amplifier", Integer.class) : 0;
+		int amplifier = args.has("amplifier") ? args.get("amplifier", Integer.class) - 1 : 0;
 		boolean showParticles = args.has("showParticles") ? args.get("showParticles", Boolean.class) : true;
 		PointEffect effect = new PointEffect(-1, type, duration, amplifier, showParticles);
 		effect.setStatus(DataStatus.CREATED);
 		point.getEffects().add(effect);
 		sender.sendMessage("Effect " + type.getName() + " added to point " + point.getName());
+		return true;
+	}
+	
+	
+	@MethodId("parkourPointEffectList")
+	public boolean parkourPointEffectList(CommandSender sender, Command command, ArgumentData args) {
+		Point point = args.get("point", Point.class);
+		if (point.getEffects().isEmpty()) {
+			sender.sendMessage("There is no effects on this point");
+			return false;
+		}
+		sender.sendMessage("" + point.getEffects().size() + " effects on point " + point.getName() + ":");
+		for (PointEffect effect : point.getEffects()) {
+			sender.sendMessage(effect.getType().getName() + "x" + (effect.getAmplifier() + 1) + " for " + effect.getDuration() + " ticks (with" + (effect.isShowParticles() ? "" : "out") + " particles)");
+		}
 		return true;
 	}
 	
