@@ -19,7 +19,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	/*
 	 * TODO
 	 * 
-	 * Parkour delete command
+	 * V Parkour delete command
 	 * Add point effects
 	 * point teleport
 	 * Create GUI to edit

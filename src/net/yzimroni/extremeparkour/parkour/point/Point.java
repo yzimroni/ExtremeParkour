@@ -1,8 +1,10 @@
 package net.yzimroni.extremeparkour.parkour.point;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
@@ -13,8 +15,13 @@ public abstract class Point {
 	private int id;
 	private Parkour parkour;
 	private Location location;
-	protected boolean changed;
+	private List<PointEffect> effects = new ArrayList<PointEffect>();
+	
 	private Hologram hologram;
+	
+	protected boolean changed;
+	
+	private List<Integer> removedEffects;
 
 	public Point(int id, Parkour parkour, Location location) {
 		super();
@@ -104,6 +111,22 @@ public abstract class Point {
 	 */
 	public void setHologram(Hologram hologram) {
 		this.hologram = hologram;
+	}
+
+	public List<PointEffect> getEffects() {
+		return effects;
+	}
+
+	public void setEffects(List<PointEffect> effects) {
+		this.effects = effects;
+	}
+
+	public List<Integer> getRemovedEffects() {
+		return removedEffects;
+	}
+
+	public void setRemovedEffects(List<Integer> removedEffects) {
+		this.removedEffects = removedEffects;
 	}
 
 	
