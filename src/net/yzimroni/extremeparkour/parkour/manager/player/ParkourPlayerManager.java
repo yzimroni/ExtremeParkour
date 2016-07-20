@@ -273,8 +273,9 @@ public class ParkourPlayerManager implements Listener {
 		long time = System.currentTimeMillis() - playerp.getStartTime();
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
-		players.remove(p.getUniqueId());
 		// TODO remove effects
+		handlePointEffect(p, parkour.getEndPoint());
+		players.remove(p.getUniqueId());
 		p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You completed the parkour in " + ChatColor.GREEN + Utils.formatTime(time));
 		if (old != null) {
 			if (now.getTimeTook() < old.getTimeTook()) {
@@ -289,7 +290,6 @@ public class ParkourPlayerManager implements Listener {
 				plugin.getParkourManager().initLeaderboard(parkour);
 			}
 		});
-		handlePointEffect(p, parkour.getEndPoint());
 		return true;
 	}
 	
@@ -316,6 +316,7 @@ public class ParkourPlayerManager implements Listener {
 			PotionEffect potion = effect.createPotionEffect();
 			p.removePotionEffect(potion.getType());
 			p.addPotionEffect(potion);
+			player.getEffectsAdded().add(effect);
 		}
 		
 	}

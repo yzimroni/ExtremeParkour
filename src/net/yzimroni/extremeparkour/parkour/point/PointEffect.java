@@ -72,7 +72,7 @@ public class PointEffect {
 	}
 	
 	public PotionEffect createPotionEffect() {
-		PotionEffect effect = new PotionEffect(type, duration == -1 ? Integer.MAX_VALUE : duration, amplifier);
+		PotionEffect effect = new PotionEffect(type, duration == -1 ? Integer.MAX_VALUE : duration, amplifier, true, showParticles);
 		return effect;
 	}
 

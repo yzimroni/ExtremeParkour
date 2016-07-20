@@ -129,7 +129,7 @@ public class SQLData {
 					}
 					point.setChanged(false);
 					
-					ResultSet effects_rs = sql.get("SELECT * FROM " + prefix + "point_effects WEHRE pointId=" + point_id);
+					ResultSet effects_rs = sql.get("SELECT * FROM " + prefix + "point_effects WHERE pointId=" + point_id);
 					List<PointEffect> effects = new ArrayList<PointEffect>();
 					while (effects_rs.next()) {
 						int effect_id = effects_rs.getInt("ID");
