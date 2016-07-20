@@ -69,21 +69,21 @@ public class SQLData {
 		 */
 		InputStream stream = plugin.getResource("sql/" + type.name().toLowerCase() + ".sql");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        String line;
-        String query = "";
-        while ((line = reader.readLine()) != null) {
-        	if (line.isEmpty() || line.startsWith("#") || line.startsWith("--")) {
-        		continue;
-        	}
-        	line = line.replaceAll("%prefix%", prefix);
-        	query += line;
-        	if (line.endsWith(";")) {
-        		sql.set(query);
-        		query = "";
-        	}
-        }
-        reader.close();
-		
+		String line;
+		String query = "";
+		while ((line = reader.readLine()) != null) {
+			if (line.isEmpty() || line.startsWith("#") || line.startsWith("--")) {
+				continue;
+			}
+			line = line.replaceAll("%prefix%", prefix);
+			query += line;
+			if (line.endsWith(";")) {
+				sql.set(query);
+				query = "";
+			}
+		}
+		reader.close();
+
 	}
 	
 	public void disable() {
