@@ -159,6 +159,7 @@ public class ParkourPlayerManager implements Listener {
 				}
 				playerp.setLastCheckpoint(-1);
 				playerp.setLastCheckpointTime(0);
+				playerp.setStartTime(System.currentTimeMillis());
 				p.sendMessage(ChatColor.GREEN + "Time reset to " + Utils.formatTime(0));
 				//TODO remove effects
 				handlePointEffect(p, parkour.getStartPoint());
