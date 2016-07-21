@@ -387,18 +387,22 @@ public class SQLData {
 		return null;
 	}
 	
-	public void insertPlayerScore(ParkourPlayerScore score) {
+	public int insertPlayerScore(ParkourPlayerScore score) {
 		try {
-			PreparedStatement pre = sql.getPrepare("INSERT INTO " + prefix + "playerscore (UUID,parkourId,date,timeTook) VALUES(?,?,?,?)");
+			PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "playerscore (UUID,parkourId,date,timeTook) VALUES(?,?,?,?)");
 			pre.setString(1, score.getPlayer().toString());
 			pre.setInt(2, score.getParkourId());
 			pre.setLong(3, score.getDate());
 			pre.setLong(4, score.getTimeTook());
 			
 			pre.executeUpdate();
+			
+			int id = sql.getIdFromPrepared(pre);
+			return id;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return -1;
 	}
 	
 	public List<ParkourPlayerScore> getTopPlayerScore(Parkour parkour, int playercount, int page) {
@@ -430,6 +434,36 @@ public class SQLData {
 		sql.set("DELETE FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId());
 		sql.set("DELETE FROM " + prefix + "parkour_leaderboards WHERE parkourId=" + parkour.getId());
 		sql.set("DELETE FROM " + prefix + "parkours WHERE ID=" + parkour.getId());
+	}
+	
+	public int getPlayerRank(Parkour parkour, Player p) {
+		try {
+			ResultSet rs = sql.get(
+					"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
+					+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.UUID = '" + p.getUniqueId().toString() + "' ORDER BY b.rank LIMIT 1");
+			if (rs.next()) {
+				return rs.getInt("rank");
+			}
+			return -1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -2;
+	}
+	
+	public int getScoreRank(Parkour parkour, int scoreId) {
+		try {
+			ResultSet rs = sql.get(
+					"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
+					+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.ID = " + scoreId + " ORDER BY b.rank LIMIT 1");
+			if (rs.next()) {
+				return rs.getInt("rank");
+			}
+			return -1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -2;
 	}
 
 }

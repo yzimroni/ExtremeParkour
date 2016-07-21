@@ -306,7 +306,13 @@ public class ParkourPlayerManager implements Listener {
 				p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You break your previous record of " + ChatColor.RESET + "" + ChatColor.AQUA + Utils.formatTime(old.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + " (Improvement of " + ChatColor.GREEN + Utils.formatTime(old.getTimeTook() - now.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + ")!");
 			}
 		}
-		plugin.getData().insertPlayerScore(now);
+		int oldrank = plugin.getData().getPlayerRank(parkour, p);
+		int scoreId = plugin.getData().insertPlayerScore(now);
+		int rank = plugin.getData().getPlayerRank(parkour, p);
+		int scorerank = plugin.getData().getScoreRank(parkour, scoreId);
+		p.sendMessage("old best rank: " + oldrank);
+		p.sendMessage("new best rank: " + rank);
+		p.sendMessage("score rank: " + scorerank);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			
 			@Override
