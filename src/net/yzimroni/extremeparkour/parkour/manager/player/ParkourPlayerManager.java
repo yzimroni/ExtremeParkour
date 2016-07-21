@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
@@ -65,7 +67,10 @@ public class ParkourPlayerManager implements Listener {
 			public void onPacketReceiving(PacketEvent e) {
 				if (isPakouring(e.getPlayer())) {
 					sendBar(e.getPlayer());
-					Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(e.getPlayer().getLocation().getBlock());
+					//Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(e.getPlayer().getLocation().getBlock());
+					PacketContainer p = e.getPacket();
+					Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(
+							new Location(e.getPlayer().getWorld(), p.getDoubles().read(0), p.getDoubles().read(1), p.getDoubles().read(2)).getBlock());
 					if (point != null && point instanceof Endpoint) {
 						prossesPoint(e.getPlayer(), point);
 					}
@@ -304,6 +309,8 @@ public class ParkourPlayerManager implements Listener {
 		if (old != null) {
 			if (now.getTimeTook() < old.getTimeTook()) {
 				p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You break your previous record of " + ChatColor.RESET + "" + ChatColor.AQUA + Utils.formatTime(old.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + " (Improvement of " + ChatColor.GREEN + Utils.formatTime(old.getTimeTook() - now.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + ")!");
+			} else {
+				p.sendMessage(ChatColor.YELLOW + "Try again to beat you previous record of " + ChatColor.AQUA + Utils.formatTime(old.getTimeTook()) + "");
 			}
 		}
 		int oldrank = plugin.getData().getPlayerRank(parkour, p);
