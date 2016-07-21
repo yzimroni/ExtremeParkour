@@ -36,6 +36,8 @@ public class ParkourPlayerManager implements Listener {
 	private Events events;
 	private HashMap<UUID, ParkourPlayer> players;
 	
+	private boolean remove = true;
+	
 	public ParkourPlayerManager(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
 		events = new Events(this);
@@ -47,7 +49,12 @@ public class ParkourPlayerManager implements Listener {
 	}
 	
 	public void disable() {
-		
+		remove = false;
+		for (ParkourPlayer p : players.values()) {
+			leaveParkour(p.getBukkitPlayer(), "Plugin disabled");
+		}
+		players.clear();
+		remove = true;
 	}
 	
 	private void initProtocolLib() {
@@ -174,7 +181,9 @@ public class ParkourPlayerManager implements Listener {
 	public boolean leaveParkour(Player p, String reason) {
 		if (players.containsKey(p.getUniqueId())) {
 			ParkourPlayer playerp = getPlayer(p);
-			players.remove(p.getUniqueId());
+			if (remove) {
+				players.remove(p.getUniqueId());
+			}
 			if (reason != null && !reason.isEmpty()) {
 				p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + reason);
 			}
