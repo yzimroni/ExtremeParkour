@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
@@ -19,6 +20,8 @@ public class ParkourPlayer {
 	private long startTime;
 	private int lastCheckpoint;
 	private long lastCheckpointTime;
+	
+	private List<PotionEffect> effectsBefore = new ArrayList<PotionEffect>();
 	
 	private boolean teleportAllowed = false;
 	
@@ -149,6 +152,14 @@ public class ParkourPlayer {
 
 	public void setEffectsAdded(List<PointEffect> effectsAdded) {
 		this.effectsAdded = effectsAdded;
+	}
+
+	public List<PotionEffect> getEffectsBefore() {
+		return effectsBefore;
+	}
+
+	public void setEffectsBefore(List<PotionEffect> effectsBefore) {
+		this.effectsBefore = effectsBefore;
 	}
 
 }

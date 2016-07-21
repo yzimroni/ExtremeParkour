@@ -1,6 +1,7 @@
 package net.yzimroni.extremeparkour.parkour.manager.player;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -153,7 +154,11 @@ public class ParkourPlayerManager implements Listener {
 			ParkourPlayer playerp = new ParkourPlayer(p.getUniqueId(), parkour, System.currentTimeMillis());
 			playerp.setLastCheckpoint(-1); //So the next checkpoint is index 0
 			players.put(p.getUniqueId(), playerp);
-			p.sendMessage(ChatColor.GREEN + "You start the parkour!");
+		    for (PotionEffect effect : p.getActivePotionEffects()){
+		    	playerp.getEffectsBefore().add(effect);
+		    	p.removePotionEffect(effect.getType());
+		    }
+		    p.sendMessage(ChatColor.GREEN + "You start the parkour!");
 			playerp.setLastMessage();
 			playerp.setStartTime(System.currentTimeMillis());
 			handlePointEffect(p, parkour.getStartPoint());
@@ -164,11 +169,14 @@ public class ParkourPlayerManager implements Listener {
 				if (!playerp.checkAndSetLastMessage()) {
 					return false;
 				}
+			    for (PotionEffect effect : p.getActivePotionEffects()){
+			    	p.removePotionEffect(effect.getType()); //The potion is from the parkour
+			    }
+			    playerp.getEffectsAdded().clear();
 				playerp.setLastCheckpoint(-1);
 				playerp.setLastCheckpointTime(0);
 				playerp.setStartTime(System.currentTimeMillis());
 				p.sendMessage(ChatColor.GREEN + "Time reset to " + Utils.formatTime(0));
-				//TODO remove effects
 				handlePointEffect(p, parkour.getStartPoint());
 			} else {
 				leaveParkour(p, "");
@@ -187,6 +195,10 @@ public class ParkourPlayerManager implements Listener {
 			if (reason != null && !reason.isEmpty()) {
 				p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + reason);
 			}
+			for (PotionEffect before : playerp.getEffectsBefore()) {
+				p.addPotionEffect(before);
+			}
+			playerp.getEffectsBefore().clear();
 			return true;
 		}
 		return false;
@@ -210,7 +222,11 @@ public class ParkourPlayerManager implements Listener {
 				if (!playerp.checkAndSetLastMessage()) {
 					return false;
 				}
-				if ((playerp.getLastCheckpoint() + 1) < check.getIndex()) {
+				if (playerp.getLastCheckpoint() == check.getIndex()) {
+					playerp.setLastCheckpointTime(System.currentTimeMillis() - playerp.getStartTime());
+					p.sendMessage(ChatColor.YELLOW + "You are now on checkpoint " + ChatColor.AQUA + "#" + (check.getDisplayIndex()));
+					handlePointEffect(p, check);
+				} else if ((playerp.getLastCheckpoint() + 1) < check.getIndex()) {
 					p.sendMessage(ChatColor.RED + "You need to get " + check.getParkour().getCheckpoint(playerp.getLastCheckpoint() + 1).getName() + " first");
 				} else {
 					p.sendMessage(ChatColor.GREEN + "You already got this checkpoint"); //TODO
@@ -281,11 +297,9 @@ public class ParkourPlayerManager implements Listener {
 	private boolean completeParkour(Player p, Parkour parkour, ParkourPlayer playerp) {
 		//System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
 		long time = System.currentTimeMillis() - playerp.getStartTime();
+		players.remove(p.getUniqueId());
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
-		// TODO remove effects
-		handlePointEffect(p, parkour.getEndPoint());
-		players.remove(p.getUniqueId());
 		p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You completed the parkour in " + ChatColor.GREEN + Utils.formatTime(time));
 		if (old != null) {
 			if (now.getTimeTook() < old.getTimeTook()) {
@@ -297,7 +311,14 @@ public class ParkourPlayerManager implements Listener {
 			
 			@Override
 			public void run() {
+			    for (PotionEffect effect : p.getActivePotionEffects()) {
+			    	p.removePotionEffect(effect.getType());
+			    }
 				plugin.getParkourManager().initLeaderboard(parkour);
+				for (PotionEffect before : playerp.getEffectsBefore()) {
+					p.addPotionEffect(before);
+				}
+				playerp.getEffectsBefore().clear();
 			}
 		});
 		return true;
