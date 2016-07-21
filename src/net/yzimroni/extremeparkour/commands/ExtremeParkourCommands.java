@@ -3,6 +3,7 @@ package net.yzimroni.extremeparkour.commands;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -46,6 +47,10 @@ public class ExtremeParkourCommands {
 	protected Parkour getSelection(CommandSender sender) {
 		//TODO
 		return parkourSel;
+	}
+	
+	private boolean isParkourBlock(Location l) {
+		return plugin.getParkourManager().isParkourBlock(l.getBlock());
 	}
 	
 	private void createPakourCommand() {
@@ -219,6 +224,10 @@ public class ExtremeParkourCommands {
 			p.sendMessage("Parkour is null");
 			return true;
 		}
+		if (isParkourBlock(p.getLocation())) {
+			p.sendMessage("This block is already a parkour point");
+			return false;
+		}
 		Startpoint start = new Startpoint(-1, parkour, p.getLocation());
 		parkour.setStartPoint(start);
 		parkour.initPoint(start);
@@ -233,6 +242,10 @@ public class ExtremeParkourCommands {
 		if (parkour == null) {
 			p.sendMessage("Parkour is null");
 			return true;
+		}
+		if (isParkourBlock(p.getLocation())) {
+			p.sendMessage("This block is already a parkour point");
+			return false;
 		}
 		Endpoint end = new Endpoint(-1, parkour, p.getLocation());
 		parkour.setEndPoint(end);
@@ -249,6 +262,10 @@ public class ExtremeParkourCommands {
 		if (parkour == null) {
 			p.sendMessage("Parkour is null");
 			return true;
+		}
+		if (isParkourBlock(p.getLocation())) {
+			p.sendMessage("This block is already a parkour point");
+			return false;
 		}
 		int index = parkour.getChestpointsCount();
 		boolean hasIndex = false;

@@ -20,13 +20,13 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	 * TODO
 	 * 
 	 * V Parkour delete command
-	 * Add point effects
+	 * V Add point effects
 	 * point teleport
 	 * Create GUI to edit
 	 * Add parkour reward
-	 * Prevent more then one point in the same location
+	 * V Prevent more then one point in the same location
 	 * Storage convert
-	 * Leaderboard reset
+	 * V Leaderboard reset
 	 * Remove all potions effects from the player before enter the parkour (and give them back afterwards)
 	 */
 	
