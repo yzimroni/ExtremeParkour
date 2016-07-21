@@ -299,7 +299,7 @@ public class ParkourPlayerManager implements Listener {
 		return false;
 	}
 	
-	private boolean completeParkour(Player p, Parkour parkour, ParkourPlayer playerp) {
+	private boolean completeParkour(final Player p, final Parkour parkour, final ParkourPlayer playerp) {
 		//System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
 		long time = System.currentTimeMillis() - playerp.getStartTime();
 		players.remove(p.getUniqueId());
