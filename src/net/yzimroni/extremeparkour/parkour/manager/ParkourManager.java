@@ -21,6 +21,7 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
+import net.yzimroni.extremeparkour.parkour.EditMode;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
@@ -38,12 +39,13 @@ public class ParkourManager {
 	private ExtremeParkourPlugin plugin;
 	private Events events;
 	private ParkourPlayerManager playerManager;
+	private EditMode editMode;
 	private List<Parkour> parkours = null;
 	private Comparator<Checkpoint> checkpointComparator;
 
 	public ParkourManager(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
-		events = new Events(this);
+		events = new Events(plugin);
 		Bukkit.getPluginManager().registerEvents(events, plugin);
 		playerManager = new ParkourPlayerManager(plugin);
 		Bukkit.getPluginManager().registerEvents(playerManager, plugin);
@@ -67,6 +69,8 @@ public class ParkourManager {
 			}
 			initLeaderboard(p);
 		}
+		editMode = new EditMode(plugin);
+		Bukkit.getPluginManager().registerEvents(editMode, plugin);
 	}
 	
 	public void disable() {
@@ -285,6 +289,10 @@ public class ParkourManager {
 
 	public ParkourPlayerManager getPlayerManager() {
 		return playerManager;
+	}
+
+	public EditMode getEditMode() {
+		return editMode;
 	}
 			
 }

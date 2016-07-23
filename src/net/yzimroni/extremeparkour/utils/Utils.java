@@ -1,10 +1,14 @@
 package net.yzimroni.extremeparkour.utils;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class Utils {
 
@@ -69,6 +73,15 @@ public class Utils {
 			return Integer.valueOf(s);
 		} catch (Exception e) {}
 		return 0;
+	}
+	
+	public static ItemStack item(Material type, String name, String... lore) {
+		ItemStack i = new ItemStack(type);
+		ItemMeta im = i.getItemMeta();
+		im.setDisplayName(name);
+		im.setLore(Arrays.asList(lore));
+		i.setItemMeta(im);
+		return i;
 	}
 	
 }
