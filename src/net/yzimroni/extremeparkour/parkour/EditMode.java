@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
@@ -35,13 +36,37 @@ public class EditMode implements Listener {
 	}
 	
 	private void initItems() {
-		START_POINT = Utils.item(Material.BLAZE_ROD, ChatColor.AQUA + "Start point", "Place this item to set", "the parkour start point");
-		END_POINT = Utils.item(Material.BLAZE_POWDER, ChatColor.AQUA + "End point", "Place this item to set", "the parkour end point");
-		CHECK_POINT = Utils.item(Material.MAGMA_CREAM, ChatColor.AQUA + "Check point", "Place this item to add", "a checkpoint to the parkour");
+		START_POINT = Utils.item(Startpoint.MATERIAL, ChatColor.AQUA + "Start point", "Place this item to set", "the parkour start point");
+		END_POINT = Utils.item(Endpoint.MATERIAL, ChatColor.AQUA + "End point", "Place this item to set", "the parkour end point");
+		CHECK_POINT = Utils.item(Checkpoint.MATERIAL, ChatColor.AQUA + "Check point", "Place this item to add", "a checkpoint to the parkour");
 	}
 	
 	public boolean isEditMode(Player p) {
 		return players.containsKey(p.getUniqueId());
+	}
+	
+	public Parkour getParkour(Player p) {
+		return players.get(p.getUniqueId());
+	}
+	
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent e) {
+		if (isEditMode(e.getPlayer())) {
+			Parkour parkour = getParkour(e.getPlayer());
+			if (START_POINT.isSimilar(e.getItemInHand())) {
+				Startpoint start = new Startpoint(-1, parkour, e.getBlockPlaced().getLocation());
+				parkour.setStartPoint(start);
+				parkour.initPoint(start);
+			} else if (END_POINT.isSimilar(e.getItemInHand())) {
+				Endpoint end = new Endpoint(-1, parkour, e.getBlockPlaced().getLocation());
+				parkour.setEndPoint(end);
+				parkour.initPoint(end);
+			} else if (CHECK_POINT.isSimilar(e.getItemInHand())) {
+				//TODO add support for shift + place
+				Checkpoint check = new Checkpoint(-1, parkour, e.getBlockPlaced().getLocation(), parkour.getChestpointsCount());
+				parkour.addCheckpoint(check);
+			}
+		}
 	}
 	
 	@EventHandler
@@ -61,6 +86,7 @@ public class EditMode implements Listener {
 				} else if (p instanceof Endpoint) {
 					p.getParkour().setEndPoint(null);
 				}
+				e.setCancelled(true);
 			}
 		}
 	}
