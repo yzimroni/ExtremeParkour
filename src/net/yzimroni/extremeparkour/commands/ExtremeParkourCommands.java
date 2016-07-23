@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import net.yzimroni.commandmanager.command.Command;
@@ -157,6 +156,11 @@ public class ExtremeParkourCommands {
 		removeParkour.setAliases("rem", "delete", "del");
 		parkour.addSubCommand(removeParkour);
 		
+		SubCommand editMode = new SubCommand("editmode", "Toggle edit mode", MethodExecutor.createByMethodId(this, "parkourEditMode"));
+		editMode.setAliases("edit");
+		editMode.setOnlyPlayer(true);
+		parkour.addSubCommand(editMode);
+		
 		
 		CommandManager.get().registerCommand(plugin, parkour);
 	}
@@ -303,7 +307,6 @@ public class ExtremeParkourCommands {
 	
 	@MethodId("parkourPointEffectAdd")
 	public boolean parkourPointEffectAdd(CommandSender sender, Command command, ArgumentData args) {
-		Parkour p = getSelection(sender); //The parkour must be, if not PointArgument will throw an exeption and the command would not executed
 		Point point = args.get("point", Point.class);
 		PotionEffectType type = args.get("effect", PotionEffectType.class);
 		if (point.hasEffect(type)) {
@@ -434,6 +437,19 @@ public class ExtremeParkourCommands {
 		}
 		plugin.getParkourManager().removeParkour(parkour);
 		sender.sendMessage(ChatColor.DARK_RED + "Parkour deleted");
+		return true;
+	}
+	
+	
+	
+	@MethodId("parkourEditMode")
+	public boolean parkourEditMode(CommandSender sender, Command command, ArgumentData args) {
+		Parkour parkour = getSelection(sender);
+		if (parkour == null) {
+			sender.sendMessage("Parkour is null");
+			return true;
+		}
+		plugin.getParkourManager().getEditMode().toggle((Player) sender, parkour);
 		return true;
 	}
 	

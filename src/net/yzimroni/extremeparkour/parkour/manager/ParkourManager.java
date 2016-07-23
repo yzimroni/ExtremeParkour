@@ -270,6 +270,8 @@ public class ParkourManager {
 			}
 			parkours.remove(p);
 			
+			editMode.onParkourDelete(p);
+			
 			for (ParkourLeaderboard leaderboard : p.getLeaderboards()) {
 				removeLeaderboard(leaderboard);
 			}

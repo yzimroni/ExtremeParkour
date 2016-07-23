@@ -198,6 +198,7 @@ public class Parkour {
 		if (checkpoints.contains(point)) {
 			markPointAsRemoved(point);
 			checkpoints.remove(point);
+			plugin.getParkourManager().fixCheckpoints(this);
 		}
 	}
 	

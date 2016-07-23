@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,8 +44,34 @@ public class EditMode implements Listener {
 		return players.containsKey(p.getUniqueId());
 	}
 	
+	public void joinEditMode(Player p, Parkour parkour) {
+		p.sendMessage("you joined edit mode");
+		p.getInventory().addItem(START_POINT, CHECK_POINT, END_POINT);
+		players.put(p.getUniqueId(), parkour);
+	}
+	
+	public void leaveEditMode(Player p) {
+		if (isEditMode(p)) {
+			players.remove(p.getUniqueId());
+			p.getInventory().removeItem(START_POINT, CHECK_POINT, END_POINT);
+			p.sendMessage("you left edit mode");
+		}
+	}
+	
+	public void toggle(Player p, Parkour parkour) {
+		if (!isEditMode(p)) {
+			joinEditMode(p, parkour);
+		} else {
+			leaveEditMode(p);
+		}
+	}
+	
 	public Parkour getParkour(Player p) {
 		return players.get(p.getUniqueId());
+	}
+	
+	public void onParkourDelete(Parkour parkour) {
+		//TODO
 	}
 	
 	@EventHandler

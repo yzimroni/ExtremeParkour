@@ -1,7 +1,6 @@
 package net.yzimroni.extremeparkour.parkour.manager.player;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
