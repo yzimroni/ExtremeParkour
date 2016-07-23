@@ -11,11 +11,15 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 
+import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
+
 public class Events implements Listener {
 
+	private ExtremeParkourPlugin plugin;
 	private ParkourPlayerManager manager;
 
-	public Events(ParkourPlayerManager manager) {
+	public Events(ExtremeParkourPlugin plugin, ParkourPlayerManager manager) {
+		this.plugin = plugin;
 		this.manager = manager;
 	}
 	
@@ -32,6 +36,7 @@ public class Events implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		leaveParkour(e.getPlayer(), "");
+		plugin.getParkourManager().getEditMode().leaveEditMode(e.getPlayer());
 	}
 	
 	@EventHandler

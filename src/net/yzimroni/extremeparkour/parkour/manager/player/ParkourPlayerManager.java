@@ -42,7 +42,7 @@ public class ParkourPlayerManager implements Listener {
 	
 	public ParkourPlayerManager(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
-		events = new Events(this);
+		events = new Events(plugin, this);
 		Bukkit.getPluginManager().registerEvents(events, plugin);
 		players = new HashMap<UUID, ParkourPlayer>();
 		

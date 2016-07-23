@@ -3,6 +3,7 @@ package net.yzimroni.extremeparkour.parkour;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +24,7 @@ public class EditMode implements Listener {
 	private ExtremeParkourPlugin plugin;
 	
 	private HashMap<UUID, Parkour> players = new HashMap<UUID, Parkour>();
+	private boolean removePlayers = true;
 	
 	/* ITEMS */
 	private ItemStack START_POINT;
@@ -32,6 +34,15 @@ public class EditMode implements Listener {
 	public EditMode(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
 		initItems();
+	}
+	
+	public void disable() {
+		removePlayers = false;
+		for (UUID u : players.keySet()) {
+			Player p = Bukkit.getPlayer(u);
+			leaveEditMode(p);
+		}
+		removePlayers = true;
 	}
 	
 	private void initItems() {
@@ -52,7 +63,9 @@ public class EditMode implements Listener {
 	
 	public void leaveEditMode(Player p) {
 		if (isEditMode(p)) {
-			players.remove(p.getUniqueId());
+			if (removePlayers) {
+				players.remove(p.getUniqueId());
+			}
 			p.getInventory().removeItem(START_POINT, CHECK_POINT, END_POINT);
 			p.sendMessage("you left edit mode");
 		}
@@ -104,6 +117,11 @@ public class EditMode implements Listener {
 				p = plugin.getParkourManager().getPoint(e.getBlock().getLocation().add(0, 1, 0).getBlock());
 			}
 			if (p != null) {
+				if (!p.getParkour().equals(getParkour(e.getPlayer()))) {
+					//The player try to remove a point from another parkour - cancel it
+					e.setCancelled(true);
+					return;
+				}
 				if (p instanceof Checkpoint) {
 					p.getParkour().removeCheckpoint((Checkpoint) p);
 				} else if (p instanceof Startpoint) {

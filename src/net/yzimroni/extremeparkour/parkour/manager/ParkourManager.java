@@ -74,6 +74,7 @@ public class ParkourManager {
 	}
 	
 	public void disable() {
+		editMode.disable();
 		events.disable();
 		playerManager.disable();
 		for (Parkour parkour : parkours) {
