@@ -158,6 +158,11 @@ public class EditMode implements Listener {
 			if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				if (plugin.getParkourManager().isParkourBlock(e.getClickedBlock())) {
 					Point point = plugin.getParkourManager().getPoint(e.getClickedBlock());
+					if (!point.getParkour().equals(getParkour(e.getPlayer()))) {
+						//The player try to edit a point from another parkour - cancel it
+						e.setCancelled(true);
+						return;
+					}
 					getData(e.getPlayer()).setPoint(point);
 					openPointGUI(e.getPlayer());
 					e.setCancelled(true); //Prevent interaction with the points (light detector for example)
