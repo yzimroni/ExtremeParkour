@@ -438,13 +438,27 @@ public class SQLData {
 	
 	public int getPlayerRank(Parkour parkour, Player p) {
 		try {
-			ResultSet rs = sql.get(
-					"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
-					+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.UUID = '" + p.getUniqueId().toString() + "' ORDER BY b.rank LIMIT 1");
-			if (rs.next()) {
-				return rs.getInt("rank");
+			if (type == SQLType.MySQL) {
+				ResultSet rs = sql.get(
+						"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
+						+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.UUID = '" + p.getUniqueId().toString() + "' ORDER BY b.rank LIMIT 1");
+				if (rs.next()) {
+					return rs.getInt("rank");
+				}
+				return -1;
+			} else {
+				//SQLite doesn't support that complicated queries :\
+				ResultSet rs = sql.get("SELECT * FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC LIMIT 1000" /* TODO configurable limit */);
+				int rank = 0;
+				String uuid = p.getUniqueId().toString();
+				while (rs.next()) {
+					rank++;
+					if (rs.getString("UUID").equals(uuid)) {
+						return rank;
+					}
+				}
+				return -1;
 			}
-			return -1;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -453,13 +467,26 @@ public class SQLData {
 	
 	public int getScoreRank(Parkour parkour, int scoreId) {
 		try {
-			ResultSet rs = sql.get(
-					"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
-					+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.ID = " + scoreId + " ORDER BY b.rank LIMIT 1");
-			if (rs.next()) {
-				return rs.getInt("rank");
+			if (type == SQLType.MySQL) {
+				ResultSet rs = sql.get(
+						"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
+						+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.ID = " + scoreId + " ORDER BY b.rank LIMIT 1");
+				if (rs.next()) {
+					return rs.getInt("rank");
+				}
+				return -1;
+			} else {
+				//SQLite doesn't support that complicated queries :\
+				ResultSet rs = sql.get("SELECT * FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC LIMIT 1000" /* TODO configurable limit */);
+				int rank = 0;
+				while (rs.next()) {
+					rank++;
+					if (rs.getInt("ID") == scoreId) {
+						return rank;
+					}
+				}
+				return -1;
 			}
-			return -1;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
