@@ -84,4 +84,13 @@ public class Utils {
 		return i;
 	}
 	
+	public static ItemStack item(MaterialData type, String name, String... lore) {
+		ItemStack i = new ItemStack(type.getMaterial(), 1, type.getData());
+		ItemMeta im = i.getItemMeta();
+		im.setDisplayName(name);
+		im.setLore(Arrays.asList(lore));
+		i.setItemMeta(im);
+		return i;
+	}
+	
 }
