@@ -5,11 +5,16 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
@@ -31,6 +36,10 @@ public class EditMode implements Listener {
 	private ItemStack START_POINT;
 	private ItemStack END_POINT;
 	private ItemStack CHECK_POINT;
+	
+	private ItemStack SHOW_EFFECTS;
+	private ItemStack ADD_EFFECT;
+	private ItemStack REMOVE_EFFECT;
 
 	public EditMode(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
@@ -50,10 +59,22 @@ public class EditMode implements Listener {
 		START_POINT = Utils.item(Startpoint.MATERIAL, ChatColor.AQUA + "Start point", "Place this item to set", "the parkour start point");
 		END_POINT = Utils.item(Endpoint.MATERIAL, ChatColor.AQUA + "End point", "Place this item to set", "the parkour end point");
 		CHECK_POINT = Utils.item(Checkpoint.MATERIAL, ChatColor.AQUA + "Check point", "Place this item to add", "a checkpoint to the parkour");
+		
+		SHOW_EFFECTS = Utils.item(Material.GLASS, ChatColor.GREEN + "Effects list");
+		ADD_EFFECT = Utils.item(Material.BEACON, ChatColor.GREEN + "Add an effect");
+		REMOVE_EFFECT = Utils.item(Material.BARRIER, ChatColor.GREEN + "Remove an effect");
 	}
 	
 	public boolean isEditMode(Player p) {
 		return players.containsKey(p.getUniqueId());
+	}
+	
+	public EditData getData(Player p) {
+		return players.get(p.getUniqueId());
+	}
+	
+	public Parkour getParkour(Player p) {
+		return getData(p).getParkour();
 	}
 	
 	public void joinEditMode(Player p, Parkour parkour) {
@@ -79,11 +100,7 @@ public class EditMode implements Listener {
 			leaveEditMode(p);
 		}
 	}
-	
-	public Parkour getParkour(Player p) {
-		return players.get(p.getUniqueId()).getParkour();
-	}
-	
+		
 	public void onParkourDelete(Parkour parkour) {
 		//TODO
 	}
@@ -134,5 +151,29 @@ public class EditMode implements Listener {
 			}
 		}
 	}
+	
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (isEditMode(e.getPlayer())) {
+			if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				if (plugin.getParkourManager().isParkourBlock(e.getClickedBlock())) {
+					Point point = plugin.getParkourManager().getPoint(e.getClickedBlock());
+					getData(e.getPlayer()).setPoint(point);
+					openPointGUI(e.getPlayer());
+					e.setCancelled(true); //Prevent interaction with the points (light detector for example)
+				}
+			}
+		}
+	}
+	
+	private void openPointGUI(Player p) {
+		EditData data = getData(p);
+		//TODO reset here what need to be reseted in data
+		Inventory inv = Bukkit.createInventory(p, 9, "Point menu - " + data.getPoint().getName());
+		inv.addItem(SHOW_EFFECTS, ADD_EFFECT, REMOVE_EFFECT);
+		p.openInventory(inv);
+	}
+	
+	
 
 }
