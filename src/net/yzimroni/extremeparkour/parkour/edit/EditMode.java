@@ -1,4 +1,4 @@
-package net.yzimroni.extremeparkour.parkour;
+package net.yzimroni.extremeparkour.parkour.edit;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
+import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
