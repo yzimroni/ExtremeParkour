@@ -24,7 +24,7 @@ public class EditMode implements Listener {
 	
 	private ExtremeParkourPlugin plugin;
 	
-	private HashMap<UUID, Parkour> players = new HashMap<UUID, Parkour>();
+	private HashMap<UUID, EditData> players = new HashMap<UUID, EditData>();
 	private boolean removePlayers = true;
 	
 	/* ITEMS */
@@ -59,7 +59,7 @@ public class EditMode implements Listener {
 	public void joinEditMode(Player p, Parkour parkour) {
 		p.sendMessage("you joined edit mode");
 		p.getInventory().addItem(START_POINT, CHECK_POINT, END_POINT);
-		players.put(p.getUniqueId(), parkour);
+		players.put(p.getUniqueId(), new EditData(p.getUniqueId(), parkour));
 	}
 	
 	public void leaveEditMode(Player p) {
@@ -81,7 +81,7 @@ public class EditMode implements Listener {
 	}
 	
 	public Parkour getParkour(Player p) {
-		return players.get(p.getUniqueId());
+		return players.get(p.getUniqueId()).getParkour();
 	}
 	
 	public void onParkourDelete(Parkour parkour) {
