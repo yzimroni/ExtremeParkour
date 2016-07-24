@@ -29,6 +29,8 @@ import net.yzimroni.extremeparkour.utils.Utils;
 
 public class SQLData {
 	
+	public static final int DATABASE_VERSION = 1;
+	
 	MCSQL sql = null;
 	private String prefix = null;
 	private SQLType type = null;
@@ -83,6 +85,17 @@ public class SQLData {
 			}
 		}
 		reader.close();
+		
+		//Database version checking
+		ResultSet rs = sql.get("SELECT * FROM " + prefix + "settings WHERE setting_key='database_version'");
+		if (rs.next()) {
+			int version = Integer.valueOf(rs.getString("setting_key"));
+			if (version < DATABASE_VERSION) {
+				//TODO upgrade the database
+			}
+		} else {
+			sql.set("INSERT INTO " + prefix + "settings (setting_key,value) VALUES('database_version'," + DATABASE_VERSION + ")");
+		}
 
 	}
 	

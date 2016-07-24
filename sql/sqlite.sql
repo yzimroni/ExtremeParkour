@@ -1,6 +1,18 @@
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `settings`
+--
+
+CREATE TABLE IF NOT EXISTS `%prefix%settings` (
+  `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `setting_key` varchar(26) NOT NULL UNIQUE,
+  `value` varchar(300) NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `parkours`
 --
 

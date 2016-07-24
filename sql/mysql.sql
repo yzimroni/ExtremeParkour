@@ -1,6 +1,20 @@
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `settings`
+--
+
+CREATE TABLE IF NOT EXISTS `%prefix%settings` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `setting_key` varchar(26) NOT NULL,
+  `value` varchar(300) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `setting_key` (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `parkours`
 --
 
