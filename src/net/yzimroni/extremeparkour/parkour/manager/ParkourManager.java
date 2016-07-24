@@ -79,6 +79,11 @@ public class ParkourManager {
 		playerManager.disable();
 		for (Parkour parkour : parkours) {
 			plugin.getData().saveParkour(parkour);
+			removePointMetadata(parkour.getStartPoint());
+			removePointMetadata(parkour.getEndPoint());
+			for (Checkpoint checkpoint : parkour.getCheckpoints()) {
+				removePointMetadata(checkpoint);
+			}
 		}
 		parkours.clear();
 	}
@@ -183,6 +188,12 @@ public class ParkourManager {
 		if (p.getHologram() != null) {
 			p.getHologram().delete();
 			p.setHologram(null);
+		}
+	}
+	
+	private void removePointMetadata(Point p) {
+		if (p != null && p.getLocation() != null) {
+			removePointMetadata(p.getLocation().getBlock());
 		}
 	}
 	
