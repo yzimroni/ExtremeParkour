@@ -53,6 +53,14 @@ public class Utils {
 		return formatLong(minutes) + ":" + formatLong(seconds) + "." + time_s;
 	}
 	
+	public static String formatScore(long time, int place) {
+		String result = formatTime(time);
+		if (place > 0) {
+			result += " (Place #" + place + ")";
+		}
+		return result;
+	}
+	
 	private static DecimalFormat format = new DecimalFormat("#00"); 
 	
 	private static String formatLong(long d) {

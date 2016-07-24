@@ -304,21 +304,22 @@ public class ParkourPlayerManager implements Listener {
 		players.remove(p.getUniqueId());
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
-		p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You completed the parkour in " + ChatColor.GREEN + Utils.formatTime(time));
+		
+		int bestrank = plugin.getData().getPlayerRank(parkour, p);
+		int scoreId = plugin.getData().insertPlayerScore(now);
+		int scorerank = plugin.getData().getScoreRank(parkour, scoreId);
+		
+		p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You completed the parkour in " + ChatColor.GREEN + Utils.formatScore(time, scorerank));
 		if (old != null) {
 			if (now.getTimeTook() < old.getTimeTook()) {
-				p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You break your previous record of " + ChatColor.RESET + "" + ChatColor.AQUA + Utils.formatTime(old.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + " (Improvement of " + ChatColor.GREEN + Utils.formatTime(old.getTimeTook() - now.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + ")!");
+				p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You break your previous record of " + ChatColor.RESET + "" + ChatColor.AQUA + Utils.formatScore(old.getTimeTook(), bestrank) + ChatColor.GOLD + "" + ChatColor.BOLD + " (Improvement of " + ChatColor.GREEN + Utils.formatTime(old.getTimeTook() - now.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD + ")!");
 			} else {
-				p.sendMessage(ChatColor.YELLOW + "Try again to beat you previous record of " + ChatColor.AQUA + Utils.formatTime(old.getTimeTook()) + "");
+				p.sendMessage(ChatColor.YELLOW + "Try again to beat you previous record of " + ChatColor.AQUA + Utils.formatScore(old.getTimeTook(), bestrank) + "");
 			}
 		}
-		int oldrank = plugin.getData().getPlayerRank(parkour, p);
-		int scoreId = plugin.getData().insertPlayerScore(now);
-		int rank = plugin.getData().getPlayerRank(parkour, p);
-		int scorerank = plugin.getData().getScoreRank(parkour, scoreId);
-		p.sendMessage("old best rank: " + oldrank);
-		p.sendMessage("new best rank: " + rank);
-		p.sendMessage("score rank: " + scorerank);
+		//p.sendMessage("old best rank: " + oldrank);
+		//p.sendMessage("new best rank: " + rank);
+		//p.sendMessage("score rank: " + scorerank);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			
 			@Override
