@@ -33,7 +33,7 @@ public class MCSQL {
 		return !hasConnecting();
 	}
 
-	public boolean openMySQLConnection(String hostname, String port, String database, String username, String password) throws Exception {
+	public boolean openMySQLConnection(String hostname, int port, String database, String username, String password) throws Exception {
 		ms.openMySQL(hostname, port, database, username, password);
 		return ms.checkConnection();
 	}
@@ -117,7 +117,7 @@ class MySQL extends Database {
 	public MySQL() {
 	}
 
-	public Connection openMySQL(String hostname, String port, String database, String username, String password) throws Exception {
+	public Connection openMySQL(String hostname, int port, String database, String username, String password) throws Exception {
 		Class.forName("com.mysql.jdbc.Driver");
 		this.c = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, username, password);
 		return c;

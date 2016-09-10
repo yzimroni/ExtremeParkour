@@ -47,11 +47,11 @@ public class SQLData {
 	}
 	
 	public void openMySQL(ConfigurationSection config) throws Exception {
-		openMySQL(config.getString("host"), config.getString("port"), config.getString("database"),
+		openMySQL(config.getString("host"), config.getInt("port"), config.getString("database"),
 				config.getString("username"), config.getString("password"));
 	}
 	
-	public void openMySQL(String host, String port, String database, String username, String password) throws Exception {
+	public void openMySQL(String host, int port, String database, String username, String password) throws Exception {
 		sql.openMySQLConnection(host, port, database, username, password);
 		type = SQLType.MySQL;
 		createTables();
