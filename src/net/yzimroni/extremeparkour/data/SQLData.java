@@ -89,7 +89,7 @@ public class SQLData {
 		//Database version checking
 		ResultSet rs = sql.get("SELECT * FROM " + prefix + "settings WHERE setting_key='database_version'");
 		if (rs.next()) {
-			int version = Integer.valueOf(rs.getString("setting_key"));
+			int version = Integer.valueOf(rs.getString("value"));
 			if (version < DATABASE_VERSION) {
 				//TODO upgrade the database
 			}
