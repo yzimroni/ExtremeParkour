@@ -1,7 +1,5 @@
 package net.yzimroni.extremeparkour.parkour.manager;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +39,6 @@ public class ParkourManager {
 	private ParkourPlayerManager playerManager;
 	private EditMode editMode;
 	private List<Parkour> parkours = null;
-	private Comparator<Checkpoint> checkpointComparator;
 
 	public ParkourManager(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
@@ -50,17 +47,8 @@ public class ParkourManager {
 		playerManager = new ParkourPlayerManager(plugin);
 		Bukkit.getPluginManager().registerEvents(playerManager, plugin);
 
-		checkpointComparator = new Comparator<Checkpoint>() {
-			
-			@Override
-			public int compare(Checkpoint o1, Checkpoint o2) {
-				return Integer.compare(o1.getIndex(), o2.getIndex());
-			}
-		};
-		
 		parkours = plugin.getData().getAllParkours();
 		for (Parkour p : parkours) {
-			Collections.sort(p.getCheckpoints(), checkpointComparator);
 			//TODO
 			initPoint(p.getStartPoint());
 			initPoint(p.getEndPoint());
