@@ -61,9 +61,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 		try {
 			String type = getConfig().getString("storage.type").toLowerCase();
 			if (type.equals("mysql")) {
-				data.openMySQL(getConfig().getString("storage.mysql.host"), getConfig().getString("storage.mysql.port"),
-						getConfig().getString("storage.mysql.database"), getConfig().getString("storage.mysql.username"),
-						getConfig().getString("storage.mysql.password"));
+				data.openMySQL(getConfig().getConfigurationSection("storage.mysql"));
 			} else if (type.equals("sqlite")) {
 				data.openSQLite("plugins/" + getDataFolder().getName() + "/extremeparkour.db");
 			} else {

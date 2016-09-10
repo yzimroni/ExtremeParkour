@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -43,6 +44,11 @@ public class SQLData {
 		}
 		this.prefix = prefix;
 		this.sql = new MCSQL();
+	}
+	
+	public void openMySQL(ConfigurationSection config) throws Exception {
+		openMySQL(config.getString("host"), config.getString("port"), config.getString("database"),
+				config.getString("username"), config.getString("password"));
 	}
 	
 	public void openMySQL(String host, String port, String database, String username, String password) throws Exception {
