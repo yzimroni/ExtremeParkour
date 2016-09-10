@@ -38,6 +38,7 @@ public class ParkourPlayerManager implements Listener {
 	private Events events;
 	private HashMap<UUID, ParkourPlayer> players;
 	
+	private boolean protocolLib = false;
 	private boolean remove = true;
 	
 	public ParkourPlayerManager(ExtremeParkourPlugin plugin) {
@@ -60,23 +61,29 @@ public class ParkourPlayerManager implements Listener {
 	}
 	
 	private void initProtocolLib() {
-		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGH, PacketType.Play.Client.POSITION) {
-			
-			@Override
-			public void onPacketReceiving(PacketEvent e) {
-				if (isPakouring(e.getPlayer())) {
-					sendBar(e.getPlayer());
-					//Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(e.getPlayer().getLocation().getBlock());
-					PacketContainer p = e.getPacket();
-					Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(
-							new Location(e.getPlayer().getWorld(), p.getDoubles().read(0), p.getDoubles().read(1), p.getDoubles().read(2)).getBlock());
-					if (point != null && point instanceof Endpoint) {
-						prossesPoint(e.getPlayer(), point);
+		if (Utils.checkPlugin("ProtocolLib")) {
+			System.out.println("ProtcolLib found, using it");
+			ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGH, PacketType.Play.Client.POSITION) {
+				
+				@Override
+				public void onPacketReceiving(PacketEvent e) {
+					if (isPakouring(e.getPlayer())) {
+						sendBar(e.getPlayer());
+						//Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(e.getPlayer().getLocation().getBlock());
+						PacketContainer p = e.getPacket();
+						Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(
+								new Location(e.getPlayer().getWorld(), p.getDoubles().read(0), p.getDoubles().read(1), p.getDoubles().read(2)).getBlock());
+						if (point != null && point instanceof Endpoint) {
+							processPoint(e.getPlayer(), point);
+						}
+							
 					}
-						
 				}
-			}
-		});
+			});
+			protocolLib = true;
+		} else {
+			System.out.println("ProtocolLib doesn't found");
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -115,14 +122,14 @@ public class ParkourPlayerManager implements Listener {
 		if (b.getType() == Startpoint.MATERIAL.getMaterial() || b.getType() == Checkpoint.MATERIAL.getMaterial() || b.getType() == Endpoint.MATERIAL.getMaterial()) {
 			Point p = plugin.getParkourManager().getPoint(b);
 			if (p != null) {
-				if (!(p instanceof Endpoint)) {
-					prossesPoint(e.getPlayer(), p);
+				if (!(p instanceof Endpoint) || !protocolLib) {
+					processPoint(e.getPlayer(), p);
 				}
 			}
 		}
 	}
 	
-	private void prossesPoint(Player p, Point point) {
+	private void processPoint(Player p, Point point) {
 		if (point instanceof Startpoint) {
 			startParkour(p, point.getParkour());
 		} else if (point instanceof Endpoint) {
@@ -273,34 +280,50 @@ public class ParkourPlayerManager implements Listener {
 		}
 	}
 	
-	public boolean checkComplete(Player p, Parkour parkour) {
+	public void checkComplete(Player p, Parkour parkour) {
 		if (players.containsKey(p.getUniqueId())) {
 			ParkourPlayer playerp = players.get(p.getUniqueId());
 			if (!parkour.equals(playerp.getParkour())) {
-				return false;
+				return;
 			}
 			if (parkour.hasCheckpoints()) {
 				if (playerp.getLastCheckpoint() == (parkour.getChestpointsCount() - 1)) {
 					// The player was in all the checkpoint and the latest one
 					// is the last one
-					return completeParkour(p, parkour, playerp);
+					callComplete(p, parkour, playerp);
 				} else {
 					if (!playerp.checkAndSetLastMessage()) {
-						return false;
+						return;
 					}
 					p.sendMessage(ChatColor.RED + "You missed a checkpoint");
 				}
 			} else {
-				return completeParkour(p, parkour, playerp);
+				callComplete(p, parkour, playerp);
 			}
 
 		}
-		return false;
 	}
 	
-	private boolean completeParkour(final Player p, final Parkour parkour, final ParkourPlayer playerp) {
-		//System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
-		long time = System.currentTimeMillis() - playerp.getStartTime();
+	@SuppressWarnings("deprecation")
+	private void callComplete(final Player p, final Parkour parkour, final ParkourPlayer playerp) {
+		final long time = System.currentTimeMillis() - playerp.getStartTime();
+		if (Bukkit.isPrimaryThread()) {
+			//We perform few sql queries on the completeParkour method, so better to call it async
+			//The time of the player will still be correct, we calculate it before
+			Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
+				
+				@Override
+				public void run() {
+					completeParkour(p, parkour, playerp, time);
+				}
+			});
+		} else {
+			completeParkour(p, parkour, playerp, time);
+		}
+	}
+	
+	private boolean completeParkour(final Player p, final Parkour parkour, final ParkourPlayer playerp, final long time) {
+		System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
 		players.remove(p.getUniqueId());
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);

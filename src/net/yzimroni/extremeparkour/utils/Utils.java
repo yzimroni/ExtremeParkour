@@ -101,4 +101,8 @@ public class Utils {
 		return i;
 	}
 	
+	public static boolean checkPlugin(String name) {
+		return Bukkit.getPluginManager().getPlugin(name) != null && Bukkit.getPluginManager().getPlugin(name).isEnabled();
+	}
+	
 }
