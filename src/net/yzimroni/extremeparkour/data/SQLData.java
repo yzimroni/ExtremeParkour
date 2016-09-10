@@ -418,15 +418,18 @@ public class SQLData {
 		return -1;
 	}
 	
-	public List<ParkourPlayerScore> getTopPlayerScore(Parkour parkour, int playercount, int page) {
-		/*
-		 * TODO take page into account
-		 */
+	public List<ParkourPlayerScore> getTopPlayerScore(Parkour parkour, int playercount) {
 		try {
-			ResultSet rs = sql.get("SELECT * FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC LIMIT " + playercount);
+			boolean oneBestPerPlayer = true;
+			ResultSet rs = null;
+			if (oneBestPerPlayer) {
+				rs = sql.get("SELECT UUID,MIN(timeTook) AS timeTook FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId() + " GROUP BY UUID ORDER BY timeTook ASC LIMIT " + playercount);
+			} else {
+				rs = sql.get("SELECT * FROM " + prefix + "playerscore WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC LIMIT " + playercount);
+			}
 			List<ParkourPlayerScore> players = new ArrayList<ParkourPlayerScore>();
 			while (rs.next()) {
-				ParkourPlayerScore player = new ParkourPlayerScore(UUID.fromString(rs.getString("UUID")), parkour.getId(), rs.getLong("date"), rs.getLong("timeTook"));
+				ParkourPlayerScore player = new ParkourPlayerScore(UUID.fromString(rs.getString("UUID")), parkour.getId(), 0/*rs.getLong("date")*/, rs.getLong("timeTook"));
 				players.add(player);
 			}
 			return players;

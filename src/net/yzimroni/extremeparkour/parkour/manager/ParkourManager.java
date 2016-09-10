@@ -141,7 +141,7 @@ public class ParkourManager {
 				max = 150;
 			}
 
-			List<ParkourPlayerScore> top = plugin.getData().getTopPlayerScore(parkour, max, 0 /* TODO */);
+			List<ParkourPlayerScore> top = plugin.getData().getTopPlayerScore(parkour, max);
 			HashMap<UUID, String> nameCache = new HashMap<UUID, String>();
 			for (ParkourLeaderboard leaderboard : parkour.getLeaderboards()) {
 				removeLeaderboard(leaderboard);
