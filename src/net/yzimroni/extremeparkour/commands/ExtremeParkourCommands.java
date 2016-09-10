@@ -166,28 +166,25 @@ public class ExtremeParkourCommands {
 	}
 	
 	@MethodId("parkourMain")
-	public boolean parkourMain(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourMain(CommandSender sender, Command command, ArgumentData args) {
 		command.printHelp(sender, 2);
-		return true;
 	}
 	
 	
 	
 	@MethodId("parkourCheckpoint")
-	public boolean parkourCheckpoint(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourCheckpoint(CommandSender sender, Command command, ArgumentData args) {
 		plugin.getParkourManager().getPlayerManager().teleportLatestCheckpoint((Player) sender);
-		return true;
 	}
 	
 	
 	@MethodId("parkourReset")
-	public boolean parkourReset(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourReset(CommandSender sender, Command command, ArgumentData args) {
 		plugin.getParkourManager().getPlayerManager().teleportStart((Player) sender);
-		return true;
 	}
 	
 	@MethodId("parkourSelect")
-	public boolean parkourSelect(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourSelect(CommandSender sender, Command command, ArgumentData args) {
 		/*
 		 * TODO THIS IS TEMP
 		 */
@@ -199,77 +196,72 @@ public class ExtremeParkourCommands {
 		} else {
 			sender.sendMessage("Parkour not found");
 		}
-		return true;
 	}
 	
 	
 	@MethodId("parkourCreate")
-	public boolean parkourCreate(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourCreate(CommandSender sender, Command command, ArgumentData args) {
 		Parkour parkour = plugin.getParkourManager().createParkour((Player) sender, args.get("name", String.class));
 		sender.sendMessage("Secsessfully created parkour id " + parkour.getId() + " '" + parkour.getName() + "'");
-		return true;
 	}
 	
 	@MethodId("parkourList")
-	public boolean parkourList(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourList(CommandSender sender, Command command, ArgumentData args) {
 		List<Parkour> parkours = plugin.getParkourManager().getParkours();
 		sender.sendMessage("Parkours (" + parkours.size() + "):");
 		for (Parkour parkour : parkours) {
 			sender.sendMessage(String.format("%s | %s | %s", parkour.getId(), parkour.getName(), parkour.getOwner().toString()));
 		}
-		return true;
 	}
 	
 	@MethodId("parkourPointSetStart")
-	public boolean parkourPointSetStart(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourPointSetStart(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
 		Parkour parkour = getSelection(p);
 		if (parkour == null) {
 			p.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		if (isParkourBlock(p.getLocation())) {
 			p.sendMessage("This block is already a parkour point");
-			return false;
+			return;
 		}
 		Startpoint start = new Startpoint(-1, parkour, p.getLocation());
 		parkour.setStartPoint(start);
 		parkour.initPoint(start);
 		p.sendMessage("Start point set!");
-		return true;
 	}
 	
 	@MethodId("parkourPointSetEnd")
-	public boolean parkourPointSetEnd(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourPointSetEnd(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
 		Parkour parkour = getSelection(p);
 		if (parkour == null) {
 			p.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		if (isParkourBlock(p.getLocation())) {
 			p.sendMessage("This block is already a parkour point");
-			return false;
+			return;
 		}
 		Endpoint end = new Endpoint(-1, parkour, p.getLocation());
 		parkour.setEndPoint(end);
 		parkour.initPoint(end);
 		p.sendMessage("End point set!");
-		return true;
 	}
 	
 	
 	@MethodId("parkourPointSetCheck")
-	public boolean parkourPointSetCheck(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourPointSetCheck(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
 		Parkour parkour = getSelection(p);
 		if (parkour == null) {
 			p.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		if (isParkourBlock(p.getLocation())) {
 			p.sendMessage("This block is already a parkour point");
-			return false;
+			return;
 		}
 		int index = parkour.getChestpointsCount();
 		boolean hasIndex = false;
@@ -283,35 +275,33 @@ public class ExtremeParkourCommands {
 		} else {
 			parkour.addCheckpoint(check);
 		}
-		return true;
 	}
 	
 	
 	@MethodId("parkourPointRemoveCheck")
-	public boolean parkourPointRemoveCheck(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourPointRemoveCheck(CommandSender sender, Command command, ArgumentData args) {
 		Parkour parkour = getSelection(sender);
 		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		int index = args.get("index", Integer.class) - 1;
 		if (parkour.getChestpointsCount() >= index) {
 			sender.sendMessage("Checkpoint not found");
-			return false;
+			return;
 		}
 		parkour.removeCheckpoint(index);
 		sender.sendMessage("Removed checkpoint #" + (index + 1));
-		return true;
 	}
 	
 	
 	@MethodId("parkourPointEffectAdd")
-	public boolean parkourPointEffectAdd(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourPointEffectAdd(CommandSender sender, Command command, ArgumentData args) {
 		Point point = args.get("point", Point.class);
 		PotionEffectType type = args.get("effect", PotionEffectType.class);
 		if (point.hasEffect(type)) {
 			sender.sendMessage("This point already has effect " + type.getName());
-			return false;
+			return;
 		}
 		int duration = args.get("duration", Integer.class);
 		int amplifier = args.has("amplifier") ? args.get("amplifier", Integer.class) - 1 : 0;
@@ -320,32 +310,30 @@ public class ExtremeParkourCommands {
 		effect.setStatus(DataStatus.CREATED);
 		point.getEffects().add(effect);
 		sender.sendMessage("Effect " + type.getName() + " added to point " + point.getName());
-		return true;
 	}
 	
 	
 	@MethodId("parkourPointEffectList")
-	public boolean parkourPointEffectList(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourPointEffectList(CommandSender sender, Command command, ArgumentData args) {
 		Point point = args.get("point", Point.class);
 		if (point.getEffects().isEmpty()) {
 			sender.sendMessage("There is no effects on this point");
-			return false;
+			return;
 		}
 		sender.sendMessage("" + point.getEffects().size() + " effects on point " + point.getName() + ":");
 		for (PointEffect effect : point.getEffects()) {
 			sender.sendMessage(effect.getType().getName() + "x" + (effect.getAmplifier() + 1) + " for " + effect.getDuration() + " ticks (with" + (effect.isShowParticles() ? "" : "out") + " particles)");
 		}
-		return true;
 	}
 	
 	
 	@MethodId("parkourPointEffectRemove")
-	public boolean parkourPointEffectRemove(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourPointEffectRemove(CommandSender sender, Command command, ArgumentData args) {
 		Point point = args.get("point", Point.class);
 		PotionEffectType type = args.get("effect", PotionEffectType.class);
 		if (!point.hasEffect(type)) {
 			sender.sendMessage("This point doesn't contains the effect " + type.getName());
-			return false;
+			return;
 		}
 		PointEffect ep = null;
 		for (PointEffect temp : point.getEffects()) {
@@ -356,40 +344,38 @@ public class ExtremeParkourCommands {
 		}
 		if (ep == null) {
 			sender.sendMessage("Error: ep is null");
-			return false;
+			return;
 		}
 		point.removeEffect(ep);
 		sender.sendMessage("Effect " + type.getName() + " removed from point" + point.getName());
-		return true;
 	}
 	
 	@MethodId("parkourLeaderboardAdd")
-	public boolean parkourLeaderboardAdd(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourLeaderboardAdd(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
 		Parkour parkour = getSelection(p);
 		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		int count = args.has("players") ? args.get("players", Integer.class) : 10;
 		ParkourLeaderboard leaderboard = new ParkourLeaderboard(-1, parkour, p.getLocation(), count, 1);
 		leaderboard.setStatus(DataStatus.CREATED);
 		parkour.getLeaderboards().add(leaderboard);
 		plugin.getParkourManager().initLeaderboard(parkour);
-		return true;
 	}
 	
 	@MethodId("parkourLeaderboardRemove")
-	public boolean parkourLeaderboardRemove(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourLeaderboardRemove(CommandSender sender, Command command, ArgumentData args) {
 		Player p = (Player) sender;
 		Parkour parkour = getSelection(p);
 		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		if (parkour.getLeaderboards().isEmpty()) {
 			p.sendMessage("The parkour dont have leaderboards");
-			return false;
+			return;
 		}
 		ParkourLeaderboard lb = null;
 		double last_dis = -1;
@@ -404,53 +390,48 @@ public class ExtremeParkourCommands {
 		}
 		if (lb == null) {
 			p.sendMessage("Leaderboard not found, are you near the board?");
-			return false;
+			return;
 		}
 		
 		parkour.removeLeaderboard(lb);
 		p.sendMessage("Leaderboard removed!");
-		
-		return true;
 	}
 	
 	
 	@MethodId("parkourLeaderboardReset")
-	public boolean parkourLeaderboardReset(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourLeaderboardReset(CommandSender sender, Command command, ArgumentData args) {
 		Parkour parkour = getSelection(sender);
 		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		//TODO accept
 		plugin.getData().resetLeaderboard(parkour);
 		sender.sendMessage("Leaderboard stats has been reset for parkour " + parkour.getId());
-		return true;
 	}
 	
 	@MethodId("parkourRemove")
-	public boolean parkourRemove(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourRemove(CommandSender sender, Command command, ArgumentData args) {
 		//TODO require the sender to accept the deletion
 		Parkour parkour = getSelection(sender);
 		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		plugin.getParkourManager().removeParkour(parkour);
 		sender.sendMessage(ChatColor.DARK_RED + "Parkour deleted");
-		return true;
 	}
 	
 	
 	
 	@MethodId("parkourEditMode")
-	public boolean parkourEditMode(CommandSender sender, Command command, ArgumentData args) {
+	public void parkourEditMode(CommandSender sender, Command command, ArgumentData args) {
 		Parkour parkour = getSelection(sender);
 		if (parkour == null) {
 			sender.sendMessage("Parkour is null");
-			return true;
+			return;
 		}
 		plugin.getParkourManager().getEditMode().toggle((Player) sender, parkour);
-		return true;
 	}
 	
 }
