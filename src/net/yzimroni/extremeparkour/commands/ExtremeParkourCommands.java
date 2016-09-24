@@ -1,10 +1,15 @@
 package net.yzimroni.extremeparkour.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -33,7 +38,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 
 	private ExtremeParkourPlugin plugin;
 	
-	private Parkour parkourSel = null; /* TODO THIS IS TEMP */
+	private HashMap<UUID, Parkour> selections = new HashMap<UUID, Parkour>();
 
 	public ExtremeParkourCommands(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
@@ -44,9 +49,35 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		
 	}
 	
+	public void onPlayerQuit(UUID player) {
+		selections.remove(player);
+	}
+	
+	public void onPlayerDelete(Parkour p) {
+		if (selections.containsValue(p)) {
+			List<UUID> toRemove = new ArrayList<UUID>();
+			for (Entry<UUID, Parkour> e : selections.entrySet()) {
+				if (e.getValue().equals(p)) {
+					toRemove.add(e.getKey());
+				}
+			}
+			
+			if (!toRemove.isEmpty()) {
+				for (UUID key : toRemove) {
+					selections.remove(key);
+				}
+			}
+			toRemove.clear();
+		}
+	}
+	
 	protected Parkour getSelection(CommandSender sender) {
-		//TODO
-		return parkourSel;
+		if (sender instanceof Player) {
+			return selections.get(((Player) sender).getUniqueId());
+		} else if (sender instanceof ConsoleCommandSender) {
+			return selections.get(null);
+		}
+		return null;
 	}
 	
 	private boolean isParkourBlock(Location l) {
@@ -67,7 +98,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		parkour.addSubCommand(reset);
 		
 		SubCommand select = new SubCommand("select", "Select a parkour", MethodExecutor.createByMethodId(this, "parkourSelect"));
-		select.addArgument(new IntegerArgument("parkourId", true));
+		select.addArgument(new IntegerArgument("parkourId", false));
 		parkour.addSubCommand(select);
 		
 		SubCommand create = new SubCommand("create", "Create a new parkour", MethodExecutor.createByMethodId(this, "parkourCreate"));
@@ -186,16 +217,29 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 	
 	@MethodId("parkourSelect")
 	public void parkourSelect(CommandSender sender, Command command, ArgumentData args) {
-		/*
-		 * TODO THIS IS TEMP
-		 */
-		int id = args.get("parkourId", Integer.class);
-		Parkour p = plugin.getParkourManager().getParkourById(id);
-		if (p != null) {
-			parkourSel = p;
-			sender.sendMessage("Selected parkour: " + p.getId());
+		if (args.has("parkourId")) {
+			int id = args.get("parkourId", Integer.class);
+			Parkour p = plugin.getParkourManager().getParkourById(id);
+			if (p != null) {
+				if (sender instanceof Player) {
+					selections.put(((Player) sender).getUniqueId(), p);
+				} else if (sender instanceof ConsoleCommandSender) {
+					selections.put(null, p);
+				} else {
+					sender.sendMessage("Invalid sender");
+					return;
+				}
+				sender.sendMessage("Parkour selected: " + p.getName() + " (" + p.getId() + ")");
+			} else {
+				sender.sendMessage("Parkour not found");
+			}
 		} else {
-			sender.sendMessage("Parkour not found");
+			Parkour p = getSelection(sender);
+			if (p == null) {
+				sender.sendMessage("You didn't select a parkour");
+			} else {
+				sender.sendMessage("Parkour selected: " + p.getName() + " (" + p.getId() + ")");
+			}
 		}
 	}
 	

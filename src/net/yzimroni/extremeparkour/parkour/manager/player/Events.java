@@ -37,6 +37,7 @@ public class Events implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		leaveParkour(e.getPlayer(), "");
 		plugin.getParkourManager().getEditMode().leaveEditMode(e.getPlayer());
+		plugin.getCommands().onPlayerQuit(e.getPlayer().getUniqueId());
 	}
 	
 	@EventHandler
