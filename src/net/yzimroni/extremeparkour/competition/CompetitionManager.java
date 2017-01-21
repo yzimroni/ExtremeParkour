@@ -15,11 +15,13 @@ public class CompetitionManager {
 	private ExtremeParkourPlugin plugin;
 	private List<Competition> competitions = new ArrayList<Competition>();
 	private Events events;
+	private CompetitionCommands commands;
 	
 	public CompetitionManager(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
 		this.events = new Events(this);
 		Bukkit.getPluginManager().registerEvents(events, plugin);
+		commands = new CompetitionCommands(plugin, this);
 	}
 	
 	public Competition createCompetition(Player p) {
