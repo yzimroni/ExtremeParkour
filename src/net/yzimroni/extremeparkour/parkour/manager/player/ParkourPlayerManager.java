@@ -25,6 +25,9 @@ import com.comphenix.protocol.events.PacketEvent;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.manager.player.events.PlayerParkourComplete;
+import net.yzimroni.extremeparkour.parkour.manager.player.events.PlayerParkourFailed;
+import net.yzimroni.extremeparkour.parkour.manager.player.events.PlayerParkourStart;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
@@ -173,6 +176,7 @@ public class ParkourPlayerManager implements Listener {
 			playerp.setLastMessage();
 			playerp.setStartTime(System.currentTimeMillis());
 			handlePointEffect(p, parkour.getStartPoint());
+			Bukkit.getPluginManager().callEvent(new PlayerParkourStart(parkour, playerp, p));
 			return true;
 		} else {
 			ParkourPlayer playerp = players.get(p.getUniqueId());
@@ -210,6 +214,7 @@ public class ParkourPlayerManager implements Listener {
 				p.addPotionEffect(before);
 			}
 			playerp.getEffectsBefore().clear();
+			Bukkit.getPluginManager().callEvent(new PlayerParkourFailed(playerp.getParkour(), playerp, p, reason));
 			return true;
 		}
 		return false;
@@ -326,7 +331,7 @@ public class ParkourPlayerManager implements Listener {
 		System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
 		players.remove(p.getUniqueId());
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
-		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
+		final ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
 		
 		int bestrank = plugin.getData().getPlayerRank(parkour, p);
 		int scoreId = plugin.getData().insertPlayerScore(now);
@@ -347,6 +352,7 @@ public class ParkourPlayerManager implements Listener {
 			
 			@Override
 			public void run() {
+				Bukkit.getPluginManager().callEvent(new PlayerParkourComplete(parkour, playerp, p, now));
 			    for (PotionEffect effect : p.getActivePotionEffects()) {
 			    	p.removePotionEffect(effect.getType());
 			    }
