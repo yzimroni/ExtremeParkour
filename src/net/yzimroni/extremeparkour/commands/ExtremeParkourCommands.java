@@ -284,7 +284,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			return;
 		}
 		PointMode mode = getPointMode(args.get("pointMode", PointMode.class));
-		Startpoint start = new Startpoint(-1, parkour, p.getLocation(), mode, 5);
+		Startpoint start = new Startpoint(plugin, -1, parkour, p.getLocation(), mode, 5);
 		parkour.setStartPoint(start);
 		parkour.initPoint(start);
 		p.sendMessage("Start point set!");
@@ -303,7 +303,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			return;
 		}
 		PointMode mode = getPointMode(args.get("pointMode", PointMode.class));
-		Endpoint end = new Endpoint(-1, parkour, p.getLocation(), mode, 5);
+		Endpoint end = new Endpoint(plugin, -1, parkour, p.getLocation(), mode, 5);
 		parkour.setEndPoint(end);
 		parkour.initPoint(end);
 		p.sendMessage("End point set!");
@@ -329,7 +329,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			hasIndex = true;
 		}
 		PointMode mode = getPointMode(args.get("pointMode", PointMode.class));
-		Checkpoint check = new Checkpoint(-1, parkour, p.getLocation(), index, mode, 5);
+		Checkpoint check = new Checkpoint(plugin, -1, parkour, p.getLocation(), index, mode, 5);
 		if (hasIndex) {
 			parkour.insertCheckpoint(index, check);
 		} else {

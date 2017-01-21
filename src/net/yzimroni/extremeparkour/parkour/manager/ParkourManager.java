@@ -86,7 +86,7 @@ public class ParkourManager {
 
 	public void initPoint(Point p) {
 		if (p != null) {
-			p.init(plugin);
+			p.init();
 		}
 	}
 	
@@ -130,7 +130,7 @@ public class ParkourManager {
 	
 	public void removePoint(Point p) {
 		if (p != null) {
-			p.remove(plugin);
+			p.remove();
 		}
 	}
 	
@@ -177,7 +177,7 @@ public class ParkourManager {
 	public boolean isParkourBlock(Block b, boolean exact) {
 		if (b == null || !b.hasMetadata("extremeparkour_block")) return false;
 		if (b.hasMetadata("parkour_id") && !b.getMetadata("parkour_id").isEmpty()) {
-			if (b.hasMetadata("point_distance") && !b.getMetadata("point_distance").isEmpty()) {
+			if (b.hasMetadata("point_radius") && !b.getMetadata("point_radius").isEmpty()) {
 				//This is a distance parkour point
 				return true;
 			}
@@ -207,8 +207,8 @@ public class ParkourManager {
 			removePointMetadata(b);
 			return null;
 		}
-		if (!exact && b.hasMetadata("point_distance") && !b.getMetadata("point_distance").isEmpty()) {
-			int index = b.getMetadata("point_distance").get(0).asInt();
+		if (!exact && b.hasMetadata("point_radius") && !b.getMetadata("point_radius").isEmpty()) {
+			int index = b.getMetadata("point_radius").get(0).asInt();
 			Point p = parkour.getPointByIndex(index);
 			if (p != null) {
 				return p;

@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 
@@ -16,8 +17,8 @@ public class Checkpoint extends Point {
 
 	private int index;
 
-	public Checkpoint(int id, Parkour parkour, Location location, int index, PointMode mode, int radius) {
-		super(id, parkour, location, mode, radius);
+	public Checkpoint(ExtremeParkourPlugin plugin, int id, Parkour parkour, Location location, int index, PointMode mode, int radius) {
+		super(plugin, id, parkour, location, mode, radius);
 		this.index = index;
 	}
 

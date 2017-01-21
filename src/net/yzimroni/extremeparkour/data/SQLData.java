@@ -136,17 +136,17 @@ public class SQLData {
 					Point point = null;
 					if (index == -1) {
 						//Start
-						Startpoint start = new Startpoint(point_id, p, location, mode, radius);
+						Startpoint start = new Startpoint(plugin, point_id, p, location, mode, radius);
 						p.setStartPoint(start);
 						point = start;
 					} else if (index == -2) {
 						//End
-						Endpoint end = new Endpoint(point_id, p, location, mode, radius);
+						Endpoint end = new Endpoint(plugin, point_id, p, location, mode, radius);
 						p.setEndPoint(end);
 						point = end;
 					} else {
 						//Checkpoint
-						Checkpoint checkpoint = new Checkpoint(point_id, p, location, index, mode, radius);
+						Checkpoint checkpoint = new Checkpoint(plugin, point_id, p, location, index, mode, radius);
 						checkpoints.add(checkpoint);
 						point = checkpoint;
 					}

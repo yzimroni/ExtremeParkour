@@ -19,6 +19,8 @@ import net.yzimroni.extremeparkour.utils.MaterialData;
 import net.yzimroni.extremeparkour.utils.Utils;
 
 public abstract class Point {
+	
+	private ExtremeParkourPlugin plugin;
 
 	private int id;
 	private Parkour parkour;
@@ -33,8 +35,9 @@ public abstract class Point {
 	
 	private List<Integer> removedEffects;
 
-	public Point(int id, Parkour parkour, Location location, PointMode mode, int radius) {
+	public Point(ExtremeParkourPlugin plugin, int id, Parkour parkour, Location location, PointMode mode, int radius) {
 		super();
+		this.plugin = plugin;
 		this.id = id;
 		this.parkour = parkour;
 		this.location = location;
@@ -42,7 +45,7 @@ public abstract class Point {
 		this.radius = radius;
 	}
 	
-	public void init(ExtremeParkourPlugin plugin) {
+	public void init() {
 		if (getLocation() == null) {
 			return;
 		}
@@ -62,7 +65,7 @@ public abstract class Point {
 			block_below.setMetadata("extremeparkour_block", new FixedMetadataValue(plugin, true));
 		}
 		
-		removePointMetadata(block, plugin);
+		removePointMetadata(block);
 		
 		block.setMetadata("parkour_id", new FixedMetadataValue(plugin, getParkour().getId()));
 		block.setMetadata("point_type", new FixedMetadataValue(plugin, getClass().getName()));
@@ -77,17 +80,38 @@ public abstract class Point {
 		}
 		
 		setHologram(hologram);
+		
+		if (getMode().getRadius()) {
+			addRadiusBlocks();
+		}
 
 	}
 	
-	private void removePointMetadata(Block b, ExtremeParkourPlugin plugin) {
-		removeMetadata(b, "parkour_id", plugin);
-		removeMetadata(b, "point_type", plugin);
-		removeMetadata(b, "point_index", plugin);
-		removeMetadata(b, "extremeparkour_block", plugin);
+	private void addRadiusBlocks() {
+		for (Block b: getNearbyBlocks()) {
+			b.setMetadata("point_radius", new FixedMetadataValue(plugin, getIndex()));
+		}
 	}
 	
-	private void removeMetadata(Block b, String name, ExtremeParkourPlugin plugin) {
+	private void removeRadiusBlocks() {
+		for (Block b: getNearbyBlocks()) {
+			if (b.hasMetadata("point_radius")) {
+				for (MetadataValue v : b.getMetadata("point_radius")) {
+					v.invalidate();
+				}
+				b.removeMetadata("point_radius", plugin);
+			}
+		}
+	}
+	
+	private void removePointMetadata(Block b) {
+		removeMetadata(b, "parkour_id");
+		removeMetadata(b, "point_type");
+		removeMetadata(b, "point_index");
+		removeMetadata(b, "extremeparkour_block");
+	}
+	
+	private void removeMetadata(Block b, String name) {
 		if (b.hasMetadata(name)) {
 			for (MetadataValue m : b.getMetadata(name)) {
 				m.invalidate();
@@ -95,14 +119,18 @@ public abstract class Point {
 			b.removeMetadata(name, plugin);
 		}
 	}
-	
-	public void remove(ExtremeParkourPlugin plugin) {
+		
+	public void remove() {
 		if (getLocation() == null) {
 			return;
 		}
-		removePointMetadata(getLocation().getBlock(), plugin);
+		removePointMetadata(getLocation().getBlock());
 		if (getMode() == PointMode.BLOCK) {
 			getLocation().getBlock().setType(Material.AIR);
+		}
+		
+		if (getMode().getRadius()) {
+			removeRadiusBlocks();
 		}
 		
 		removeHologram();
@@ -240,6 +268,13 @@ public abstract class Point {
 
 	public void setMode(PointMode mode) {
 		changed = true;
+		if (mode.getRadius() != this.mode.getRadius()) {
+			if (mode.getRadius()) {
+				addRadiusBlocks();
+			} else {
+				removeRadiusBlocks();
+			}
+		}
 		this.mode = mode;
 	}
 
@@ -248,7 +283,13 @@ public abstract class Point {
 	}
 
 	public void setRadius(int radius) {
+		if (getMode().getRadius()) {
+			removeRadiusBlocks();
+		}
 		this.radius = radius;
+		if (getMode().getRadius()) {
+			addRadiusBlocks();
+		}
 	}
 
 	
