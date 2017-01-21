@@ -1,12 +1,15 @@
 package net.yzimroni.extremeparkour.utils;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -103,6 +106,20 @@ public class Utils {
 	
 	public static boolean checkPlugin(String name) {
 		return Bukkit.getPluginManager().getPlugin(name) != null && Bukkit.getPluginManager().getPlugin(name).isEnabled();
+	}
+	
+	public static List<Block> getNearbyBlocks(Location l, int radius) {
+		List<Block> blocks = new ArrayList<Block>();
+
+		for (int x = l.getBlockX() - radius; x <= l.getBlockX() + radius; x++) {
+			for (int y = l.getBlockY() - radius; y <= l.getBlockY() + radius; y++) {
+				for (int z = l.getBlockZ() - radius; z <= l.getBlockZ() + radius; z++) {
+					blocks.add(l.getWorld().getBlockAt(x, y, z));
+				}
+			}
+		}
+
+		return blocks;
 	}
 	
 }

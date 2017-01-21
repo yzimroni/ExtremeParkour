@@ -16,8 +16,8 @@ public class Checkpoint extends Point {
 
 	private int index;
 
-	public Checkpoint(int id, Parkour parkour, Location location, int index, PointMode mode, double distance) {
-		super(id, parkour, location, mode, distance);
+	public Checkpoint(int id, Parkour parkour, Location location, int index, PointMode mode, int radius) {
+		super(id, parkour, location, mode, radius);
 		this.index = index;
 	}
 

@@ -14,8 +14,8 @@ public class Startpoint extends Point {
 	
 	public static MaterialData MATERIAL = new MaterialData(Material.DAYLIGHT_DETECTOR);
 
-	public Startpoint(int id, Parkour parkour, Location location, PointMode mode, double distance) {
-		super(id, parkour, location, mode, distance);
+	public Startpoint(int id, Parkour parkour, Location location, PointMode mode, int radius) {
+		super(id, parkour, location, mode, radius);
 	}
 
 	@Override

@@ -131,22 +131,22 @@ public class SQLData {
 					Location location = Utils.deserializeLocation(points_rs.getString("location"));
 					int index = points_rs.getInt("point_index");
 					PointMode mode = PointMode.valueOf(points_rs.getString("pointMode"));
-					double distance = points_rs.getDouble("distance");
+					int radius = points_rs.getInt("radius");
 					
 					Point point = null;
 					if (index == -1) {
 						//Start
-						Startpoint start = new Startpoint(point_id, p, location, mode, distance);
+						Startpoint start = new Startpoint(point_id, p, location, mode, radius);
 						p.setStartPoint(start);
 						point = start;
 					} else if (index == -2) {
 						//End
-						Endpoint end = new Endpoint(point_id, p, location, mode, distance);
+						Endpoint end = new Endpoint(point_id, p, location, mode, radius);
 						p.setEndPoint(end);
 						point = end;
 					} else {
 						//Checkpoint
-						Checkpoint checkpoint = new Checkpoint(point_id, p, location, index, mode, distance);
+						Checkpoint checkpoint = new Checkpoint(point_id, p, location, index, mode, radius);
 						checkpoints.add(checkpoint);
 						point = checkpoint;
 					}
@@ -255,12 +255,12 @@ public class SQLData {
 		for (Point point : points) {
 			if (point.hasChanged()) {
 				try {
-					PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, point_index=?, pointMode=?, distance=? WHERE ID = " + point.getId());
+					PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, point_index=?, pointMode=?, radius=? WHERE ID = " + point.getId());
 					pre.setInt(1, point.getParkour().getId());
 					pre.setString(2, Utils.serializeLocation(point.getLocation()));
 					pre.setInt(3, point.getIndex());
 					pre.setString(4, point.getMode().name());
-					pre.setDouble(5, point.getDistance());
+					pre.setInt(5, point.getRadius());
 					
 					pre.executeUpdate();
 	

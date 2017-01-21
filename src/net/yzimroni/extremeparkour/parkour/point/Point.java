@@ -16,6 +16,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
+import net.yzimroni.extremeparkour.utils.Utils;
 
 public abstract class Point {
 
@@ -24,7 +25,7 @@ public abstract class Point {
 	private Location location;
 	private List<PointEffect> effects = new ArrayList<PointEffect>();
 	private PointMode mode;
-	private double distance;
+	private int radius;
 	
 	private Hologram hologram;
 	
@@ -32,13 +33,13 @@ public abstract class Point {
 	
 	private List<Integer> removedEffects;
 
-	public Point(int id, Parkour parkour, Location location, PointMode mode, double distance) {
+	public Point(int id, Parkour parkour, Location location, PointMode mode, int radius) {
 		super();
 		this.id = id;
 		this.parkour = parkour;
 		this.location = location;
 		this.mode = mode;
-		this.distance = distance;
+		this.radius = radius;
 	}
 	
 	public void init(ExtremeParkourPlugin plugin) {
@@ -242,13 +243,17 @@ public abstract class Point {
 		this.mode = mode;
 	}
 
-	public double getDistance() {
-		return distance;
+	public int getRadius() {
+		return radius;
 	}
 
-	public void setDistance(double distance) {
-		changed = true;
-		this.distance = distance;
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
+
+	
+	public List<Block> getNearbyBlocks() {
+		return Utils.getNearbyBlocks(location, radius);
 	}
 
 }

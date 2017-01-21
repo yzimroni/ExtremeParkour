@@ -14,8 +14,8 @@ public class Endpoint extends Point {
 	
 	public static MaterialData MATERIAL = new MaterialData(Material.GOLD_PLATE);
 
-	public Endpoint(int id, Parkour parkour, Location location, PointMode mode, double distance) {
-		super(id, parkour, location, mode, distance);
+	public Endpoint(int id, Parkour parkour, Location location, PointMode mode, int radius) {
+		super(id, parkour, location, mode, radius);
 	}
 
 	@Override
