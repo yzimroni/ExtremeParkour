@@ -12,6 +12,7 @@ import net.yzimroni.extremeparkour.commands.ExtremeParkourCommands;
 import net.yzimroni.extremeparkour.data.SQLData;
 import net.yzimroni.extremeparkour.parkour.manager.ParkourManager;
 import net.yzimroni.extremeparkour.utils.Actionbar;
+import net.yzimroni.extremeparkour.utils.ElytraUtils;
 import net.yzimroni.extremeparkour.utils.ExtremeParkourLogger;
 
 public class ExtremeParkourPlugin extends JavaPlugin {
@@ -47,6 +48,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 			return;
 		}
 		
+		ElytraUtils.init();
 		manager = new ParkourManager(this);
 		commands = new ExtremeParkourCommands(this);
 		actionbar = new Actionbar(this);
