@@ -63,7 +63,7 @@ public class ParkourPlayerManager implements Listener {
 	private void initProtocolLib() {
 		if (Utils.checkPlugin("ProtocolLib")) {
 			System.out.println("ProtcolLib found, using it");
-			ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGH, PacketType.Play.Client.POSITION) {
+			ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.LOWEST, PacketType.Play.Client.POSITION, PacketType.Play.Client.POSITION_LOOK) {
 				
 				@Override
 				public void onPacketReceiving(PacketEvent e) {
@@ -122,10 +122,9 @@ public class ParkourPlayerManager implements Listener {
 		if (plugin.getParkourManager().isGeneralParkourBlock(b)) {
 			Point p = plugin.getParkourManager().getPoint(b, false);
 			if (p != null) {
-				processPoint(e.getPlayer(), p);
-				/*if (!(p instanceof Endpoint) || !protocolLib) {
+				if (!(p instanceof Endpoint) || !protocolLib) {
 					processPoint(e.getPlayer(), p);
-				}*/
+				}
 			}
 		}
 	}
@@ -325,12 +324,7 @@ public class ParkourPlayerManager implements Listener {
 	
 	private boolean completeParkour(final Player p, final Parkour parkour, final ParkourPlayer playerp, final long time) {
 		System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
-		synchronized (playerp) {
-			if (!players.containsValue(playerp)) {
-				return false; //Got called from two diffrent threads, the first one already handled it
-			}
-			players.remove(p.getUniqueId());
-		}
+		players.remove(p.getUniqueId());
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
 		
