@@ -268,14 +268,13 @@ public abstract class Point {
 
 	public void setMode(PointMode mode) {
 		changed = true;
-		if (mode.getRadius() != this.mode.getRadius()) {
-			if (mode.getRadius()) {
-				addRadiusBlocks();
-			} else {
-				removeRadiusBlocks();
-			}
+		if (this.mode.getRadius()) {
+			removeRadiusBlocks();
 		}
 		this.mode = mode;
+		if (this.mode.getRadius()) {
+			addRadiusBlocks();
+		}
 	}
 
 	public int getRadius() {
@@ -294,7 +293,17 @@ public abstract class Point {
 
 	
 	public List<Block> getNearbyBlocks() {
-		return Utils.getNearbyBlocks(location, radius);
+		List<Block> blocks = Utils.getNearbyBlocks(location, radius);
+		if (mode == PointMode.TRIPWIRE) {
+			List<Block> onlyStrings = new ArrayList<Block>();
+			for (Block b : blocks) {
+				if (b.getType() == Material.TRIPWIRE || b.getType() == Material.TRIPWIRE_HOOK || b.getType() == Material.STRING) {
+					onlyStrings.add(b);
+				}
+			}
+			blocks = onlyStrings;
+		}
+		return blocks;
 	}
 
 }

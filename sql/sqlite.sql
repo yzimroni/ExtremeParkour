@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `%prefix%points` (
   `point_index` int(11) NOT NULL,
   `location` varchar(200) NOT NULL,
   `pointMode` varchar(15) NOT NULL,
-  `distance` double NOT NULL
+  `radius` int(11) NOT NULL
 );
 
 --
