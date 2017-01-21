@@ -108,18 +108,19 @@ public class EditMode implements Listener {
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent e) {
 		if (isEditMode(e.getPlayer())) {
+			EditData data = getData(e.getPlayer());
 			Parkour parkour = getParkour(e.getPlayer());
 			if (START_POINT.isSimilar(e.getItemInHand())) {
-				Startpoint start = new Startpoint(-1, parkour, e.getBlockPlaced().getLocation());
+				Startpoint start = new Startpoint(-1, parkour, e.getBlockPlaced().getLocation(), data.getSelectedMode(), 5);
 				parkour.setStartPoint(start);
 				parkour.initPoint(start);
 			} else if (END_POINT.isSimilar(e.getItemInHand())) {
-				Endpoint end = new Endpoint(-1, parkour, e.getBlockPlaced().getLocation());
+				Endpoint end = new Endpoint(-1, parkour, e.getBlockPlaced().getLocation(), data.getSelectedMode(), 5);
 				parkour.setEndPoint(end);
 				parkour.initPoint(end);
 			} else if (CHECK_POINT.isSimilar(e.getItemInHand())) {
 				//TODO add support for shift + place
-				Checkpoint check = new Checkpoint(-1, parkour, e.getBlockPlaced().getLocation(), parkour.getChestpointsCount());
+				Checkpoint check = new Checkpoint(-1, parkour, e.getBlockPlaced().getLocation(), parkour.getChestpointsCount(), data.getSelectedMode(), 5);
 				parkour.addCheckpoint(check);
 			}
 		}

@@ -23,6 +23,7 @@ import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.PointEffect;
+import net.yzimroni.extremeparkour.parkour.point.PointMode;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.DataStatus;
 import net.yzimroni.extremeparkour.utils.MCSQL;
@@ -129,20 +130,23 @@ public class SQLData {
 					int point_id = points_rs.getInt("ID");
 					Location location = Utils.deserializeLocation(points_rs.getString("location"));
 					int index = points_rs.getInt("point_index");
+					PointMode mode = PointMode.valueOf(points_rs.getString("pointMode"));
+					double distance = points_rs.getDouble("distance");
+					
 					Point point = null;
 					if (index == -1) {
 						//Start
-						Startpoint start = new Startpoint(point_id, p, location);
+						Startpoint start = new Startpoint(point_id, p, location, mode, distance);
 						p.setStartPoint(start);
 						point = start;
 					} else if (index == -2) {
 						//End
-						Endpoint end = new Endpoint(point_id, p, location);
+						Endpoint end = new Endpoint(point_id, p, location, mode, distance);
 						p.setEndPoint(end);
 						point = end;
 					} else {
 						//Checkpoint
-						Checkpoint checkpoint = new Checkpoint(point_id, p, location, index);
+						Checkpoint checkpoint = new Checkpoint(point_id, p, location, index, mode, distance);
 						checkpoints.add(checkpoint);
 						point = checkpoint;
 					}
@@ -251,10 +255,12 @@ public class SQLData {
 		for (Point point : points) {
 			if (point.hasChanged()) {
 				try {
-					PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, point_index=? WHERE ID = " + point.getId());
+					PreparedStatement pre = sql.getPrepare("UPDATE " + prefix + "points SET parkour_id=?, location=?, point_index=?, pointMode=?, distance=? WHERE ID = " + point.getId());
 					pre.setInt(1, point.getParkour().getId());
 					pre.setString(2, Utils.serializeLocation(point.getLocation()));
 					pre.setInt(3, point.getIndex());
+					pre.setString(4, point.getMode().name());
+					pre.setDouble(5, point.getDistance());
 					
 					pre.executeUpdate();
 	

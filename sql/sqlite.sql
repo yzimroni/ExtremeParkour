@@ -47,7 +47,9 @@ CREATE TABLE IF NOT EXISTS `%prefix%points` (
   `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   `parkour_id` int(11) NOT NULL,
   `point_index` int(11) NOT NULL,
-  `location` varchar(200) NOT NULL
+  `location` varchar(200) NOT NULL,
+  `pointMode` varchar(15) NOT NULL,
+  `distance` double NOT NULL
 );
 
 --

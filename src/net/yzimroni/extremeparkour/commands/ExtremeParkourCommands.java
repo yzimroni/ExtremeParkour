@@ -17,6 +17,7 @@ import net.yzimroni.commandmanager.command.Command;
 import net.yzimroni.commandmanager.command.SubCommand;
 import net.yzimroni.commandmanager.command.args.ArgumentData;
 import net.yzimroni.commandmanager.command.args.arguments.BooleanArgument;
+import net.yzimroni.commandmanager.command.args.arguments.EnumArgument;
 import net.yzimroni.commandmanager.command.args.arguments.IntegerArgument;
 import net.yzimroni.commandmanager.command.args.arguments.PotionEffectArgument;
 import net.yzimroni.commandmanager.command.args.arguments.StringArgument;
@@ -31,6 +32,7 @@ import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.PointEffect;
+import net.yzimroni.extremeparkour.parkour.point.PointMode;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.DataStatus;
 
@@ -84,6 +86,10 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		return plugin.getParkourManager().isParkourBlock(l.getBlock());
 	}
 	
+	private PointMode getPointMode(PointMode e) {
+		return e != null ? e : PointMode.BLOCK;
+	}
+	
 	private void createPakourCommand() {
 		Command parkour = new Command("parkour", "ExetremePakour command", MethodExecutor.createByMethodId(this, "parkourMain"));
 		parkour.setAliases("p", "eparkour", "extremeparkour", "ep");
@@ -115,17 +121,23 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		SubCommand set = new SubCommand("set", "Set a point", MethodExecutor.createByMethodId(this, "parkourMain")); //^^
 		set.setAliases("add");
 		
+		EnumArgument<PointMode> pointModes = new EnumArgument<PointMode>("pointMode", PointMode.values());
+		pointModes.setRequire(false);
+		
 		SubCommand start = new SubCommand("start", "Set the start of the parkour", MethodExecutor.createByMethodId(this, "parkourPointSetStart"));
 		start.setOnlyPlayer(true);
+		start.addArgument(pointModes);
 		set.addSubCommand(start);
 		
 		SubCommand end = new SubCommand("end", "Set the end of the parkour", MethodExecutor.createByMethodId(this, "parkourPointSetEnd"));
 		end.setOnlyPlayer(true);
+		end.addArgument(pointModes);
 		set.addSubCommand(end);
 		
 		SubCommand check = new SubCommand("check", "Add a checkpoint to the parkour", MethodExecutor.createByMethodId(this, "parkourPointSetCheck"));
 		check.setAliases("checkpoint");
 		check.setOnlyPlayer(true);
+		check.addArgument(pointModes);
 		check.addArgument(new IntegerArgument("index", false, 0, null));
 		set.addSubCommand(check);
 		
@@ -271,7 +283,8 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			p.sendMessage("This block is already a parkour point");
 			return;
 		}
-		Startpoint start = new Startpoint(-1, parkour, p.getLocation());
+		PointMode mode = getPointMode(args.get("pointMode", PointMode.class));
+		Startpoint start = new Startpoint(-1, parkour, p.getLocation(), mode, 5);
 		parkour.setStartPoint(start);
 		parkour.initPoint(start);
 		p.sendMessage("Start point set!");
@@ -289,7 +302,8 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			p.sendMessage("This block is already a parkour point");
 			return;
 		}
-		Endpoint end = new Endpoint(-1, parkour, p.getLocation());
+		PointMode mode = getPointMode(args.get("pointMode", PointMode.class));
+		Endpoint end = new Endpoint(-1, parkour, p.getLocation(), mode, 5);
 		parkour.setEndPoint(end);
 		parkour.initPoint(end);
 		p.sendMessage("End point set!");
@@ -314,7 +328,8 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			index = args.get("index", Integer.class) - 1;
 			hasIndex = true;
 		}
-		Checkpoint check = new Checkpoint(-1, parkour, p.getLocation(), index);
+		PointMode mode = getPointMode(args.get("pointMode", PointMode.class));
+		Checkpoint check = new Checkpoint(-1, parkour, p.getLocation(), index, mode, 5);
 		if (hasIndex) {
 			parkour.insertCheckpoint(index, check);
 		} else {

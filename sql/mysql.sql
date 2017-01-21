@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS `%prefix%points` (
   `parkour_id` int(11) NOT NULL,
   `point_index` int(11) NOT NULL,
   `location` varchar(200) NOT NULL,
+  `pointMode` varchar(15) NOT NULL,
+  `distance` double NOT NULL
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

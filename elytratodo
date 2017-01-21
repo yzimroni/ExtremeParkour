@@ -1,0 +1,20 @@
+Allow the plugin to handle 2 (or more) types or parkour (or races):
+Normal, the current type
+Elytra, elytra parkour
+
+For the elytra parkour there will be more options:
+Give elytra when starting?
+Give firework when starting?
+Unlimited fireworks?
+
+And we also need to change the way points works, The points in the elytra parkour can be:
+Distance point, the player must pass near the point
+Tripwire point, the player must activate tirewire hook near the point (allow for the parkour creator to create "gates")
+
+Elytra parkour can also use normal points
+
+2:
+There will be only one parkour type, and the options for the elytra parkour will be on every parkour
+(Additional options: allow elytra in the parkour)
+For the points, each point will have "mode", block (the player need to step on the block), pass near (go near the point) and tripwire
+This way we dont need to change alot of things but it still works

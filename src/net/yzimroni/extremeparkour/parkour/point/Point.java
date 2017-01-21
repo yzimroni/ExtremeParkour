@@ -17,6 +17,8 @@ public abstract class Point {
 	private Parkour parkour;
 	private Location location;
 	private List<PointEffect> effects = new ArrayList<PointEffect>();
+	private PointMode mode;
+	private double distance;
 	
 	private Hologram hologram;
 	
@@ -24,11 +26,13 @@ public abstract class Point {
 	
 	private List<Integer> removedEffects;
 
-	public Point(int id, Parkour parkour, Location location) {
+	public Point(int id, Parkour parkour, Location location, PointMode mode, double distance) {
 		super();
 		this.id = id;
 		this.parkour = parkour;
 		this.location = location;
+		this.mode = mode;
+		this.distance = distance;
 	}
 	
 	public abstract String getName();
@@ -149,6 +153,22 @@ public abstract class Point {
 		this.removedEffects = removedEffects;
 	}
 
-	
-	
+	public PointMode getMode() {
+		return mode;
+	}
+
+	public void setMode(PointMode mode) {
+		changed = true;
+		this.mode = mode;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		changed = true;
+		this.distance = distance;
+	}
+
 }
