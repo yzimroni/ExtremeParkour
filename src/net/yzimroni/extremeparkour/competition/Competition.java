@@ -32,15 +32,18 @@ public class Competition {
 	private CompetitionState state = CompetitionState.WAITING;
 	private int taskId;
 	private int timeStarting;
-	private CompetitionScoreboard scoreboard = new CompetitionScoreboard(this);
+	private CompetitionScoreboard scoreboard;
 	
 	private LinkedHashMap<UUID, ParkourPlayerScore> winners = new LinkedHashMap<UUID, ParkourPlayerScore>();
+	private List<UUID> failed = new ArrayList<UUID>();
 
 	public Competition(ExtremeParkourPlugin plugin, CompetitionManager manager, Player leader, Parkour parkour) {
 		this.plugin = plugin;
 		this.manager = manager;
 		this.leader = leader.getUniqueId();
 		this.parkour = parkour;
+		
+		scoreboard = new CompetitionScoreboard(plugin, this);
 		join(leader);
 	}
 
@@ -129,6 +132,7 @@ public class Competition {
 			players.put(p.getUniqueId(), par);
 		}
 		scoreboard.changeScoreboard();
+		scoreboard.startTask();
 	}
 	
 	public List<Entry<UUID, ParkourPlayer>> getCompetetingPlayers() {
@@ -145,6 +149,7 @@ public class Competition {
 		if (players.get(e.getPlayer().getUniqueId()) != null) {
 			players.remove(e.getPlayer().getUniqueId());
 			players.put(e.getPlayer().getUniqueId(), null);
+			failed.add(e.getPlayer().getUniqueId());
 			broadcast(ChatColor.DARK_RED + e.getPlayer().getName() + " has failed the parkour");
 			checkFinish();
 		}
@@ -229,6 +234,14 @@ public class Competition {
 
 	public CompetitionScoreboard getScoreboard() {
 		return scoreboard;
+	}
+
+	public LinkedHashMap<UUID, ParkourPlayerScore> getWinners() {
+		return winners;
+	}
+
+	public List<UUID> getFailed() {
+		return failed;
 	}
 
 }

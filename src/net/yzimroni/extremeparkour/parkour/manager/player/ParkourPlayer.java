@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.point.Point;
 import net.yzimroni.extremeparkour.parkour.point.PointEffect;
 
 public class ParkourPlayer {
@@ -62,6 +63,18 @@ public class ParkourPlayer {
 
 	public void setLastCheckpoint(int lastCheckpoint) {
 		this.lastCheckpoint = lastCheckpoint;
+	}
+	
+	public int getNextPointIndex() {
+		int next = getLastCheckpoint() + 1;
+		if (next >= parkour.getCheckpointsCount()) {
+			return -2; //End point
+		}
+		return next;
+	}
+	
+	public Point getNextPoint() {
+		return parkour.getPointByIndex(getNextPointIndex());
 	}
 
 	public long getLastCheckpointTime() {
