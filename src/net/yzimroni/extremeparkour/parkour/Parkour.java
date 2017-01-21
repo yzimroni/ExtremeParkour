@@ -242,6 +242,16 @@ public class Parkour {
 		}
 		return false;
 	}
+	
+	public Point getPointByIndex(int index) {
+		if (index == -1) {
+			return getStartPoint();
+		} else if (index == -2) {
+			return getEndPoint();
+		} else {
+			return getCheckpoint(index);
+		}
+	}
 
 
 	/**

@@ -83,7 +83,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 	}
 	
 	private boolean isParkourBlock(Location l) {
-		return plugin.getParkourManager().isParkourBlock(l.getBlock());
+		return plugin.getParkourManager().isParkourBlock(l.getBlock(), false);
 	}
 	
 	private PointMode getPointMode(PointMode e) {

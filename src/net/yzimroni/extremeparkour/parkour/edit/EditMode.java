@@ -130,10 +130,10 @@ public class EditMode implements Listener {
 	public void onBlockBreak(BlockBreakEvent e) {
 		if (isEditMode(e.getPlayer())) {
 			Point p = null;
-			if (plugin.getParkourManager().isParkourBlock(e.getBlock())) {
-				p = plugin.getParkourManager().getPoint(e.getBlock());
-			} else if (plugin.getParkourManager().isParkourBlock(e.getBlock().getLocation().add(0, 1, 0).getBlock())) {
-				p = plugin.getParkourManager().getPoint(e.getBlock().getLocation().add(0, 1, 0).getBlock());
+			if (plugin.getParkourManager().isParkourBlock(e.getBlock(), true)) {
+				p = plugin.getParkourManager().getPoint(e.getBlock(), true);
+			} else if (plugin.getParkourManager().isParkourBlock(e.getBlock().getLocation().add(0, 1, 0).getBlock(), true)) {
+				p = plugin.getParkourManager().getPoint(e.getBlock().getLocation().add(0, 1, 0).getBlock(), true);
 			}
 			if (p != null) {
 				if (!p.getParkour().equals(getParkour(e.getPlayer()))) {
@@ -157,8 +157,8 @@ public class EditMode implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (isEditMode(e.getPlayer())) {
 			if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if (plugin.getParkourManager().isParkourBlock(e.getClickedBlock())) {
-					Point point = plugin.getParkourManager().getPoint(e.getClickedBlock());
+				if (plugin.getParkourManager().isParkourBlock(e.getClickedBlock(), true)) {
+					Point point = plugin.getParkourManager().getPoint(e.getClickedBlock(), true);
 					if (!point.getParkour().equals(getParkour(e.getPlayer()))) {
 						//The player try to edit a point from another parkour - cancel it
 						e.setCancelled(true);

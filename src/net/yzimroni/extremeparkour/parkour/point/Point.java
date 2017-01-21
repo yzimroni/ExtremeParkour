@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
+import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 
@@ -33,6 +39,80 @@ public abstract class Point {
 		this.location = location;
 		this.mode = mode;
 		this.distance = distance;
+	}
+	
+	public void init(ExtremeParkourPlugin plugin) {
+		if (getLocation() == null) {
+			return;
+		}
+		
+		Block block = getLocation().getBlock();
+		if (mode == PointMode.BLOCK) {
+			Block block_below = block.getLocation().add(0, -1, 0).getBlock();
+			if (block_below.getType() == null || block_below.getType() == Material.AIR || !block_below.getType().isSolid() || !block_below.getType().isBlock()) {
+				block_below.setType(Material.STONE);
+			}
+			
+			MaterialData type = getPointMaterial();
+			block.setType(type.getMaterial());
+			if (type.getData() != (byte) 0) {
+				block.setData(type.getData());
+			}
+			block_below.setMetadata("extremeparkour_block", new FixedMetadataValue(plugin, true));
+		}
+		
+		removePointMetadata(block, plugin);
+		
+		block.setMetadata("parkour_id", new FixedMetadataValue(plugin, getParkour().getId()));
+		block.setMetadata("point_type", new FixedMetadataValue(plugin, getClass().getName()));
+		if (this instanceof Checkpoint) {
+			block.setMetadata("point_index", new FixedMetadataValue(plugin, ((Checkpoint) this).getIndex()));
+		}
+		block.setMetadata("extremeparkour_block", new FixedMetadataValue(plugin, true));
+		
+		Hologram hologram = HologramsAPI.createHologram(plugin, getLocation().getBlock().getLocation().add(0.5, 2, 0.5));
+		for (String line : getHologramText()) {
+			hologram.appendTextLine(line);
+		}
+		
+		setHologram(hologram);
+
+	}
+	
+	private void removePointMetadata(Block b, ExtremeParkourPlugin plugin) {
+		removeMetadata(b, "parkour_id", plugin);
+		removeMetadata(b, "point_type", plugin);
+		removeMetadata(b, "point_index", plugin);
+		removeMetadata(b, "extremeparkour_block", plugin);
+	}
+	
+	private void removeMetadata(Block b, String name, ExtremeParkourPlugin plugin) {
+		if (b.hasMetadata(name)) {
+			for (MetadataValue m : b.getMetadata(name)) {
+				m.invalidate();
+			}
+			b.removeMetadata(name, plugin);
+		}
+	}
+	
+	public void remove(ExtremeParkourPlugin plugin) {
+		if (getLocation() == null) {
+			return;
+		}
+		removePointMetadata(getLocation().getBlock(), plugin);
+		if (getMode() == PointMode.BLOCK) {
+			getLocation().getBlock().setType(Material.AIR);
+		}
+		
+		removeHologram();
+	
+	}
+	
+	public void removeHologram() {
+		if (getHologram() != null) {
+			getHologram().delete();
+			setHologram(null);
+		}
 	}
 	
 	public abstract String getName();

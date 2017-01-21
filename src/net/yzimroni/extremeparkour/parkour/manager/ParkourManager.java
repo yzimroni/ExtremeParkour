@@ -28,6 +28,7 @@ import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
+import net.yzimroni.extremeparkour.parkour.point.PointMode;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 import net.yzimroni.extremeparkour.utils.Utils;
@@ -84,37 +85,9 @@ public class ParkourManager {
 	}
 
 	public void initPoint(Point p) {
-		if (p == null || p.getLocation() == null) {
-			return;
+		if (p != null) {
+			p.init(plugin);
 		}
-		
-		Block block = p.getLocation().getBlock();
-		Block block_below = block.getLocation().add(0, -1, 0).getBlock();
-		if (block_below.getType() == null || block_below.getType() == Material.AIR || !block_below.getType().isSolid() || !block_below.getType().isBlock()) {
-			block_below.setType(Material.STONE);
-		}
-		
-		MaterialData type = p.getPointMaterial();
-		block.setType(type.getMaterial());
-		if (type.getData() != (byte) 0) {
-			block.setData(type.getData());
-		}
-		
-		removePointMetadata(block);
-		
-		block.setMetadata("parkour_id", new FixedMetadataValue(plugin, p.getParkour().getId()));
-		block.setMetadata("point_type", new FixedMetadataValue(plugin, p.getClass().getName()));
-		if (p instanceof Checkpoint) {
-			block.setMetadata("point_index", new FixedMetadataValue(plugin, ((Checkpoint) p).getIndex()));
-		}
-		
-		Hologram hologram = HologramsAPI.createHologram(plugin, p.getLocation().getBlock().getLocation().add(0.5, 2, 0.5));
-		for (String line : p.getHologramText()) {
-			hologram.appendTextLine(line);
-		}
-		
-		p.setHologram(hologram);
-
 	}
 	
 	public void initLeaderboard(Parkour parkour) {
@@ -156,13 +129,9 @@ public class ParkourManager {
 	}
 	
 	public void removePoint(Point p) {
-		if (p == null || p.getLocation() == null) {
-			return;
+		if (p != null) {
+			p.remove(plugin);
 		}
-		removePointMetadata(p.getLocation().getBlock());
-		p.getLocation().getBlock().setType(Material.AIR);
-		
-		removeHologram(p);
 	}
 	
 	public void removeLeaderboard(ParkourLeaderboard leaderboard) {
@@ -189,6 +158,7 @@ public class ParkourManager {
 		removeMetadata(b, "parkour_id");
 		removeMetadata(b, "point_type");
 		removeMetadata(b, "point_index");
+		removeMetadata(b, "extremeparkour_block");
 	}
 	
 	private void removeMetadata(Block b, String name) {
@@ -200,9 +170,17 @@ public class ParkourManager {
 		}
 	}
 	
-	public boolean isParkourBlock(Block b) {
-		if (b == null) return false;
+	public boolean isGeneralParkourBlock(Block b) {
+		return b.hasMetadata("extremeparkour_block");
+	}
+	
+	public boolean isParkourBlock(Block b, boolean exact) {
+		if (b == null || !b.hasMetadata("extremeparkour_block")) return false;
 		if (b.hasMetadata("parkour_id") && !b.getMetadata("parkour_id").isEmpty()) {
+			if (b.hasMetadata("point_distance") && !b.getMetadata("point_distance").isEmpty()) {
+				//This is a distance parkour point
+				return true;
+			}
 			if (b.hasMetadata("point_type") && !b.getMetadata("point_type").isEmpty()) {
 				String type = b.getMetadata("point_type").get(0).asString();
 				if (type.equals(Checkpoint.class.getName())) {
@@ -215,8 +193,11 @@ public class ParkourManager {
 		return false;
 	}
 	
-	public Point getPoint(Block b) {
-		if (!isParkourBlock(b)) {
+	/*
+	 * Exact used if we want to get the point that is exactly in that block, otherwise, it will return point distance based
+	 */
+	public Point getPoint(Block b, boolean exact) {
+		if (!isParkourBlock(b, exact)) {
 			return null;
 		}
 		int parkourId = b.getMetadata("parkour_id").get(0).asInt();
@@ -226,7 +207,14 @@ public class ParkourManager {
 			removePointMetadata(b);
 			return null;
 		}
-		String type = b.getMetadata("point_type").get(0).asString();
+		if (!exact && b.hasMetadata("point_distance") && !b.getMetadata("point_distance").isEmpty()) {
+			int index = b.getMetadata("point_distance").get(0).asInt();
+			Point p = parkour.getPointByIndex(index);
+			if (p != null) {
+				return p;
+			}
+		}
+ 		String type = b.getMetadata("point_type").get(0).asString();
 		if (type.equals(Checkpoint.class.getName())) {
 			int index = b.getMetadata("point_index").get(0).asInt();
 			try {

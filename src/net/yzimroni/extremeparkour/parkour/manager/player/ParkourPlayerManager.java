@@ -72,7 +72,7 @@ public class ParkourPlayerManager implements Listener {
 						//Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(e.getPlayer().getLocation().getBlock());
 						PacketContainer p = e.getPacket();
 						Point point = ParkourPlayerManager.this.plugin.getParkourManager().getPoint(
-								new Location(e.getPlayer().getWorld(), p.getDoubles().read(0), p.getDoubles().read(1), p.getDoubles().read(2)).getBlock());
+								new Location(e.getPlayer().getWorld(), p.getDoubles().read(0), p.getDoubles().read(1), p.getDoubles().read(2)).getBlock(), false);
 						if (point != null && point instanceof Endpoint) {
 							processPoint(e.getPlayer(), point);
 						}
@@ -119,8 +119,8 @@ public class ParkourPlayerManager implements Listener {
 		if (b == null) {
 			return;
 		}
-		if (b.getType() == Startpoint.MATERIAL.getMaterial() || b.getType() == Checkpoint.MATERIAL.getMaterial() || b.getType() == Endpoint.MATERIAL.getMaterial()) {
-			Point p = plugin.getParkourManager().getPoint(b);
+		if (plugin.getParkourManager().isGeneralParkourBlock(b)) {
+			Point p = plugin.getParkourManager().getPoint(b, false);
 			if (p != null) {
 				if (!(p instanceof Endpoint) || !protocolLib) {
 					processPoint(e.getPlayer(), p);

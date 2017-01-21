@@ -29,9 +29,9 @@ public class Events implements Listener {
 	}
 
 	private boolean isPointOrPointSupport(Block b) {
-		if (plugin.getParkourManager().isParkourBlock(b)) {
+		if (plugin.getParkourManager().isParkourBlock(b, true)) {
 			return true;
-		} else if (plugin.getParkourManager().isParkourBlock(b.getLocation().add(0, 1, 0).getBlock())) {
+		} else if (plugin.getParkourManager().isParkourBlock(b.getLocation().add(0, 1, 0).getBlock(), true)) {
 			return true;
 		}
 		return false;
@@ -57,7 +57,7 @@ public class Events implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (!isEditMode(e.getPlayer())) {
 			if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if (plugin.getParkourManager().isParkourBlock(e.getClickedBlock())) {
+				if (plugin.getParkourManager().isParkourBlock(e.getClickedBlock(), true)) {
 					e.setCancelled(true); // Prevent interaction with the points (light detector for example)
 				}
 			}
