@@ -80,7 +80,7 @@ public abstract class Point {
 		}
 		
 		setHologram(hologram);
-		
+				
 		if (getMode().getRadius()) {
 			addRadiusBlocks();
 		}
@@ -89,6 +89,8 @@ public abstract class Point {
 	
 	private void addRadiusBlocks() {
 		for (Block b: getNearbyBlocks()) {
+			b.setMetadata("parkour_id", new FixedMetadataValue(plugin, parkour.getId()));
+			b.setMetadata("extremeparkour_block", new FixedMetadataValue(plugin, true));
 			b.setMetadata("point_radius", new FixedMetadataValue(plugin, getIndex()));
 		}
 	}
@@ -99,6 +101,8 @@ public abstract class Point {
 				for (MetadataValue v : b.getMetadata("point_radius")) {
 					v.invalidate();
 				}
+				b.removeMetadata("parkour_id", plugin);
+				b.removeMetadata("extremeparkour_block", plugin);
 				b.removeMetadata("point_radius", plugin);
 			}
 		}
@@ -268,13 +272,9 @@ public abstract class Point {
 
 	public void setMode(PointMode mode) {
 		changed = true;
-		if (this.mode.getRadius()) {
-			removeRadiusBlocks();
-		}
+		remove();
 		this.mode = mode;
-		if (this.mode.getRadius()) {
-			addRadiusBlocks();
-		}
+		init();
 	}
 
 	public int getRadius() {

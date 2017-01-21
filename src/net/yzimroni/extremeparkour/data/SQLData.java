@@ -374,10 +374,12 @@ public class SQLData {
 
 	public void insertPoint(Point point) {
 		try {
-			PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "points (parkour_id,point_index,location) VALUES(?,?,?)");
+			PreparedStatement pre = sql.getPrepareAutoKeys("INSERT INTO " + prefix + "points (parkour_id,point_index,location,pointMode,radius) VALUES(?,?,?,?,?)");
 			pre.setInt(1, point.getParkour().getId());
 			pre.setInt(2, point.getIndex());
 			pre.setString(3, Utils.serializeLocation(point.getLocation()));
+			pre.setString(4, point.getMode().name());
+			pre.setInt(5, point.getRadius());
 			
 			pre.executeUpdate();
 			
