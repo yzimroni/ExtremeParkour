@@ -9,6 +9,7 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import net.yzimroni.extremeparkour.commands.ExtremeParkourCommands;
+import net.yzimroni.extremeparkour.competition.CompetitionManager;
 import net.yzimroni.extremeparkour.data.SQLData;
 import net.yzimroni.extremeparkour.parkour.manager.ParkourManager;
 import net.yzimroni.extremeparkour.utils.Actionbar;
@@ -35,6 +36,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	private ParkourManager manager;
 	private ExtremeParkourCommands commands;
 	private Actionbar actionbar;
+	private CompetitionManager competition;
 	
 	private boolean inited = false;
 
@@ -52,6 +54,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 		manager = new ParkourManager(this);
 		commands = new ExtremeParkourCommands(this);
 		actionbar = new Actionbar(this);
+		competition = new CompetitionManager(this);
 		
 		ExtremeParkourLogger.log("enabled");
 		
@@ -127,6 +130,14 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 
 	public ExtremeParkourCommands getCommands() {
 		return commands;
+	}
+
+	public CompetitionManager getCompetition() {
+		return competition;
+	}
+
+	public void setCompetition(CompetitionManager competition) {
+		this.competition = competition;
 	}
 
 }
