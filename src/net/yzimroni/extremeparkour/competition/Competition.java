@@ -1,7 +1,11 @@
 package net.yzimroni.extremeparkour.competition;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -12,6 +16,11 @@ import org.bukkit.entity.Player;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
+import net.yzimroni.extremeparkour.parkour.manager.player.events.PlayerParkourComplete;
+import net.yzimroni.extremeparkour.parkour.manager.player.events.PlayerParkourFailed;
+import net.yzimroni.extremeparkour.utils.Utils;
 
 public class Competition {
 
@@ -19,10 +28,12 @@ public class Competition {
 	private CompetitionManager manager;
 	private UUID leader;
 	private Parkour parkour;
-	private List<UUID> players = new ArrayList<UUID>();
-	private CompetitionState state;
+	private HashMap<UUID, ParkourPlayer> players = new HashMap<UUID, ParkourPlayer>();
+	private CompetitionState state = CompetitionState.WAITING;
 	private int taskId;
 	private int timeStarting;
+	
+	private LinkedHashMap<UUID, ParkourPlayerScore> winners = new LinkedHashMap<UUID, ParkourPlayerScore>();
 
 	public Competition(ExtremeParkourPlugin plugin, CompetitionManager manager, Player leader, Parkour parkour) {
 		this.plugin = plugin;
@@ -36,7 +47,7 @@ public class Competition {
 		if (manager.isCompetes(p)) {
 			return;
 		}
-		players.add(p.getUniqueId());
+		players.put(p.getUniqueId(), null);
 		p.sendMessage("You joined " + getLeaderPlayer().getName() + "'s competition");
 		broadcast(p.getName() + " Joined!");
 	}
@@ -54,15 +65,14 @@ public class Competition {
 		}
 
 		if (p.getUniqueId().equals(leader)) {
-			leader = players.get(0);
+			leader = players.keySet().iterator().next();
 			broadcast(getLeaderPlayer().getName() + " is now the leader");
 		}
 
 	}
 
 	public void broadcast(String text) {
-		String message = ChatColor.RED + "[" + ChatColor.GOLD + "Competition" + ChatColor.RED + "]" + ChatColor.RESET
-				+ text;
+		String message = ChatColor.RED + "[" + ChatColor.GOLD + "Competition" + ChatColor.RED + "]" + ChatColor.RESET + text;
 		for (Player p : getBukkitPlayers()) {
 			p.sendMessage(message);
 		}
@@ -79,12 +89,12 @@ public class Competition {
 			p.sendMessage("Not enough players in the competition!");
 			return;
 		}
-		
+
 		state = CompetitionState.COUNTDOWN;
 		timeStarting = 10;
-		
+
 		taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-			
+
 			@Override
 			public void run() {
 				if (--timeStarting == 0) {
@@ -98,7 +108,7 @@ public class Competition {
 		}, 20L, 20L);
 
 	}
-	
+
 	private void start() {
 		state = CompetitionState.STARTED;
 		broadcast("Go!");
@@ -108,11 +118,68 @@ public class Competition {
 				p.setGameMode(GameMode.SURVIVAL);
 			}
 			p.setFlying(false);
-			
+
 			plugin.getParkourManager().getPlayerManager().leaveParkour(p, "");
 			p.teleport(l);
-			plugin.getParkourManager().getPlayerManager().startParkour(p, parkour);
+			ParkourPlayer par = plugin.getParkourManager().getPlayerManager().startParkour(p, parkour);
+			players.remove(p.getUniqueId());
+			players.put(p.getUniqueId(), par);
 		}
+	}
+	
+	public List<Entry<UUID, ParkourPlayer>> getCompetetingPlayers() {
+		List<Entry<UUID, ParkourPlayer>> pl = new ArrayList<Entry<UUID, ParkourPlayer>>();
+		for (Entry<UUID, ParkourPlayer> e : players.entrySet()) {
+			if (e.getValue() != null) {
+				pl.add(e);
+			}
+		}
+		return pl;
+	}
+
+	protected void handleParkourFail(PlayerParkourFailed e) {
+		if (players.get(e.getPlayer().getUniqueId()) != null) {
+			players.remove(e.getPlayer().getUniqueId());
+			players.put(e.getPlayer().getUniqueId(), null);
+			broadcast(ChatColor.DARK_RED + e.getPlayer().getName() + " has failed the parkour");
+			checkFinish();
+		}
+	}
+
+	protected void handleParkourComplete(PlayerParkourComplete e) {
+		if (players.get(e.getPlayer().getUniqueId()) != null) {
+			players.remove(e.getPlayer().getUniqueId());
+			players.put(e.getPlayer().getUniqueId(), null);
+			winners.put(e.getPlayer().getUniqueId(), e.getScore());
+			int place = winners.size();
+			broadcast(ChatColor.GREEN + e.getPlayer().getName() + " has finish the parkour in " + Utils.formatTime(e.getScore().getTimeTook()) + " (#" + place + " place)!");
+			checkFinish();
+		}
+	}
+	
+	public void checkFinish() {
+		if (state == CompetitionState.STARTED) {
+			if (getCompetetingPlayers().isEmpty()) {
+				end();
+			}
+		}
+	}
+	
+	public void end() {
+		state = CompetitionState.ENDED;
+		if (winners.isEmpty()) {
+			broadcast("All the players have failed the parkour");
+		} else {
+			broadcast("All the players have finished the parkour!");
+			broadcast("   " + ChatColor.GOLD + "The Winners:");
+			int index = 1;
+			for (ParkourPlayerScore score : winners.values()) {
+				broadcast("   " + ChatColor.GOLD + (index) + ": " + Bukkit.getPlayer(score.getPlayer()).getName() + " " + Utils.formatTime(score.getTimeTook()));
+				index++;
+			}
+
+		}
+		manager.removeCompetition(this);
 	}
 
 	public boolean isCompetes(Player p) {
@@ -120,7 +187,7 @@ public class Competition {
 	}
 
 	public boolean isCompetes(UUID u) {
-		return players.contains(u);
+		return players.containsKey(u);
 	}
 
 	public UUID getLeader() {
@@ -135,13 +202,13 @@ public class Competition {
 		return parkour;
 	}
 
-	public List<UUID> getPlayers() {
-		return players;
+	public Collection<ParkourPlayer> getPlayers() {
+		return players.values();
 	}
 
 	public List<Player> getBukkitPlayers() {
 		List<Player> players = new ArrayList<Player>();
-		for (UUID u : this.players) {
+		for (UUID u : this.players.keySet()) {
 			players.add(Bukkit.getPlayer(u));
 		}
 		return players;
