@@ -132,7 +132,7 @@ public class EditMode implements Listener {
 				parkour.initPoint(end);
 			} else if (CHECK_POINT.isSimilar(e.getItemInHand())) {
 				//TODO add support for shift + place
-				Checkpoint check = new Checkpoint(plugin, -1, parkour, e.getBlockPlaced().getLocation(), parkour.getChestpointsCount(), data.getSelectedMode(), 5);
+				Checkpoint check = new Checkpoint(plugin, -1, parkour, e.getBlockPlaced().getLocation(), parkour.getCheckpointsCount(), data.getSelectedMode(), 5);
 				parkour.addCheckpoint(check);
 			}
 		}

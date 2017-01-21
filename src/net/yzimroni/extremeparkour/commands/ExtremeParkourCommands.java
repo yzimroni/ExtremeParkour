@@ -141,6 +141,8 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		check.addArgument(new IntegerArgument("index", false, 0, null));
 		set.addSubCommand(check);
 		
+		point.addSubCommand(set);
+		
 		SubCommand remove = new SubCommand("remove", "Remove a point", MethodExecutor.createByMethodId(this, "parkourMain")); //Just need to send help
 		remove.setAliases("rem", "delete", "del");
 		
@@ -148,9 +150,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		remcheck.setAliases("checkpoint");
 		remcheck.addArgument(new IntegerArgument("index", true, 0, null));
 		remove.addSubCommand(remcheck);
-		set.addSubCommand(remove);
-		
-		point.addSubCommand(set);
+		point.addSubCommand(remove);
 		
 		SubCommand effect = new SubCommand("effect", "Potion effect", MethodExecutor.createByMethodId(this, "parkourMain")); //Just need to send help
 		
@@ -322,7 +322,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			p.sendMessage("This block is already a parkour point");
 			return;
 		}
-		int index = parkour.getChestpointsCount();
+		int index = parkour.getCheckpointsCount();
 		boolean hasIndex = false;
 		if (args.has("index", Integer.class)) {
 			index = args.get("index", Integer.class) - 1;
@@ -346,7 +346,8 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 			return;
 		}
 		int index = args.get("index", Integer.class) - 1;
-		if (parkour.getChestpointsCount() >= index) {
+		System.out.println();
+		if (index >= parkour.getCheckpointsCount() || index < 0) {
 			sender.sendMessage("Checkpoint not found");
 			return;
 		}

@@ -44,7 +44,7 @@ public class PointArgument extends CommandArgument<Point> {
 		}
 		if (Utils.isInt(data.getInput())) {
 			int index = Utils.getInt(data.getInput()) - 1;
-			return ArgumentValidCheck.create(index >= 0 && index < p.getChestpointsCount(), "Point not found");
+			return ArgumentValidCheck.create(index >= 0 && index < p.getCheckpointsCount(), "Point not found");
 		} else {
 			return ArgumentValidCheck.create(false, "Invalid index");
 		}
@@ -70,7 +70,7 @@ public class PointArgument extends CommandArgument<Point> {
 		if (p != null) {
 			options.add("start");
 			options.add("end");
-			for (int i = 0; i < p.getChestpointsCount(); i++) {
+			for (int i = 0; i < p.getCheckpointsCount(); i++) {
 				options.add("" + (i + 1));
 			}
 		}

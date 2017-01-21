@@ -287,7 +287,7 @@ public class ParkourPlayerManager implements Listener {
 				return;
 			}
 			if (parkour.hasCheckpoints()) {
-				if (playerp.getLastCheckpoint() == (parkour.getChestpointsCount() - 1)) {
+				if (playerp.getLastCheckpoint() == (parkour.getCheckpointsCount() - 1)) {
 					// The player was in all the checkpoint and the latest one
 					// is the last one
 					callComplete(p, parkour, playerp);
@@ -362,6 +362,9 @@ public class ParkourPlayerManager implements Listener {
 	
 	private void sendBar(Player p) {
 		ParkourPlayer player = getPlayer(p);
+		if (player == null) {
+			return;
+		}
 		player.setLastActionbar(System.currentTimeMillis());
 		String bar = ChatColor.GREEN + Utils.formatTime(System.currentTimeMillis() - player.getStartTime());
 		plugin.getActionbar().sendActionBarRaw(p, bar);

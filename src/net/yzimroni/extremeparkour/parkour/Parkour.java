@@ -170,7 +170,7 @@ public class Parkour {
 		return !checkpoints.isEmpty();
 	}
 	
-	public int getChestpointsCount() {
+	public int getCheckpointsCount() {
 		return checkpoints.size();
 	}
 	
