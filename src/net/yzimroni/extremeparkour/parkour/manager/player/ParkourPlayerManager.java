@@ -152,17 +152,17 @@ public class ParkourPlayerManager implements Listener {
 		return players.get(p.getUniqueId());
 	}
 	
-	public boolean startParkour(Player p, Parkour parkour) {
+	public ParkourPlayer startParkour(Player p, Parkour parkour) {
 		if (!parkour.isComplete()) {
-			return false;
+			return null;
 		}
 		
 		if (p.isFlying()) {
-			return false;
+			return null;
 		}
 		
 		if (p.getGameMode() == GameMode.SPECTATOR) {
-			return false;
+			return null;
 		}
 		if (!players.containsKey(p.getUniqueId())) {
 			ParkourPlayer playerp = new ParkourPlayer(p.getUniqueId(), parkour, System.currentTimeMillis());
@@ -177,12 +177,12 @@ public class ParkourPlayerManager implements Listener {
 			playerp.setStartTime(System.currentTimeMillis());
 			handlePointEffect(p, parkour.getStartPoint());
 			Bukkit.getPluginManager().callEvent(new PlayerParkourStart(parkour, playerp, p));
-			return true;
+			return playerp;
 		} else {
 			ParkourPlayer playerp = players.get(p.getUniqueId());
 			if (parkour.equals(playerp.getParkour())) {
 				if (!playerp.checkAndSetLastMessage()) {
-					return false;
+					return null;
 				}
 			    for (PotionEffect effect : p.getActivePotionEffects()){
 			    	p.removePotionEffect(effect.getType()); //The potion is from the parkour
@@ -198,7 +198,7 @@ public class ParkourPlayerManager implements Listener {
 				return startParkour(p, parkour);
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	public boolean leaveParkour(Player p, String reason) {
