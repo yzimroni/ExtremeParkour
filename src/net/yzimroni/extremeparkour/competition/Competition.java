@@ -32,6 +32,7 @@ public class Competition {
 	private CompetitionState state = CompetitionState.WAITING;
 	private int taskId;
 	private int timeStarting;
+	private CompetitionScoreboard scoreboard = new CompetitionScoreboard(this);
 	
 	private LinkedHashMap<UUID, ParkourPlayerScore> winners = new LinkedHashMap<UUID, ParkourPlayerScore>();
 
@@ -58,6 +59,7 @@ public class Competition {
 		}
 		broadcast(p.getName() + " quit");
 		players.remove(p.getUniqueId());
+		
 
 		if (players.isEmpty()) {
 			manager.removeCompetition(this);
@@ -111,6 +113,7 @@ public class Competition {
 
 	private void start() {
 		state = CompetitionState.STARTED;
+		scoreboard.init();
 		broadcast("Go!");
 		Location l = parkour.getStartPoint().getLocation().clone().add(0.5, 2, 0.5);
 		for (Player p : getBukkitPlayers()) {
@@ -125,6 +128,7 @@ public class Competition {
 			players.remove(p.getUniqueId());
 			players.put(p.getUniqueId(), par);
 		}
+		scoreboard.changeScoreboard();
 	}
 	
 	public List<Entry<UUID, ParkourPlayer>> getCompetetingPlayers() {
@@ -179,6 +183,7 @@ public class Competition {
 			}
 
 		}
+		scoreboard.disable();
 		manager.removeCompetition(this);
 	}
 
@@ -220,6 +225,10 @@ public class Competition {
 
 	public void setState(CompetitionState state) {
 		this.state = state;
+	}
+
+	public CompetitionScoreboard getScoreboard() {
+		return scoreboard;
 	}
 
 }
