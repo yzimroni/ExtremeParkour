@@ -12,6 +12,7 @@ public class EditData {
 	private Parkour parkour;
 	private Point point;
 	private PointMode selectedMode;
+	private boolean changeModeToPoint;
 
 	public EditData(UUID uuid, Parkour parkour) {
 		super();
@@ -50,6 +51,14 @@ public class EditData {
 
 	public void setSelectedMode(PointMode selectedMode) {
 		this.selectedMode = selectedMode;
+	}
+
+	public boolean isChangeModeToPoint() {
+		return changeModeToPoint;
+	}
+
+	public void setChangeModeToPoint(boolean changeModeToPoint) {
+		this.changeModeToPoint = changeModeToPoint;
 	}
 
 }
