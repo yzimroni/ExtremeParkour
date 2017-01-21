@@ -122,9 +122,10 @@ public class ParkourPlayerManager implements Listener {
 		if (plugin.getParkourManager().isGeneralParkourBlock(b)) {
 			Point p = plugin.getParkourManager().getPoint(b, false);
 			if (p != null) {
-				if (!(p instanceof Endpoint) || !protocolLib) {
+				processPoint(e.getPlayer(), p);
+				/*if (!(p instanceof Endpoint) || !protocolLib) {
 					processPoint(e.getPlayer(), p);
-				}
+				}*/
 			}
 		}
 	}
@@ -324,7 +325,12 @@ public class ParkourPlayerManager implements Listener {
 	
 	private boolean completeParkour(final Player p, final Parkour parkour, final ParkourPlayer playerp, final long time) {
 		System.out.println(Thread.currentThread().getName() + " " + Bukkit.isPrimaryThread());
-		players.remove(p.getUniqueId());
+		synchronized (playerp) {
+			if (!players.containsValue(playerp)) {
+				return false; //Got called from two diffrent threads, the first one already handled it
+			}
+			players.remove(p.getUniqueId());
+		}
 		ParkourPlayerScore old = plugin.getData().getBestPlayerScore(p, parkour);
 		ParkourPlayerScore now = new ParkourPlayerScore(p.getUniqueId(), parkour.getId(), playerp.getStartTime(), time);
 		
