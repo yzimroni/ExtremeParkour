@@ -118,6 +118,8 @@ public class Utils {
 				}
 			}
 		}
+		
+		blocks.remove(l.getBlock());
 
 		return blocks;
 	}

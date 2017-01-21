@@ -179,7 +179,7 @@ public class ParkourManager {
 		if (b.hasMetadata("parkour_id") && !b.getMetadata("parkour_id").isEmpty()) {
 			if (b.hasMetadata("point_radius") && !b.getMetadata("point_radius").isEmpty()) {
 				//This is a distance parkour point
-				return true;
+				return !exact;
 			}
 			if (b.hasMetadata("point_type") && !b.getMetadata("point_type").isEmpty()) {
 				String type = b.getMetadata("point_type").get(0).asString();
@@ -207,7 +207,11 @@ public class ParkourManager {
 			removePointMetadata(b);
 			return null;
 		}
-		if (!exact && b.hasMetadata("point_radius") && !b.getMetadata("point_radius").isEmpty()) {
+		if (b.hasMetadata("point_radius") && !b.getMetadata("point_radius").isEmpty()) {
+			if (exact) {
+				//This is a radius point block but we want exact, return null
+				return null;
+			}
 			int index = b.getMetadata("point_radius").get(0).asInt();
 			Point p = parkour.getPointByIndex(index);
 			if (p != null) {
