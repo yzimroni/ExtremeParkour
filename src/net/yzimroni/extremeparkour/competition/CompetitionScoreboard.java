@@ -67,7 +67,7 @@ public class CompetitionScoreboard {
 		if (taskId != 0) {
 			return;
 		}
-		Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+		taskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
 			
 			@Override
 			public void run() {
@@ -80,7 +80,9 @@ public class CompetitionScoreboard {
 		for (String entry : scoreboard.getEntries()) {
 			scoreboard.resetScores(entry);
 		}
-		
+		for (Entry<String, Integer> e : list.entrySet()) {
+			objective.getScore(e.getKey()).setScore(e.getValue());
+		}
 	}
 	
 	private String getName(UUID u) {
@@ -102,7 +104,13 @@ public class CompetitionScoreboard {
 			@Override
 			public int compare(Entry<UUID, ParkourPlayer> o1, Entry<UUID, ParkourPlayer> o2) {
 				int next1 = o1.getValue().getNextPointIndex();
+				if (next1 == -2) {
+					next1 = Integer.MAX_VALUE;
+				}
 				int next2 = o1.getValue().getNextPointIndex();
+				if (next2 == -2) {
+					next2 = Integer.MAX_VALUE;
+				}
 				if (next1 != next2) {
 					if (next1 < next2) {
 						return -1;
@@ -122,7 +130,7 @@ public class CompetitionScoreboard {
 			}
 			
 			private double calculateDistance(Entry<UUID, ParkourPlayer> e) {
-				double distance = e.getValue().getNextPoint().getLocation().distance(Bukkit.getPlayer(e.getKey()).getLocation());
+				double distance = e.getValue().getNextPoint().getLocation().distanceSquared(Bukkit.getPlayer(e.getKey()).getLocation());
 				return distance;
 			}
 		});
