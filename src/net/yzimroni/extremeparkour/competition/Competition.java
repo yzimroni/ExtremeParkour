@@ -77,7 +77,7 @@ public class Competition {
 	}
 
 	public void broadcast(String text) {
-		String message = ChatColor.RED + "[" + ChatColor.GOLD + "Competition" + ChatColor.RED + "]" + ChatColor.RESET + text;
+		String message = ChatColor.RED + "[" + ChatColor.GOLD + "Competition" + ChatColor.RED + "] " + ChatColor.RESET + text;
 		for (Player p : getBukkitPlayers()) {
 			p.sendMessage(message);
 		}

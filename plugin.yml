@@ -9,3 +9,5 @@ commands:
   parkour:
     description: ExtremeParkour command
     aliases: [p, eparkour, extremeparkour, ep]
+  competition:
+    description: Competition command

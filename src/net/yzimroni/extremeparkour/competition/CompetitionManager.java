@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
 
 public class CompetitionManager {
 	
@@ -28,11 +29,13 @@ public class CompetitionManager {
 		if (isCompetes(p)) {
 			return null;
 		}
-		Parkour parkour = plugin.getParkourManager().getPlayerManager().getPlayer(p).getParkour();
-		if (parkour == null) {
+		ParkourPlayer playerp = plugin.getParkourManager().getPlayerManager().getPlayer(p);
+		Parkour parkour;
+		if (playerp == null || (parkour = playerp.getParkour()) == null) {
 			p.sendMessage("You must start a parkour if you want to create a competition");
 			return null;
 		}
+		
 		plugin.getParkourManager().getPlayerManager().leaveParkour(p, ""); //TODO
 		Competition c = new Competition(plugin, this, p, parkour);
 		competitions.add(c);

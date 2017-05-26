@@ -36,6 +36,9 @@ public class CompetitionCommands implements MethodExecutorClass {
 		join.addArgument(new PlayerArgument("player", true));
 		competition.addSubCommand(join);
 		
+		SubCommand leave = new SubCommand("leave", "Leave the competition you are in", MethodExecutor.createByMethodName(this, "leave"));
+		competition.addSubCommand(leave);
+		
 		SubCommand start = new SubCommand("start", "Start a competition", MethodExecutor.createByMethodName(this, "start"));
 		start.setOnlyPlayer(true);
 		competition.addSubCommand(start);
@@ -83,6 +86,16 @@ public class CompetitionCommands implements MethodExecutorClass {
 			return;
 		}
 		c.startCountdown(p);
+	}
+	
+	public void leave(CommandSender sender, Command command, ArgumentData args) {
+		Player p = (Player) sender;
+		Competition c = getCompetition(p);
+		if (c == null) {
+			p.sendMessage("You aren't in a competition!");
+			return;
+		}
+		c.quit(p);
 	}
 
 }
