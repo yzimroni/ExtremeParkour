@@ -125,7 +125,7 @@ public class Competition {
 			}
 			p.setFlying(false);
 
-			plugin.getParkourManager().getPlayerManager().leaveParkour(p, "");
+			plugin.getParkourManager().getPlayerManager().getPlayer(p).leaveParkour("");
 			p.teleport(l);
 			ParkourPlayer par = plugin.getParkourManager().getPlayerManager().startParkour(p, parkour);
 			players.remove(p.getUniqueId());

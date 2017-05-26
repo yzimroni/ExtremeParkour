@@ -258,7 +258,7 @@ public class ParkourManager {
 	public void removeParkour(Parkour p) {
 		if (parkours.contains(p)) {
 			for (ParkourPlayer player : playerManager.getParkourPlayers(p)) {
-				playerManager.leaveParkour(player.getBukkitPlayer(), "Parkour deleted");
+				player.leaveParkour("Parkour deleted");
 			}
 			plugin.getCommands().onPlayerDelete(p);
 			parkours.remove(p);

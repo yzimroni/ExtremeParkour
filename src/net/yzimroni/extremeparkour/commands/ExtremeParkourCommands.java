@@ -28,6 +28,7 @@ import net.yzimroni.commandmanager.manager.CommandManager;
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
+import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
@@ -218,13 +219,23 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 	
 	@MethodId("parkourCheckpoint")
 	public void parkourCheckpoint(CommandSender sender, Command command, ArgumentData args) {
-		plugin.getParkourManager().getPlayerManager().teleportLatestCheckpoint((Player) sender);
+		ParkourPlayer p = plugin.getParkourManager().getPlayerManager().getPlayer((Player) sender);
+		if (p != null) {
+			p.teleportLatestCheckpoint();
+		} else {
+			sender.sendMessage(ChatColor.RED + "You aren't in a parkour");
+		}
 	}
 	
 	
 	@MethodId("parkourReset")
 	public void parkourReset(CommandSender sender, Command command, ArgumentData args) {
-		plugin.getParkourManager().getPlayerManager().teleportStart((Player) sender);
+		ParkourPlayer p = plugin.getParkourManager().getPlayerManager().getPlayer((Player) sender);
+		if (p != null) {
+			p.teleportStart();
+		} else {
+			sender.sendMessage(ChatColor.RED + "You aren't in a parkour");
+		}
 	}
 	
 	@MethodId("parkourSelect")

@@ -29,7 +29,7 @@ public class Events implements Listener {
 	
 	private void leaveParkour(Player p, String reason) {
 		if (manager.isPakouring(p)) {
-			manager.leaveParkour(p, reason);
+			manager.getPlayer(p).leaveParkour(reason);
 		}
 	}
 	

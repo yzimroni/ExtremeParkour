@@ -32,6 +32,8 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	 * V Remove all potions effects from the player before enter the parkour (and give them back afterwards)
 	 */
 	
+	private static ExtremeParkourPlugin plugin;
+	
 	private SQLData data;
 	private ParkourManager manager;
 	private ExtremeParkourCommands commands;
@@ -42,6 +44,8 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		
+		plugin = this;
 		
 		getConfig().options().copyDefaults(true);
 		saveConfig();
@@ -105,6 +109,10 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 		}
 		inited = false;
 		ExtremeParkourLogger.log("disabled");
+	}
+	
+	public static ExtremeParkourPlugin get() {
+		return plugin;
 	}
 
 	/**

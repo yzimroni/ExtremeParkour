@@ -36,7 +36,7 @@ public class CompetitionManager {
 			return null;
 		}
 		
-		plugin.getParkourManager().getPlayerManager().leaveParkour(p, ""); //TODO
+		playerp.leaveParkour(""); //TODO
 		Competition c = new Competition(plugin, this, p, parkour);
 		competitions.add(c);
 		return c;
