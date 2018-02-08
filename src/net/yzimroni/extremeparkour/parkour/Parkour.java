@@ -12,7 +12,7 @@ import net.yzimroni.extremeparkour.parkour.point.Startpoint;
 import net.yzimroni.extremeparkour.utils.DataStatus;
 
 public class Parkour {
-	
+
 	private ExtremeParkourPlugin plugin;
 
 	private int id;
@@ -24,11 +24,11 @@ public class Parkour {
 	private Startpoint startPoint;
 	private List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 	private Endpoint endPoint;
-	
+
 	private List<ParkourLeaderboard> leaderboards = new ArrayList<ParkourLeaderboard>();
-	
+
 	private boolean changed;
-	
+
 	private List<Integer> removedPoints;
 	private List<Integer> removedLeaderboards;
 
@@ -43,12 +43,11 @@ public class Parkour {
 		this.owner = owner;
 		this.createdTimestamp = createdTimestamp;
 	}
-	
-	
+
 	public boolean isComplete() {
 		return startPoint != null && endPoint != null;
 	}
-	
+
 	public void markPointAsRemoved(Point p) {
 		if (p == null) {
 			return;
@@ -59,12 +58,11 @@ public class Parkour {
 		}
 		removedPoints.add(p.getId());
 	}
-	
+
 	public void initPoint(Point p) {
 		plugin.getData().insertPoint(p);
 		plugin.getParkourManager().initPoint(p);
 	}
-	
 
 	/**
 	 * @return the id
@@ -72,7 +70,7 @@ public class Parkour {
 	public int getId() {
 		return id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -140,7 +138,6 @@ public class Parkour {
 		this.startPoint = startPoint;
 	}
 
-
 	/**
 	 * @return the endPoint
 	 */
@@ -158,42 +155,42 @@ public class Parkour {
 		}
 		this.endPoint = endPoint;
 	}
-	
+
 	/**
 	 * @return the checkpoints
 	 */
 	public List<Checkpoint> getCheckpoints() {
 		return checkpoints;
 	}
-	
+
 	public boolean hasCheckpoints() {
 		return !checkpoints.isEmpty();
 	}
-	
+
 	public int getCheckpointsCount() {
 		return checkpoints.size();
 	}
-	
+
 	public Checkpoint getCheckpoint(int index) {
 		return checkpoints.get(index);
 	}
-	
+
 	public void addCheckpoint(Checkpoint point) {
 		initPoint(point);
 		checkpoints.add(point);
 	}
-	
+
 	public void insertCheckpoint(int index, Checkpoint point) {
 		initPoint(point);
 		checkpoints.add(index, point);
 		plugin.getParkourManager().fixCheckpoints(this);
 	}
-	
+
 	public void removeCheckpoint(int index) {
 		Checkpoint p = getCheckpoint(index);
 		removeCheckpoint(p);
 	}
-	
+
 	public void removeCheckpoint(Checkpoint point) {
 		if (checkpoints.contains(point)) {
 			markPointAsRemoved(point);
@@ -201,15 +198,14 @@ public class Parkour {
 			plugin.getParkourManager().fixCheckpoints(this);
 		}
 	}
-	
 
 	/**
-	 * @param checkpoints the checkpoints to set
+	 * @param checkpoints
+	 *            the checkpoints to set
 	 */
 	public void setCheckpoints(List<Checkpoint> checkpoints) {
 		this.checkpoints = checkpoints;
 	}
-
 
 	/**
 	 * @return the leaderboards
@@ -218,21 +214,22 @@ public class Parkour {
 		return leaderboards;
 	}
 
-
 	/**
-	 * @param leaderboards the leaderboards to set
+	 * @param leaderboards
+	 *            the leaderboards to set
 	 */
 	public void setLeaderboards(List<ParkourLeaderboard> leaderboards) {
 		this.leaderboards = leaderboards;
 	}
-	
+
 	public boolean removeLeaderboard(ParkourLeaderboard leaderboard) {
 		if (leaderboards.contains(leaderboard)) {
 			leaderboards.remove(leaderboard);
 			plugin.getParkourManager().removeLeaderboard(leaderboard);
 			if (leaderboard.getStatus() != DataStatus.CREATED) {
-				//If the leaderboard just created and not yet inserted to the db, we can just remove it, but if it is inserted, we
-				//need you remove it from the database as well
+				// If the leaderboard just created and not yet inserted to the db, we can just
+				// remove it, but if it is inserted, we
+				// need you remove it from the database as well
 				if (removedLeaderboards == null) {
 					removedLeaderboards = new ArrayList<Integer>();
 				}
@@ -242,7 +239,7 @@ public class Parkour {
 		}
 		return false;
 	}
-	
+
 	public Point getPointByIndex(int index) {
 		if (index == -1) {
 			return getStartPoint();
@@ -253,7 +250,6 @@ public class Parkour {
 		}
 	}
 
-
 	/**
 	 * @return the changed
 	 */
@@ -261,14 +257,13 @@ public class Parkour {
 		return changed;
 	}
 
-
 	/**
-	 * @param changed the changed to set
+	 * @param changed
+	 *            the changed to set
 	 */
 	public void setChanged(boolean changed) {
 		this.changed = changed;
 	}
-
 
 	/**
 	 * @return the removedPoints
@@ -277,14 +272,13 @@ public class Parkour {
 		return removedPoints;
 	}
 
-
 	/**
-	 * @param removedPoints the removedPoints to set
+	 * @param removedPoints
+	 *            the removedPoints to set
 	 */
 	public void setRemovedPoints(List<Integer> removedPoints) {
 		this.removedPoints = removedPoints;
 	}
-
 
 	/**
 	 * @return the removedLeaderboards
@@ -293,17 +287,12 @@ public class Parkour {
 		return removedLeaderboards;
 	}
 
-
 	/**
-	 * @param removedLeaderboards the removedLeaderboards to set
+	 * @param removedLeaderboards
+	 *            the removedLeaderboards to set
 	 */
 	public void setRemovedLeaderboards(List<Integer> removedLeaderboards) {
 		this.removedLeaderboards = removedLeaderboards;
 	}
-
-
-
-
-	
 
 }

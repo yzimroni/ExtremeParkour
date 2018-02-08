@@ -54,13 +54,13 @@ public class SQLData {
 	
 	public void openMySQL(String host, int port, String database, String username, String password) throws Exception {
 		sql.openMySQLConnection(host, port, database, username, password);
-		type = SQLType.MySQL;
+		type = SQLType.MYSQL;
 		createTables();
 	}
 	
 	public void openSQLite(String file) throws Exception {
 		sql.openSQLiteConnection(file);
-		type = SQLType.SQLite;
+		type = SQLType.SQLITE;
 		createTables();
 	}
 	
@@ -179,7 +179,6 @@ public class SQLData {
 					leaderboards.add(leaderboard);
 				}
 				p.setLeaderboards(leaderboards);
-				//TODO points, ladderboard etc
 				
 				p.setChanged(false);
 				parkours.add(p);
@@ -291,7 +290,7 @@ public class SQLData {
 							pre.setString(2, effect.getType().getName());
 							pre.setInt(3, effect.getDuration());
 							pre.setInt(4, effect.getAmplifier());
-							pre.setBoolean(5, effect.isShowParticles());
+							pre.setBoolean(5, effect.shouldShowParticles());
 							
 							pre.executeUpdate();
 							
@@ -311,7 +310,7 @@ public class SQLData {
 							pre.setString(2, effect.getType().getName());
 							pre.setInt(3, effect.getDuration());
 							pre.setInt(4, effect.getAmplifier());
-							pre.setBoolean(5, effect.isShowParticles());
+							pre.setBoolean(5, effect.shouldShowParticles());
 
 							pre.executeUpdate();
 							
@@ -468,7 +467,7 @@ public class SQLData {
 	
 	public int getPlayerRank(Parkour parkour, Player p) {
 		try {
-			if (type == SQLType.MySQL) {
+			if (type == SQLType.MYSQL) {
 				ResultSet rs = sql.get(
 						"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
 						+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.UUID = '" + p.getUniqueId().toString() + "' ORDER BY b.rank LIMIT 1");
@@ -497,7 +496,7 @@ public class SQLData {
 	
 	public int getScoreRank(Parkour parkour, int scoreId) {
 		try {
-			if (type == SQLType.MySQL) {
+			if (type == SQLType.MYSQL) {
 				ResultSet rs = sql.get(
 						"SELECT * FROM (SELECT @i:=@i+1 AS rank, t.* FROM " + prefix + "playerscore AS t, "
 						+ "(SELECT @i:=0) AS foo WHERE parkourId=" + parkour.getId() + " ORDER BY timeTook ASC) b WHERE b.ID = " + scoreId + " ORDER BY b.rank LIMIT 1");

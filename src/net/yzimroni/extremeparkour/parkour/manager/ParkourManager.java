@@ -12,7 +12,6 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -22,19 +21,16 @@ import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
 import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.parkour.ParkourLeaderboard;
 import net.yzimroni.extremeparkour.parkour.edit.EditMode;
-import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayer;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerManager;
 import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 import net.yzimroni.extremeparkour.parkour.point.Checkpoint;
 import net.yzimroni.extremeparkour.parkour.point.Endpoint;
 import net.yzimroni.extremeparkour.parkour.point.Point;
-import net.yzimroni.extremeparkour.parkour.point.PointMode;
 import net.yzimroni.extremeparkour.parkour.point.Startpoint;
-import net.yzimroni.extremeparkour.utils.MaterialData;
 import net.yzimroni.extremeparkour.utils.Utils;
 
 public class ParkourManager {
-	
+
 	private ExtremeParkourPlugin plugin;
 	private Events events;
 	private ParkourPlayerManager playerManager;
@@ -50,7 +46,6 @@ public class ParkourManager {
 
 		parkours = plugin.getData().getAllParkours();
 		for (Parkour p : parkours) {
-			//TODO
 			initPoint(p.getStartPoint());
 			initPoint(p.getEndPoint());
 			for (Checkpoint checkpoint : p.getCheckpoints()) {
@@ -61,10 +56,9 @@ public class ParkourManager {
 		editMode = new EditMode(plugin);
 		Bukkit.getPluginManager().registerEvents(editMode, plugin);
 	}
-	
+
 	public void disable() {
 		editMode.disable();
-		events.disable();
 		playerManager.disable();
 		for (Parkour parkour : parkours) {
 			plugin.getData().saveParkour(parkour);
@@ -74,9 +68,8 @@ public class ParkourManager {
 				removePointMetadata(checkpoint);
 			}
 		}
-		parkours.clear();
 	}
-	
+
 	public Parkour createParkour(Player p, String name) {
 		Parkour parkour = new Parkour(plugin, -1, name, p.getUniqueId(), System.currentTimeMillis());
 		plugin.getData().insertParkour(parkour);
@@ -89,7 +82,7 @@ public class ParkourManager {
 			p.init();
 		}
 	}
-	
+
 	public void initLeaderboard(Parkour parkour) {
 		if (!parkour.getLeaderboards().isEmpty()) {
 			int max = -1;
@@ -120,47 +113,48 @@ public class ParkourManager {
 						nameCache.put(score.getPlayer(), offline.getName());
 						name = offline.getName();
 					}
-					hologram.appendTextLine(ChatColor.GRAY + "" + ChatColor.BOLD + (i + 1) + ". " + ChatColor.GREEN + name + ChatColor.WHITE + " @ " + ChatColor.GOLD + Utils.formatTime(score.getTimeTook()));
+					hologram.appendTextLine(ChatColor.GRAY + "" + ChatColor.BOLD + (i + 1) + ". " + ChatColor.GREEN
+							+ name + ChatColor.WHITE + " @ " + ChatColor.GOLD + Utils.formatTime(score.getTimeTook()));
 				}
 				hologram.teleport(hologram.getLocation().add(0, hologram.getHeight(), 0));
 				leaderboard.setHologram(hologram);
 			}
 		}
 	}
-	
+
 	public void removePoint(Point p) {
 		if (p != null) {
 			p.remove();
 		}
 	}
-	
+
 	public void removeLeaderboard(ParkourLeaderboard leaderboard) {
 		if (leaderboard.getHologram() != null) {
 			leaderboard.getHologram().delete();
 			leaderboard.setHologram(null);
 		}
 	}
-	
+
 	public void removeHologram(Point p) {
 		if (p.getHologram() != null) {
 			p.getHologram().delete();
 			p.setHologram(null);
 		}
 	}
-	
+
 	private void removePointMetadata(Point p) {
 		if (p != null && p.getLocation() != null) {
 			removePointMetadata(p.getLocation().getBlock());
 		}
 	}
-	
+
 	private void removePointMetadata(Block b) {
 		removeMetadata(b, "parkour_id");
 		removeMetadata(b, "point_type");
 		removeMetadata(b, "point_index");
 		removeMetadata(b, "extremeparkour_block");
 	}
-	
+
 	private void removeMetadata(Block b, String name) {
 		if (b.hasMetadata(name)) {
 			for (MetadataValue m : b.getMetadata(name)) {
@@ -169,16 +163,17 @@ public class ParkourManager {
 			b.removeMetadata(name, plugin);
 		}
 	}
-	
+
 	public boolean isGeneralParkourBlock(Block b) {
 		return b.hasMetadata("extremeparkour_block");
 	}
-	
+
 	public boolean isParkourBlock(Block b, boolean exact) {
-		if (b == null || !b.hasMetadata("extremeparkour_block")) return false;
+		if (b == null || !b.hasMetadata("extremeparkour_block"))
+			return false;
 		if (b.hasMetadata("parkour_id") && !b.getMetadata("parkour_id").isEmpty()) {
 			if (b.hasMetadata("point_radius") && !b.getMetadata("point_radius").isEmpty()) {
-				//This is a distance parkour point
+				// This is a distance parkour point
 				return !exact;
 			}
 			if (b.hasMetadata("point_type") && !b.getMetadata("point_type").isEmpty()) {
@@ -192,9 +187,10 @@ public class ParkourManager {
 		}
 		return false;
 	}
-	
+
 	/*
-	 * Exact used if we want to get the point that is exactly in that block, otherwise, it will return point distance based
+	 * Exact used if we want to get the point that is exactly in that block,
+	 * otherwise, it will return point distance based
 	 */
 	public Point getPoint(Block b, boolean exact) {
 		if (!isParkourBlock(b, exact)) {
@@ -203,13 +199,13 @@ public class ParkourManager {
 		int parkourId = b.getMetadata("parkour_id").get(0).asInt();
 		Parkour parkour = getParkourById(parkourId);
 		if (parkour == null) {
-			//TODO debug
+			// TODO debug
 			removePointMetadata(b);
 			return null;
 		}
 		if (b.hasMetadata("point_radius") && !b.getMetadata("point_radius").isEmpty()) {
 			if (exact) {
-				//This is a radius point block but we want exact, return null
+				// This is a radius point block but we want exact, return null
 				return null;
 			}
 			int index = b.getMetadata("point_radius").get(0).asInt();
@@ -218,13 +214,13 @@ public class ParkourManager {
 				return p;
 			}
 		}
- 		String type = b.getMetadata("point_type").get(0).asString();
+		String type = b.getMetadata("point_type").get(0).asString();
 		if (type.equals(Checkpoint.class.getName())) {
 			int index = b.getMetadata("point_index").get(0).asInt();
 			try {
 				return parkour.getCheckpoints().get(index);
 			} catch (Exception e) {
-				//TODO debug
+				// TODO debug
 				removePointMetadata(b);
 				return null;
 			}
@@ -235,7 +231,7 @@ public class ParkourManager {
 		}
 		return null;
 	}
-	
+
 	public void fixCheckpoints(Parkour p) {
 		for (int i = 0; i < p.getCheckpoints().size(); i++) {
 			Checkpoint point = p.getCheckpoints().get(i);
@@ -244,40 +240,29 @@ public class ParkourManager {
 			initPoint(point);
 		}
 	}
-	
 
 	public Parkour getParkourById(int id) {
-		for (Parkour p : parkours) {
-			if (p.getId() == id) {
-				return p;
-			}
-		}
-		return null;
+		return parkours.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
 	}
-	
+
 	public void removeParkour(Parkour p) {
 		if (parkours.contains(p)) {
-			for (ParkourPlayer player : playerManager.getParkourPlayers(p)) {
-				player.leaveParkour("Parkour deleted");
-			}
+			playerManager.getParkourPlayers(p).forEach(player -> player.leaveParkour("Parkour deleted"));
+
 			plugin.getCommands().onPlayerDelete(p);
 			parkours.remove(p);
-			
+
 			editMode.onParkourDelete(p);
-			
-			for (ParkourLeaderboard leaderboard : p.getLeaderboards()) {
-				removeLeaderboard(leaderboard);
-			}
-			
+
+			p.getLeaderboards().forEach(this::removeLeaderboard);
+
 			removePoint(p.getStartPoint());
 			removePoint(p.getEndPoint());
-			for (Checkpoint checkpoint : p.getCheckpoints()) {
-				removePoint(checkpoint);
-			}
+			p.getCheckpoints().forEach(this::removePoint);
 			plugin.getData().deleteParkour(p);
 		}
 	}
-	
+
 	public List<Parkour> getParkours() {
 		return parkours;
 	}
@@ -289,5 +274,5 @@ public class ParkourManager {
 	public EditMode getEditMode() {
 		return editMode;
 	}
-			
+
 }

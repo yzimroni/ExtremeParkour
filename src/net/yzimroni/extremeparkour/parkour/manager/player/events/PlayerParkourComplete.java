@@ -10,7 +10,7 @@ import net.yzimroni.extremeparkour.parkour.manager.player.ParkourPlayerScore;
 public class PlayerParkourComplete extends PlayerParkourEvent {
 
 	private static final HandlerList handlers = new HandlerList();
-	
+
 	private ParkourPlayerScore score;
 
 	public PlayerParkourComplete(Parkour parkour, ParkourPlayer parkourPlayer, Player who, ParkourPlayerScore score) {

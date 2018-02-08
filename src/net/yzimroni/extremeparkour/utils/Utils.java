@@ -16,23 +16,23 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class Utils {
 
 	private Utils() {
-		
+
 	}
-	
+
 	public static String serializeLocation(Location location) {
 		if (location == null) {
 			return null;
 		}
 		return location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";" + location.getZ();
 	}
-	
+
 	public static Location deserializeLocation(String string) {
 		if (string == null || string.isEmpty()) {
 			return null;
 		}
 		String[] parts = string.split(";");
 		if (parts.length != 4) {
-			//TODO debug
+			// TODO debug
 			return null;
 		}
 		World world = Bukkit.getWorld(parts[0]);
@@ -44,18 +44,19 @@ public class Utils {
 		double z = Double.parseDouble(parts[3]);
 		return new Location(world, x, y, z);
 	}
-	
+
 	public static String formatTime(long time) {
 		long seconds = time / 1000;
 		time -= seconds * 1000;
 		long minutes = seconds / 60;
 		seconds -= minutes * 60;
-		
+
 		String time_s = formatLong(time);
-		if (time_s.length() == 2) time_s = "0" + time_s;
+		if (time_s.length() == 2)
+			time_s = "0" + time_s;
 		return formatLong(minutes) + ":" + formatLong(seconds) + "." + time_s;
 	}
-	
+
 	public static String formatScore(long time, int place) {
 		String result = formatTime(time);
 		if (place > 0) {
@@ -63,13 +64,13 @@ public class Utils {
 		}
 		return result;
 	}
-	
-	private static DecimalFormat format = new DecimalFormat("#00"); 
-	
+
+	private static DecimalFormat format = new DecimalFormat("#00");
+
 	private static String formatLong(long d) {
 		return format.format(d);
 	}
-	
+
 	public static boolean isInt(String s) {
 		try {
 			Integer.valueOf(s);
@@ -78,14 +79,15 @@ public class Utils {
 			return false;
 		}
 	}
-	
+
 	public static int getInt(String s) {
 		try {
 			return Integer.valueOf(s);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		return 0;
 	}
-	
+
 	public static ItemStack item(Material type, String name, String... lore) {
 		ItemStack i = new ItemStack(type);
 		ItemMeta im = i.getItemMeta();
@@ -94,7 +96,7 @@ public class Utils {
 		i.setItemMeta(im);
 		return i;
 	}
-	
+
 	public static ItemStack item(MaterialData type, String name, String... lore) {
 		ItemStack i = new ItemStack(type.getMaterial(), 1, type.getData());
 		ItemMeta im = i.getItemMeta();
@@ -103,11 +105,12 @@ public class Utils {
 		i.setItemMeta(im);
 		return i;
 	}
-	
+
 	public static boolean checkPlugin(String name) {
-		return Bukkit.getPluginManager().getPlugin(name) != null && Bukkit.getPluginManager().getPlugin(name).isEnabled();
+		return Bukkit.getPluginManager().getPlugin(name) != null
+				&& Bukkit.getPluginManager().getPlugin(name).isEnabled();
 	}
-	
+
 	public static List<Block> getNearbyBlocks(Location l, int radius) {
 		List<Block> blocks = new ArrayList<Block>();
 
@@ -118,10 +121,10 @@ public class Utils {
 				}
 			}
 		}
-		
+
 		blocks.remove(l.getBlock());
 
 		return blocks;
 	}
-	
+
 }

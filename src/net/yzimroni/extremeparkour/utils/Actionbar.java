@@ -72,11 +72,6 @@ public class Actionbar {
 		}
 	}
 
-	public void onDisable() {
-		messages.clear();
-		messages = null;
-	}
-
 	public boolean hasActionBar(Player p) {
 		return messages.containsKey(p.getUniqueId());
 	}

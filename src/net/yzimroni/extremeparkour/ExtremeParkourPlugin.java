@@ -1,7 +1,5 @@
 package net.yzimroni.extremeparkour;
 
-import java.util.Collection;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,38 +31,38 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 	 */
 	
 	private static ExtremeParkourPlugin plugin;
-	
+
 	private SQLData data;
 	private ParkourManager manager;
 	private ExtremeParkourCommands commands;
 	private Actionbar actionbar;
 	private CompetitionManager competition;
-	
+
 	private boolean inited = false;
 
 	@Override
 	public void onEnable() {
-		
+
 		plugin = this;
-		
+
 		getConfig().options().copyDefaults(true);
 		saveConfig();
-		
+
 		if (!initData()) {
 			return;
 		}
-		
+
 		ElytraUtils.init();
 		manager = new ParkourManager(this);
 		commands = new ExtremeParkourCommands(this);
 		actionbar = new Actionbar(this);
 		competition = new CompetitionManager(this);
-		
+
 		ExtremeParkourLogger.log("enabled");
-		
+
 		inited = true;
 	}
-	
+
 	private boolean initData() {
 		data = new SQLData(this, getConfig().getString("storage.prefix"));
 		try {
@@ -77,7 +75,7 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 				ExtremeParkourLogger.log("Unknown data type: " + type + ", switch to sqlite");
 				getConfig().set("storage.type", "sqlite");
 				saveConfig();
-				initData(); //Call the method again to init the sqlite
+				initData(); // Call the method again to init the sqlite
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,31 +84,21 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public void onDisable() {
-		
+
 		if (inited) {
-			//Remove all the plugin's holograms when disabled
-			Collection<Hologram> hs = HologramsAPI.getHolograms(this);
-			if (!hs.isEmpty()) {
-				for (Hologram h : hs) {
-					h.delete();
-				}
-			}
-			
-			commands.disable();
+			// Remove all the plugin's holograms when disabled
+			HologramsAPI.getHolograms(this).forEach(Hologram::delete);
+
 			manager.disable();
 			data.disable();
-			
-			commands = null;
-			manager = null;
-			data = null;
 		}
 		inited = false;
 		ExtremeParkourLogger.log("disabled");
 	}
-	
+
 	public static ExtremeParkourPlugin get() {
 		return plugin;
 	}
@@ -142,10 +130,6 @@ public class ExtremeParkourPlugin extends JavaPlugin {
 
 	public CompetitionManager getCompetition() {
 		return competition;
-	}
-
-	public void setCompetition(CompetitionManager competition) {
-		this.competition = competition;
 	}
 
 }

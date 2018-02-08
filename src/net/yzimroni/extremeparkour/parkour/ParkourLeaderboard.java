@@ -13,9 +13,9 @@ public class ParkourLeaderboard {
 	private Location location;
 	private int playerCount;
 	private int page;
-	
+
 	private Hologram hologram;
-	
+
 	private DataStatus status;
 
 	public ParkourLeaderboard(int id, Parkour parkour, Location location, int playerCount, int page) {
@@ -79,12 +79,13 @@ public class ParkourLeaderboard {
 	}
 
 	/**
-	 * @param status the status to set
+	 * @param status
+	 *            the status to set
 	 */
 	public void setStatus(DataStatus status) {
 		this.status = status;
 	}
-	
+
 	private void change() {
 		if (status == null) {
 			status = DataStatus.UPDATED;
@@ -99,7 +100,8 @@ public class ParkourLeaderboard {
 	}
 
 	/**
-	 * @param hologram the hologram to set
+	 * @param hologram
+	 *            the hologram to set
 	 */
 	public void setHologram(Hologram hologram) {
 		this.hologram = hologram;

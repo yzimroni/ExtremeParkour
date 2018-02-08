@@ -1,8 +1,3 @@
-/** TO DO 
- * AUTO ID
- * getNextID
- */
-
 package net.yzimroni.extremeparkour.utils;
 
 import java.sql.Connection;
@@ -33,11 +28,12 @@ public class MCSQL {
 		return !hasConnecting();
 	}
 
-	public boolean openMySQLConnection(String hostname, int port, String database, String username, String password) throws Exception {
+	public boolean openMySQLConnection(String hostname, int port, String database, String username, String password)
+			throws Exception {
 		ms.openMySQL(hostname, port, database, username, password);
 		return ms.checkConnection();
 	}
-	
+
 	public boolean openSQLiteConnection(String file) throws Exception {
 		ms.openSQLite(file);
 		return ms.checkConnection();
@@ -117,16 +113,18 @@ class MySQL extends Database {
 	public MySQL() {
 	}
 
-	public Connection openMySQL(String hostname, int port, String database, String username, String password) throws Exception {
+	public Connection openMySQL(String hostname, int port, String database, String username, String password)
+			throws Exception {
 		Class.forName("com.mysql.jdbc.Driver");
-		this.c = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, username, password);
+		this.c = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, username,
+				password);
 		return c;
 	}
-	
+
 	public Connection openSQLite(String file) throws Exception {
-        Class.forName("org.sqlite.JDBC");
-        this.c = DriverManager.getConnection("jdbc:sqlite:" + file);
-        return c;
+		Class.forName("org.sqlite.JDBC");
+		this.c = DriverManager.getConnection("jdbc:sqlite:" + file);
+		return c;
 	}
 
 	public boolean checkConnection() {
@@ -194,6 +192,8 @@ class Database {
 	}
 
 	protected static enum Statements {
-		SELECT, INSERT, UPDATE, DELETE, DO, REPLACE, LOAD, HANDLER, CALL, CREATE, ALTER, DROP, TRUNCATE, RENAME, START, COMMIT, ROLLBACK, SAVEPOINT, LOCK, UNLOCK, PREPARE, EXECUTE, DEALLOCATE, SET, SHOW, DESCRIBE, EXPLAIN, HELP, USE, ANALYZE, ATTACH, BEGIN, DETACH, END, INDEXED, ON, PRAGMA, REINDEX, RELEASE, VACUUM;
+		SELECT, INSERT, UPDATE, DELETE, DO, REPLACE, LOAD, HANDLER, CALL, CREATE, ALTER, DROP, TRUNCATE, RENAME, START,
+		COMMIT, ROLLBACK, SAVEPOINT, LOCK, UNLOCK, PREPARE, EXECUTE, DEALLOCATE, SET, SHOW, DESCRIBE, EXPLAIN, HELP,
+		USE, ANALYZE, ATTACH, BEGIN, DETACH, END, INDEXED, ON, PRAGMA, REINDEX, RELEASE, VACUUM;
 	}
 }

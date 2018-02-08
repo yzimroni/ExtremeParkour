@@ -12,10 +12,11 @@ import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public class Endpoint extends Point {
-	
+
 	public static MaterialData MATERIAL = new MaterialData(Material.GOLD_PLATE);
 
-	public Endpoint(ExtremeParkourPlugin plugin, int id, Parkour parkour, Location location, PointMode mode, int radius) {
+	public Endpoint(ExtremeParkourPlugin plugin, int id, Parkour parkour, Location location, PointMode mode,
+			int radius) {
 		super(plugin, id, parkour, location, mode, radius);
 	}
 

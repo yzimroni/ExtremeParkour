@@ -48,10 +48,6 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		createPakourCommand();
 	}
 	
-	public void disable() {
-		
-	}
-	
 	public void onPlayerQuit(UUID player) {
 		selections.remove(player);
 	}
@@ -394,7 +390,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		}
 		sender.sendMessage("" + point.getEffects().size() + " effects on point " + point.getName() + ":");
 		for (PointEffect effect : point.getEffects()) {
-			sender.sendMessage(effect.getType().getName() + "x" + (effect.getAmplifier() + 1) + " for " + effect.getDuration() + " ticks (with" + (effect.isShowParticles() ? "" : "out") + " particles)");
+			sender.sendMessage(effect.getType().getName() + "x" + (effect.getAmplifier() + 1) + " for " + effect.getDuration() + " ticks (with" + (effect.shouldShowParticles() ? "" : "out") + " particles)");
 		}
 	}
 	
@@ -453,7 +449,7 @@ public class ExtremeParkourCommands implements MethodExecutorClass {
 		double last_dis = -1;
 		for (ParkourLeaderboard h : parkour.getLeaderboards()) {
 			if (h.getLocation().getWorld().equals(p.getWorld())) {
-				double dis = h.getLocation().distance(p.getLocation());
+				double dis = h.getLocation().distanceSquared(p.getLocation());
 				if (dis < 10 && (last_dis == -1 || lb == null || dis < last_dis)) {
 					lb = h;
 					last_dis = dis;

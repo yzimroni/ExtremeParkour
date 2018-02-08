@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,7 +34,7 @@ public class Competition {
 	private int taskId;
 	private int timeStarting;
 	private CompetitionScoreboard scoreboard;
-	
+
 	private LinkedHashMap<UUID, ParkourPlayerScore> winners = new LinkedHashMap<UUID, ParkourPlayerScore>();
 	private List<UUID> failed = new ArrayList<UUID>();
 
@@ -42,7 +43,7 @@ public class Competition {
 		this.manager = manager;
 		this.leader = leader.getUniqueId();
 		this.parkour = parkour;
-		
+
 		scoreboard = new CompetitionScoreboard(plugin, this);
 		join(leader);
 	}
@@ -62,7 +63,6 @@ public class Competition {
 		}
 		broadcast(p.getName() + " quit");
 		players.remove(p.getUniqueId());
-		
 
 		if (players.isEmpty()) {
 			manager.removeCompetition(this);
@@ -77,7 +77,8 @@ public class Competition {
 	}
 
 	public void broadcast(String text) {
-		String message = ChatColor.RED + "[" + ChatColor.GOLD + "Competition" + ChatColor.RED + "] " + ChatColor.RESET + text;
+		String message = ChatColor.RED + "[" + ChatColor.GOLD + "Competition" + ChatColor.RED + "] " + ChatColor.RESET
+				+ text;
 		for (Player p : getBukkitPlayers()) {
 			p.sendMessage(message);
 		}
@@ -134,15 +135,9 @@ public class Competition {
 		scoreboard.changeScoreboard();
 		scoreboard.startTask();
 	}
-	
+
 	public List<Entry<UUID, ParkourPlayer>> getCompetetingPlayers() {
-		List<Entry<UUID, ParkourPlayer>> pl = new ArrayList<Entry<UUID, ParkourPlayer>>();
-		for (Entry<UUID, ParkourPlayer> e : players.entrySet()) {
-			if (e.getValue() != null) {
-				pl.add(e);
-			}
-		}
-		return pl;
+		return players.entrySet().stream().filter(e -> e.getValue() != null).collect(Collectors.toList());
 	}
 
 	protected void handleParkourFail(PlayerParkourFailed e) {
@@ -161,11 +156,12 @@ public class Competition {
 			players.put(e.getPlayer().getUniqueId(), null);
 			winners.put(e.getPlayer().getUniqueId(), e.getScore());
 			int place = winners.size();
-			broadcast(ChatColor.GREEN + e.getPlayer().getName() + " has finish the parkour in " + Utils.formatTime(e.getScore().getTimeTook()) + " (#" + place + " place)!");
+			broadcast(ChatColor.GREEN + e.getPlayer().getName() + " has finish the parkour in "
+					+ Utils.formatTime(e.getScore().getTimeTook()) + " (#" + place + " place)!");
 			checkFinish();
 		}
 	}
-	
+
 	public void checkFinish() {
 		if (state == CompetitionState.STARTED) {
 			if (getCompetetingPlayers().isEmpty()) {
@@ -173,7 +169,7 @@ public class Competition {
 			}
 		}
 	}
-	
+
 	public void end() {
 		state = CompetitionState.ENDED;
 		if (winners.isEmpty()) {
@@ -183,7 +179,8 @@ public class Competition {
 			broadcast("   " + ChatColor.GOLD + "The Winners:");
 			int index = 1;
 			for (ParkourPlayerScore score : winners.values()) {
-				broadcast("   " + ChatColor.GOLD + (index) + ": " + Bukkit.getPlayer(score.getPlayer()).getName() + " " + Utils.formatTime(score.getTimeTook()));
+				broadcast("   " + ChatColor.GOLD + (index) + ": " + Bukkit.getPlayer(score.getPlayer()).getName() + " "
+						+ Utils.formatTime(score.getTimeTook()));
 				index++;
 			}
 
@@ -217,11 +214,7 @@ public class Competition {
 	}
 
 	public List<Player> getBukkitPlayers() {
-		List<Player> players = new ArrayList<Player>();
-		for (UUID u : this.players.keySet()) {
-			players.add(Bukkit.getPlayer(u));
-		}
-		return players;
+		return players.keySet().stream().map(Bukkit::getPlayer).collect(Collectors.toList());
 	}
 
 	public CompetitionState getState() {

@@ -1,9 +1,9 @@
 package net.yzimroni.extremeparkour.parkour.manager.player;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,17 +47,21 @@ public class ParkourPlayerManager implements Listener {
 	}
 
 	public void disable() {
-		remove = false;
+		remove = false; // To prevent ConcurrentModificationException
 		for (ParkourPlayer p : players.values()) {
 			p.leaveParkour("Plugin disabled");
 		}
-		players.clear();
 		remove = true;
 	}
 
 	private void initProtocolLib() {
 		if (Utils.checkPlugin("ProtocolLib")) {
 			System.out.println("ProtcolLib found, using it");
+			/*
+			 * ProtocolLib is used to listen to position packets sent by players, and
+			 * process them as soon as they arrive (Minecraft handles most received packets
+			 * only every 50ms (every tick), not as soon as they arrive)
+			 */
 			ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.LOWEST,
 					PacketType.Play.Client.POSITION, PacketType.Play.Client.POSITION_LOOK) {
 
@@ -69,13 +73,15 @@ public class ParkourPlayerManager implements Listener {
 							return;
 						}
 						parkourPlayer.sendBar();
-						// Point point =
-						// ParkourPlayerManager.this.plugin.getParkourManager().getPoint(e.getPlayer().getLocation().getBlock());
+
 						PacketContainer p = e.getPacket();
 						Point point = ParkourPlayerManager.this.plugin.getParkourManager()
 								.getPoint(new Location(e.getPlayer().getWorld(), p.getDoubles().read(0),
 										p.getDoubles().read(1), p.getDoubles().read(2)).getBlock(), false);
 						if (point != null && point instanceof Endpoint) {
+							// Used only for endpoint to make the time it took the player to complete the
+							// parkour as accurate as possible
+							// TODO maybe should be used for startpoints as well
 							parkourPlayer.checkComplete((Endpoint) point);
 						}
 
@@ -104,15 +110,7 @@ public class ParkourPlayerManager implements Listener {
 	}
 
 	public List<ParkourPlayer> getParkourPlayers(Parkour parkour) {
-		List<ParkourPlayer> list = new ArrayList<ParkourPlayer>();
-
-		for (ParkourPlayer player : players.values()) {
-			if (player.getParkour().equals(parkour)) {
-				list.add(player);
-			}
-		}
-
-		return list;
+		return players.values().stream().filter(p -> p.getParkour().equals(parkour)).collect(Collectors.toList());
 	}
 
 	@EventHandler

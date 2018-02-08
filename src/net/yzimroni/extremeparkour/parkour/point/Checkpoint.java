@@ -12,12 +12,13 @@ import net.yzimroni.extremeparkour.parkour.Parkour;
 import net.yzimroni.extremeparkour.utils.MaterialData;
 
 public class Checkpoint extends Point {
-	
+
 	public static MaterialData MATERIAL = new MaterialData(Material.IRON_PLATE);
 
 	private int index;
 
-	public Checkpoint(ExtremeParkourPlugin plugin, int id, Parkour parkour, Location location, int index, PointMode mode, int radius) {
+	public Checkpoint(ExtremeParkourPlugin plugin, int id, Parkour parkour, Location location, int index,
+			PointMode mode, int radius) {
 		super(plugin, id, parkour, location, mode, radius);
 		this.index = index;
 	}
@@ -29,7 +30,7 @@ public class Checkpoint extends Point {
 	public int getIndex() {
 		return index;
 	}
-	
+
 	public int getDisplayIndex() {
 		return index + 1;
 	}
@@ -52,7 +53,8 @@ public class Checkpoint extends Point {
 
 	@Override
 	public List<String> getHologramText() {
-		return Arrays.asList(ChatColor.AQUA + "" + ChatColor.BOLD + "Checkpoint " + ChatColor.YELLOW + "#" + getDisplayIndex());
+		return Arrays.asList(
+				ChatColor.AQUA + "" + ChatColor.BOLD + "Checkpoint " + ChatColor.YELLOW + "#" + getDisplayIndex());
 	}
 
 	@Override

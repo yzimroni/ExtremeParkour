@@ -22,24 +22,24 @@ public class Events implements Listener {
 		this.plugin = plugin;
 		this.manager = manager;
 	}
-	
+
 	public void disable() {
-		
+
 	}
-	
+
 	private void leaveParkour(Player p, String reason) {
 		if (manager.isPakouring(p)) {
 			manager.getPlayer(p).leaveParkour(reason);
 		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		leaveParkour(e.getPlayer(), "");
 		plugin.getParkourManager().getEditMode().leaveEditMode(e.getPlayer());
 		plugin.getCommands().onPlayerQuit(e.getPlayer().getUniqueId());
 	}
-	
+
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
 		ParkourPlayer playerp = manager.getPlayer(e.getPlayer());
@@ -51,28 +51,27 @@ public class Events implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerFly(PlayerToggleFlightEvent e) {
 		leaveParkour(e.getPlayer(), "Don't fly!");
 	}
-	
+
 	@EventHandler
 	public void onPlayerGamemodeChange(PlayerGameModeChangeEvent e) {
 		if (e.getNewGameMode() == GameMode.SPECTATOR) {
 			leaveParkour(e.getPlayer(), "Don't be in specator mode!");
 		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent e) {
 		leaveParkour(e.getPlayer(), "Don't change worlds!");
 	}
-	
+
 	@EventHandler
 	public void onPlayerDie(PlayerDeathEvent e) {
 		leaveParkour(e.getEntity(), "You died");
 	}
-	
-	
+
 }

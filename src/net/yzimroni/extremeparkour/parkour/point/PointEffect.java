@@ -55,7 +55,7 @@ public class PointEffect {
 		this.amplifier = amplifier;
 	}
 
-	public boolean isShowParticles() {
+	public boolean shouldShowParticles() {
 		return showParticles;
 	}
 
@@ -70,9 +70,10 @@ public class PointEffect {
 	public void setStatus(DataStatus status) {
 		this.status = status;
 	}
-	
+
 	public PotionEffect createPotionEffect() {
-		PotionEffect effect = new PotionEffect(type, duration == -1 ? Integer.MAX_VALUE : duration, amplifier, true, showParticles);
+		PotionEffect effect = new PotionEffect(type, duration == -1 ? Integer.MAX_VALUE : duration, amplifier, true,
+				showParticles);
 		return effect;
 	}
 

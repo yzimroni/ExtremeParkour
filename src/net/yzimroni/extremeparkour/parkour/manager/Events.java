@@ -10,7 +10,6 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import net.yzimroni.extremeparkour.ExtremeParkourPlugin;
-import net.yzimroni.extremeparkour.parkour.point.Point;
 
 public class Events implements Listener {
 
@@ -18,10 +17,6 @@ public class Events implements Listener {
 
 	public Events(ExtremeParkourPlugin plugin) {
 		this.plugin = plugin;
-	}
-
-	public void disable() {
-
 	}
 
 	private boolean isEditMode(Player p) {

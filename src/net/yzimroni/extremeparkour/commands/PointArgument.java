@@ -14,7 +14,7 @@ import net.yzimroni.extremeparkour.utils.Utils;
 public class PointArgument extends CommandArgument<Point> {
 
 	private ExtremeParkourPlugin plugin;
-	
+
 	public PointArgument(ExtremeParkourPlugin plugin, String name) {
 		super(name);
 		this.plugin = plugin;
