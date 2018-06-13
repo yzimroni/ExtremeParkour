@@ -244,7 +244,7 @@ public class ParkourPlayer {
 				+ Utils.formatScore(time, scorerank));
 		if (old != null) {
 			if (now.getTimeTook() < old.getTimeTook()) {
-				p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You break your previous record of "
+				p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "You broke your previous record of "
 						+ ChatColor.RESET + "" + ChatColor.AQUA + Utils.formatScore(old.getTimeTook(), bestrank)
 						+ ChatColor.GOLD + "" + ChatColor.BOLD + " (Improvement of " + ChatColor.GREEN
 						+ Utils.formatTime(old.getTimeTook() - now.getTimeTook()) + ChatColor.GOLD + "" + ChatColor.BOLD
